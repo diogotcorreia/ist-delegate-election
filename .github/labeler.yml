@@ -1,0 +1,4 @@
+"module:backend":
+  - backend/**/*
+"module:frontend":
+  - frontend/**/*
