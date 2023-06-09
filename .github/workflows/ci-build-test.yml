@@ -1,0 +1,40 @@
+name: Build and Test
+
+on: [push]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-test-backend:
+    name: Build and Test Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
+        working-directory: ./backend
+      - name: Run tests
+        run: cargo test --verbose
+        working-directory: ./backend
+
+  build-test-frontend:
+    name: Build and Test Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: yarn
+          cache-dependency-path: ./frontend/yarn.lock
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: ./frontend
+      - name: Build
+        run: yarn build
+        working-directory: ./frontend
+      - name: Run tests
+        run: yarn test
+        working-directory: ./frontend
