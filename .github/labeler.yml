@@ -1,4 +1,17 @@
 "module:backend":
-  - backend/**/*
+  - changed-files: ['backend/**/*']
 "module:frontend":
-  - frontend/**/*
+  - changed-files: ['frontend/**/*']
+
+"type:feature":
+  - head-branch: ['^feature']
+"type:refactor":
+  - head-branch: ['^refactor']
+"type:chore":
+  - head-branch: ['^chore']
+"type:bug":
+  - head-branch: ['^bug', '^fix']
+"type:documentation":
+  - head-branch: ['^docs']
+"type:format":
+  - head-branch: ['^style']
