@@ -8,6 +8,7 @@ env:
 jobs:
   build-test-backend:
     name: Build and Test Backend
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Build
@@ -19,6 +20,7 @@ jobs:
 
   build-test-frontend:
     name: Build and Test Frontend
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 18
