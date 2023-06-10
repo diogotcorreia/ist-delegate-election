@@ -15,6 +15,7 @@
             cargo
             rustc
             rustfmt
+            rust-analyzer
             clippy
             nodejs
             yarn
