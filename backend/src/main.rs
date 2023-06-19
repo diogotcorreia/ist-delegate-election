@@ -4,6 +4,8 @@ use axum::routing::get;
 use axum::Router;
 use tracing::info;
 
+mod services;
+
 #[tokio::main]
 async fn main() {
     // enable console logging
