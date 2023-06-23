@@ -22,10 +22,28 @@ impl From<CurriculumResponse> for DegreeEntryDto {
 
 #[derive(Serialize)]
 pub struct AuthDto {
-    jwt: String,
     username: String,
     display_name: String,
     degree_entries: Vec<DegreeEntryDto>,
+}
+
+pub async fn authenticate_from_code(code: &str) -> reqwest::Result<AuthDto> {
+    let oauth_response = authorize_fenix_oauth_code(code).await?;
+    let access_token = &oauth_response.access_token;
+    let person = get_user_details(access_token).await?;
+    let curriculum_response = get_curricular_details(access_token).await?;
+
+    let degree_entries: Vec<DegreeEntryDto> = curriculum_response
+        .into_iter()
+        .filter(|entry| entry.state == "REGISTERED")
+        .map(|entry| entry.into())
+        .collect();
+
+    Ok(AuthDto {
+        username: person.username,
+        display_name: person.display_name,
+        degree_entries,
+    })
 }
 
 #[derive(Deserialize)]
@@ -33,11 +51,42 @@ struct OAuthResponse {
     access_token: String,
 }
 
+async fn authorize_fenix_oauth_code(code: &str) -> reqwest::Result<OAuthResponse> {
+    let client = reqwest::Client::new();
+
+    client
+        .post(format!("{FENIX_OAUTH_BASE_URL}/access_token"))
+        .query(&[
+            // TODO get this from somewhere
+            ("client_id", "1695915081466315"),
+            ("client_secret", "X9mqe4vY2pe6wq9TcXX7PAmhzCyK+0R3iO3HSf4UgC34Na+o+eHBMFOwfT/WctfIX60prUVr/gizjEthDzPxkw=="),
+            ("redirect_uri", "http://localhost:5000/api/login"),
+            ("code", code),
+            ("grant_type", "authorization_code"),
+        ])
+        .send()
+        .await?
+        .json()
+        .await
+}
+
 #[derive(Deserialize)]
 struct PersonResponse {
     username: String,
     #[serde(rename = "displayName")]
     display_name: String,
+}
+
+async fn get_user_details(oauth_token: &str) -> reqwest::Result<PersonResponse> {
+    let client = reqwest::Client::new();
+
+    client
+        .get(format!("{TECNICO_API_BASE_URL}/person"))
+        .header("Authorization", format!("Bearer {}", oauth_token))
+        .send()
+        .await?
+        .json()
+        .await
 }
 
 #[derive(Deserialize)]
@@ -53,61 +102,14 @@ struct Degree {
     id: String,
 }
 
-pub async fn authenticate_from_code(code: &str) -> Result<AuthDto, ()> {
+async fn get_curricular_details(oauth_token: &str) -> reqwest::Result<Vec<CurriculumResponse>> {
     let client = reqwest::Client::new();
-    let oauth_response: OAuthResponse = client
-        .post(format!("{FENIX_OAUTH_BASE_URL}/access_token"))
-        .query(&[
-            // TODO get this from somewhere
-            ("client_id", "1695915081466315"),
-            ("client_secret", "X9mqe4vY2pe6wq9TcXX7PAmhzCyK+0R3iO3HSf4UgC34Na+o+eHBMFOwfT/WctfIX60prUVr/gizjEthDzPxkw=="),
-            ("redirect_uri", "http://localhost:5000/api/login"),
-            ("code", code),
-            ("grant_type", "authorization_code"),
-        ])
-        .send()
-        .await
-        .expect("oauth failed") // TODO proper error
-        .json()
-        .await
-        .expect("can't convert oauth to json"); // TODO proper error
 
-    let person_response: PersonResponse = client
-        .get(format!("{TECNICO_API_BASE_URL}/person"))
-        .header(
-            "Authorization",
-            format!("Bearer {}", oauth_response.access_token),
-        )
-        .send()
-        .await
-        .expect("person endpoint failed") // TODO proper error
-        .json()
-        .await
-        .expect("can't convert person to json"); // TODO proper error
-
-    let curriculum_response: Vec<CurriculumResponse> = client
+    client
         .get(format!("{TECNICO_API_BASE_URL}/student/curriculum"))
-        .header(
-            "Authorization",
-            format!("Bearer {}", oauth_response.access_token),
-        )
+        .header("Authorization", format!("Bearer {}", oauth_token))
         .send()
-        .await
-        .expect("curriculum endpoint failed")
+        .await?
         .json()
         .await
-        .expect("can't convert curriculum to json");
-
-    let degree_entries: Vec<DegreeEntryDto> = curriculum_response
-        .into_iter()
-        .filter(|entry| entry.state == "REGISTERED")
-        .map(|entry| entry.into())
-        .collect();
-
-    Ok(AuthDto {
-        jwt: "".to_string(),
-        username: person_response.username,
-        display_name: person_response.display_name,
-        degree_entries,
-    })
 }
