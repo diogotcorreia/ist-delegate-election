@@ -4,6 +4,7 @@ use axum::routing::get;
 use axum::Router;
 use tracing::info;
 
+mod routes;
 mod services;
 
 #[tokio::main]
@@ -11,7 +12,9 @@ async fn main() {
     // enable console logging
     tracing_subscriber::fmt::init();
 
-    let api_routes = Router::new().route("/test", get(|| async { "Hello, world!" })); // TODO: temporary, remove later
+    let api_routes = Router::new()
+        .route("/login", get(routes::login::login))
+        .route("/test", get(|| async { "Hello, world!" })); // TODO: temporary, remove later
 
     let app = Router::new().nest("/api", api_routes);
 
