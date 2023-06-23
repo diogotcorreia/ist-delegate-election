@@ -13,6 +13,8 @@
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             cargo
+            openssl
+            pkg-config
             rustc
             rustfmt
             rust-analyzer
