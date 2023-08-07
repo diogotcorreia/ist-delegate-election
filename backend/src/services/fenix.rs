@@ -44,7 +44,10 @@ impl FenixService {
     /// the user.
     ///
     /// Fetched information includes the user's name, username and attending degrees.
-    pub async fn authenticate_from_code(&self, code: &str) -> reqwest::Result<AuthDto> {
+    pub async fn authenticate_from_code(
+        &self,
+        code: &str,
+    ) -> reqwest::Result<(AuthDto, OAuthResponse)> {
         let oauth_response = self.authorize_fenix_oauth_code(code).await?;
         let access_token = &oauth_response.access_token;
         let person = self.get_user_details(access_token).await?;
@@ -56,12 +59,14 @@ impl FenixService {
             .map(|entry| entry.into())
             .collect();
 
-        Ok(AuthDto {
-            username: person.username,
-            display_name: person.display_name,
-            degree_entries,
+        Ok((
+            AuthDto {
+                username: person.username,
+                display_name: person.display_name,
+                degree_entries,
+            },
             oauth_response,
-        })
+        ))
     }
 
     /// Validate a OAuth code with Fenix's OAuth endpoint, getting the access and refresh tokens.
@@ -120,7 +125,7 @@ impl FenixService {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct DegreeEntryDto {
     degree_id: String,
     curricular_year: u8,
@@ -135,17 +140,14 @@ impl From<CurriculumResponse> for DegreeEntryDto {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct AuthDto {
     username: String,
     display_name: String,
     degree_entries: Vec<DegreeEntryDto>,
-
-    #[serde(skip_serializing)]
-    oauth_response: OAuthResponse,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize, Clone)]
 pub struct OAuthResponse {
     access_token: String,
     refresh_token: String,
