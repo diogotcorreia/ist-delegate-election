@@ -12,6 +12,7 @@ use tracing::{info, warn};
 
 use rand::Rng;
 
+mod errors;
 mod routes;
 mod services;
 
