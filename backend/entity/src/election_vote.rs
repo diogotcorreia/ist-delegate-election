@@ -16,8 +16,8 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(
         belongs_to = "super::nomination::Entity",
-        from = "Column::Election",
-        to = "super::nomination::Column::Election",
+        from = "(Column::Election, Column::NominationUsername)",
+        to = "(super::nomination::Column::Election, super::nomination::Column::Username)",
         on_update = "Cascade",
         on_delete = "Restrict"
     )]
