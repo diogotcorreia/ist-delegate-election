@@ -5,6 +5,8 @@ use std::net::{IpAddr, Ipv6Addr, SocketAddr};
 use axum::routing::get;
 use axum::Router;
 use axum_sessions::SessionLayer;
+use migration::{Migrator, MigratorTrait};
+use sea_orm::Database;
 use tower::ServiceBuilder;
 use tower_http::add_extension::AddExtensionLayer;
 use tower_http::trace::TraceLayer;
@@ -35,6 +37,8 @@ async fn main() {
         |secret| hex::decode(secret).expect("Invalid SESSION_SECRET: not a hex string"));
     let session_layer = SessionLayer::new(session_store, &session_secret);
 
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+
     let api_routes = Router::new()
         .route("/login", get(routes::login::login))
         .route("/whoami", get(routes::login::whoami));
@@ -45,6 +49,11 @@ async fn main() {
             .layer(AddExtensionLayer::new(fenix_service))
             .layer(TraceLayer::new_for_http()),
     );
+
+    let conn = Database::connect(database_url)
+        .await
+        .expect("Database connection failed");
+    Migrator::up(&conn, None).await.expect("Migration failed");
 
     let sock_addr = SocketAddr::from((IpAddr::V6(Ipv6Addr::LOCALHOST), 5000));
 
