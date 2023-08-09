@@ -22,7 +22,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Election::DegreeId).string().not_null())
                     .col(
                         ColumnDef::new(Election::CurricularYear)
-                            .tiny_unsigned()
+                            .integer()
                             .not_null(),
                     )
                     .col(
@@ -45,7 +45,7 @@ impl MigrationTrait for Migration {
                             .timestamp()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(Election::Round).tiny_unsigned().not_null())
+                    .col(ColumnDef::new(Election::Round).integer().not_null())
                     .index(
                         Index::create()
                             .unique()
@@ -98,7 +98,7 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     // end nomination primary key
-                    .col(ColumnDef::new(ElectionVote::Count).unsigned().not_null())
+                    .col(ColumnDef::new(ElectionVote::Count).integer().not_null())
                     .primary_key(
                         Index::create()
                             .col(ElectionVote::Election)
@@ -159,19 +159,19 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Election::Table).to_owned())
-            .await?;
-        manager
-            .drop_table(Table::drop().table(Nomination::Table).to_owned())
-            .await?;
-        manager
-            .drop_table(Table::drop().table(ElectionVote::Table).to_owned())
+            .drop_table(Table::drop().table(Admin::Table).to_owned())
             .await?;
         manager
             .drop_table(Table::drop().table(VoteLog::Table).to_owned())
             .await?;
         manager
-            .drop_table(Table::drop().table(Admin::Table).to_owned())
+            .drop_table(Table::drop().table(ElectionVote::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Nomination::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Election::Table).to_owned())
             .await?;
 
         Ok(())

@@ -1,21 +1,28 @@
 [package]
 name = "ist-delegate-election"
+version.workspace = true
+edition.workspace = true
+
+[workspace]
+members = [".", "entity", "migration"]
+
+[workspace.package]
 version = "0.1.0"
 edition = "2021"
 
-[workspace]
-members = [".", "migration"]
+[workspace.dependencies]
+sea-orm = { version = "0.12.2", features = ["runtime-tokio-native-tls", "sqlx-sqlite", "sqlx-mysql", "sqlx-postgres", "macros", "mock"] }
 
 [dependencies]
 async-session = "3.0.0"
 axum = "0.6.18"
 axum-sessions = "0.5.0"
-#entity = { path = "entity" }
+entity = { path = "entity" }
 hex = "0.4.3"
 migration = { path = "migration" }
 rand = "0.8.5"
 reqwest = { version = "0.11.18", features = ["json"] }
-sea-orm = { version = "0.12.2", features = ["runtime-tokio-native-tls", "sqlx-sqlite", "sqlx-mysql", "sqlx-postgres", "macros", "mock"] }
+sea-orm.workspace = true
 serde = { version = "1.0.164", features = ["derive"] }
 tokio = { version = "1.28.2", features = ["macros", "rt-multi-thread"] }
 tower = "0.4.13"
