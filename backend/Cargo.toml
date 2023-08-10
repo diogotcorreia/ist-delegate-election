@@ -11,7 +11,7 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace.dependencies]
-sea-orm = { version = "0.12.2", features = ["runtime-tokio-native-tls", "sqlx-sqlite", "sqlx-mysql", "sqlx-postgres", "macros", "mock"] }
+sea-orm = { version = "0.12.2", features = ["runtime-tokio-native-tls", "sqlx-sqlite", "sqlx-mysql", "sqlx-postgres", "macros"] }
 
 [dependencies]
 async-session = "3.0.0"

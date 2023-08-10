@@ -145,7 +145,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Admin::Username)
-                            .integer()
+                            .string()
                             .not_null()
                             .primary_key(),
                     )
