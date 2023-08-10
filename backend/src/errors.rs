@@ -11,6 +11,7 @@ pub enum AppError {
     BadInput(&'static str),
     DuplicateAdmin,
     UnknownAdmin,
+    NotEnoughAdmins,
     Unauthorized,
     SessionSerializationError(async_session::serde_json::Error),
     DbError(DbErr),
@@ -27,6 +28,7 @@ impl IntoResponse for AppError {
             AppError::BadInput(error) => (StatusCode::BAD_REQUEST, error),
             AppError::DuplicateAdmin => (StatusCode::CONFLICT, "error.duplicate.admin"),
             AppError::UnknownAdmin => (StatusCode::NOT_FOUND, "error.unknown.admin"),
+            AppError::NotEnoughAdmins => (StatusCode::NOT_FOUND, "error.not.enough.admins"),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "error.internal")

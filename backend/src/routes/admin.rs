@@ -2,7 +2,7 @@ use axum::{extract::Path, Extension, Json};
 use axum_sessions::SessionHandle;
 
 use entity::admin::{self, Entity as Admin};
-use sea_orm::{prelude::*, DatabaseConnection, QueryOrder, Set};
+use sea_orm::{prelude::*, DatabaseConnection, QueryOrder, Set, TransactionTrait};
 
 use crate::{
     auth_utils,
@@ -71,7 +71,15 @@ pub async fn remove_admin(
         return Err(AppError::BadInput("error.username.empty"));
     }
 
-    let res = Admin::delete_by_id(username).exec(conn).await?;
+    let txn = conn.begin().await?;
+
+    let count = Admin::find().count(&txn).await?;
+    if count <= 1 {
+        return Err(AppError::NotEnoughAdmins);
+    }
+
+    let res = Admin::delete_by_id(username).exec(&txn).await?;
+    txn.commit().await?;
     match res.rows_affected {
         0 => Err(AppError::UnknownAdmin),
         _ => Ok(()),
@@ -82,5 +90,24 @@ pub async fn setup_first_admin(
     Extension(ref session_handle): Extension<SessionHandle>,
     Extension(ref conn): Extension<DatabaseConnection>,
 ) -> Result<(), AppError> {
-    todo!()
+    // assert logged in
+    let username = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn.begin().await?;
+
+    let count = Admin::find().count(&txn).await?;
+    if count != 0 {
+        return Err(AppError::Unauthorized);
+    }
+
+    let now = chrono::offset::Utc::now().naive_utc();
+
+    let admin = admin::ActiveModel {
+        username: Set(username.to_string()),
+        date_added: Set(now),
+    };
+    admin.insert(&txn).await?;
+
+    txn.commit().await?;
+    Ok(())
 }
