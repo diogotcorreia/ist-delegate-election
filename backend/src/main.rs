@@ -2,7 +2,7 @@ use crate::services::fenix::FenixService;
 use std::env;
 use std::net::{IpAddr, Ipv6Addr, SocketAddr};
 
-use axum::routing::get;
+use axum::routing::{delete, get, post};
 use axum::Router;
 use axum_sessions::SessionLayer;
 use migration::{Migrator, MigratorTrait};
@@ -14,6 +14,8 @@ use tracing::{info, warn};
 
 use rand::Rng;
 
+mod auth_utils;
+mod dtos;
 mod errors;
 mod routes;
 mod services;
@@ -38,22 +40,26 @@ async fn main() {
     let session_layer = SessionLayer::new(session_store, &session_secret);
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+    let conn = Database::connect(database_url)
+        .await
+        .expect("Database connection failed");
+    Migrator::up(&conn, None).await.expect("Migration failed");
 
     let api_routes = Router::new()
         .route("/login", get(routes::login::login))
+        .route("/admins", get(routes::admin::list_admins))
+        .route("/admin", post(routes::admin::add_admin))
+        .route("/admin/:username", delete(routes::admin::remove_admin))
+        .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));
 
     let app = Router::new().nest("/api", api_routes).layer(
         ServiceBuilder::new()
             .layer(session_layer)
             .layer(AddExtensionLayer::new(fenix_service))
+            .layer(AddExtensionLayer::new(conn))
             .layer(TraceLayer::new_for_http()),
     );
-
-    let conn = Database::connect(database_url)
-        .await
-        .expect("Database connection failed");
-    Migrator::up(&conn, None).await.expect("Migration failed");
 
     let sock_addr = SocketAddr::from((IpAddr::V6(Ipv6Addr::LOCALHOST), 5000));
 
