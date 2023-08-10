@@ -10,6 +10,7 @@ use serde::Serialize;
 pub enum AppError {
     BadInput(&'static str),
     DuplicateAdmin,
+    UnknownAdmin,
     Unauthorized,
     SessionSerializationError(async_session::serde_json::Error),
     DbError(DbErr),
@@ -25,6 +26,7 @@ impl IntoResponse for AppError {
         let (status, key) = match self {
             AppError::BadInput(error) => (StatusCode::BAD_REQUEST, error),
             AppError::DuplicateAdmin => (StatusCode::CONFLICT, "error.duplicate.admin"),
+            AppError::UnknownAdmin => (StatusCode::NOT_FOUND, "error.unknown.admin"),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "error.internal")

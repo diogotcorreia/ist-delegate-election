@@ -1,4 +1,4 @@
-use axum::{extract, Extension, Json};
+use axum::{extract::{self, Path}, Extension, Json};
 use axum_sessions::SessionHandle;
 
 use entity::admin::{self, Entity as Admin};
@@ -58,10 +58,22 @@ pub async fn add_admin(
 }
 
 pub async fn remove_admin(
+    Path(username): Path<String>,
     Extension(ref session_handle): Extension<SessionHandle>,
     Extension(ref conn): Extension<DatabaseConnection>,
 ) -> Result<(), AppError> {
-    todo!()
+    // TODO check permissions
+
+    // validate username
+    if username.is_empty() {
+        return Err(AppError::BadInput("error.username.empty"));
+    }
+
+    let res = Admin::delete_by_id(username).exec(conn).await?;
+    match res.rows_affected {
+        0 => Err(AppError::UnknownAdmin),
+        _ => Ok(()),
+    }
 }
 
 pub async fn setup_first_admin(

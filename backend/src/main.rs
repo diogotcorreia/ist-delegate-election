@@ -48,7 +48,7 @@ async fn main() {
         .route("/login", get(routes::login::login))
         .route("/admins", get(routes::admin::list_admins))
         .route("/admin", post(routes::admin::add_admin))
-        .route("/admin", delete(routes::admin::remove_admin))
+        .route("/admin/:username", delete(routes::admin::remove_admin))
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));
 
