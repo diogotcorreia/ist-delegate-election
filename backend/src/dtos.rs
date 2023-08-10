@@ -1,6 +1,6 @@
 use entity::admin;
 use sea_orm::prelude::*;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::errors::AppError;
 

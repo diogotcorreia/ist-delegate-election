@@ -1,10 +1,11 @@
-use axum::{extract::{self, Path}, Extension, Json};
+use axum::{extract::Path, Extension, Json};
 use axum_sessions::SessionHandle;
 
 use entity::admin::{self, Entity as Admin};
 use sea_orm::{prelude::*, DatabaseConnection, QueryOrder, Set};
 
 use crate::{
+    auth_utils,
     dtos::{AddAdminDto, AdminDto},
     errors::AppError,
 };
@@ -13,7 +14,8 @@ pub async fn list_admins(
     Extension(ref session_handle): Extension<SessionHandle>,
     Extension(ref conn): Extension<DatabaseConnection>,
 ) -> Result<Json<Vec<AdminDto>>, AppError> {
-    // TODO check permissions
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
 
     let admins = Admin::find()
         .order_by_asc(admin::Column::DateAdded)
@@ -31,7 +33,8 @@ pub async fn add_admin(
     Extension(ref conn): Extension<DatabaseConnection>,
     Json(admin_dto): Json<AddAdminDto>,
 ) -> Result<(), AppError> {
-    // TODO check permissions
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
 
     // validate username
     let username = admin_dto.username.trim();
@@ -39,9 +42,7 @@ pub async fn add_admin(
         return Err(AppError::BadInput("error.username.empty"));
     }
 
-    let admin = Admin::find_by_id(username)
-        .one(conn)
-        .await?;
+    let admin = Admin::find_by_id(username).one(conn).await?;
     if admin.is_some() {
         return Err(AppError::DuplicateAdmin);
     }
@@ -62,7 +63,8 @@ pub async fn remove_admin(
     Extension(ref session_handle): Extension<SessionHandle>,
     Extension(ref conn): Extension<DatabaseConnection>,
 ) -> Result<(), AppError> {
-    // TODO check permissions
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
 
     // validate username
     if username.is_empty() {

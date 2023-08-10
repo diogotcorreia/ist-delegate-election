@@ -142,9 +142,9 @@ impl From<CurriculumResponse> for DegreeEntryDto {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct AuthDto {
-    username: String,
-    display_name: String,
-    degree_entries: Vec<DegreeEntryDto>,
+    pub username: String,
+    pub display_name: String,
+    pub degree_entries: Vec<DegreeEntryDto>,
 }
 
 #[derive(Deserialize, Serialize, Clone)]
