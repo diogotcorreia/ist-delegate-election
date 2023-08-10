@@ -1,6 +1,6 @@
 use entity::admin;
-use sea_orm::prelude::DateTimeUtc;
-use serde::Serialize;
+use sea_orm::prelude::*;
+use serde::{Serialize, Deserialize};
 
 use crate::errors::AppError;
 
@@ -18,4 +18,9 @@ impl AdminDto {
             date_added: entity.date_added.and_utc(),
         })
     }
+}
+
+#[derive(Deserialize)]
+pub struct AddAdminDto {
+    pub username: String,
 }
