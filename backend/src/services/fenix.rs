@@ -3,6 +3,8 @@ use std::env;
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
+use crate::{dtos::DegreeDto, errors::AppError};
+
 const FENIX_DEFAULT_BASE_URL: &str = "https://fenix.tecnico.ulisboa.pt";
 const TECNICO_API_PREFIX: &str = "/tecnico-api/v2";
 const FENIX_OAUTH_PREFIX: &str = "/oauth";
@@ -123,6 +125,27 @@ impl FenixService {
             .json()
             .await
     }
+
+    /// Get cached degree list from Fénix
+    /// If no degrees are cached, or if the cached list has been invalidated, they will be fetched
+    /// again.
+    pub async fn get_degrees(&self) -> Result<Vec<DegreeDto>, AppError> {
+        // TODO cache this
+        self.fetch_degrees_from_fenix()
+            .await
+            .map_err(|_| AppError::FenixError)
+    }
+
+    async fn fetch_degrees_from_fenix(&self) -> reqwest::Result<Vec<DegreeDto>> {
+        let client = reqwest::Client::new();
+
+        client
+            .get(format!("{}{}/degrees", self.base_url, TECNICO_API_PREFIX))
+            .send()
+            .await?
+            .json()
+            .await
+    }
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -161,9 +184,9 @@ struct PersonResponse {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct CurriculumResponse {
     degree: Degree,
-    #[serde(rename = "curricularYear")]
     curricular_year: u8,
     state: String,
 }

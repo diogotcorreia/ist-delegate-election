@@ -13,6 +13,7 @@ pub enum AppError {
     UnknownAdmin,
     NotEnoughAdmins,
     Unauthorized,
+    FenixError,
     SessionSerializationError(async_session::serde_json::Error),
     DbError(DbErr),
 }
@@ -30,6 +31,7 @@ impl IntoResponse for AppError {
             AppError::UnknownAdmin => (StatusCode::NOT_FOUND, "error.unknown.admin"),
             AppError::NotEnoughAdmins => (StatusCode::NOT_FOUND, "error.not.enough.admins"),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
+            AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "error.internal")
             }
