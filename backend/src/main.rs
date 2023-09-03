@@ -2,13 +2,14 @@ use crate::services::fenix::FenixService;
 use std::env;
 use std::net::{IpAddr, Ipv6Addr, SocketAddr};
 
+use axum::extract::FromRef;
 use axum::routing::{delete, get, post};
 use axum::Router;
 use axum_sessions::SessionLayer;
 use migration::{Migrator, MigratorTrait};
-use sea_orm::Database;
+use sea_orm::{Database, DatabaseConnection};
 use tower::ServiceBuilder;
-use tower_http::add_extension::AddExtensionLayer;
+
 use tower_http::trace::TraceLayer;
 use tracing::{info, warn};
 
@@ -20,6 +21,12 @@ mod dtos;
 mod errors;
 mod routes;
 mod services;
+
+#[derive(Clone, FromRef)]
+struct AppState {
+    fenix_service: FenixService,
+    conn: DatabaseConnection,
+}
 
 #[tokio::main]
 async fn main() {
@@ -46,6 +53,11 @@ async fn main() {
         .expect("Database connection failed");
     Migrator::up(&conn, None).await.expect("Migration failed");
 
+    let state = AppState {
+        fenix_service,
+        conn,
+    };
+
     let api_routes = Router::new()
         .route("/login", get(routes::login::login))
         .route("/admins", get(routes::admin::list_admins))
@@ -55,13 +67,14 @@ async fn main() {
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));
 
-    let app = Router::new().nest("/api", api_routes).layer(
-        ServiceBuilder::new()
-            .layer(session_layer)
-            .layer(AddExtensionLayer::new(fenix_service))
-            .layer(AddExtensionLayer::new(conn))
-            .layer(TraceLayer::new_for_http()),
-    );
+    let app = Router::new()
+        .nest("/api", api_routes)
+        .layer(
+            ServiceBuilder::new()
+                .layer(session_layer)
+                .layer(TraceLayer::new_for_http()),
+        )
+        .with_state(state);
 
     let sock_addr = SocketAddr::from((IpAddr::V6(Ipv6Addr::LOCALHOST), 5000));
 
