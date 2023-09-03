@@ -9,7 +9,7 @@ pub struct Model {
     pub id: i32,
     pub academic_year: String,
     pub degree_id: String,
-    pub curricular_year: i32,
+    pub curricular_year: Option<i32>,
     pub candidacy_period_start: Option<DateTime>,
     pub candidacy_period_end: Option<DateTime>,
     pub voting_period_start: DateTime,
