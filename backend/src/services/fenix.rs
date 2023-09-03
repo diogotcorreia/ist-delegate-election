@@ -19,6 +19,7 @@ pub struct FenixService {
     redirect_url: String,
 
     cached_degrees: Cached<Vec<DegreeDto>>,
+    cached_academic_year: Cached<String>,
 }
 
 impl FenixService {
@@ -38,6 +39,7 @@ impl FenixService {
                 .map_err(|_| "Environment variable FENIX_REDIRECT_URL is not defined")?,
 
             cached_degrees: Cached::new(CACHE_DURATION),
+            cached_academic_year: Cached::new(CACHE_DURATION),
         };
 
         debug!(
@@ -155,6 +157,34 @@ impl FenixService {
             .json()
             .await
     }
+
+    /// Get cached active academic year from Fénix
+    /// If no year is cached, or if the cached year has been invalidated, it will be fetched
+    /// again.
+    pub async fn get_active_year(&self) -> Result<String, AppError> {
+        self.cached_academic_year
+            .get(|| async {
+                self.fetch_active_year_from_fenix()
+                    .await
+                    .map_err(|_| AppError::FenixError)
+            })
+            .await
+    }
+
+    async fn fetch_active_year_from_fenix(&self) -> reqwest::Result<String> {
+        let client = reqwest::Client::new();
+
+        let response: AboutResponse = client
+            .get(format!("{}{}/about", self.base_url, TECNICO_API_PREFIX))
+            .send()
+            .await?
+            .json()
+            .await?;
+
+        let year = response.active_semester.year;
+
+        Ok(format!("{}/{}", year.begin_year, year.end_year))
+    }
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -203,4 +233,22 @@ struct CurriculumResponse {
 #[derive(Deserialize)]
 struct Degree {
     id: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct AboutResponse {
+    active_semester: ExecutionSemester,
+}
+
+#[derive(Deserialize)]
+struct ExecutionSemester {
+    year: ExecutionYear,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ExecutionYear {
+    begin_year: u32,
+    end_year: u32,
 }

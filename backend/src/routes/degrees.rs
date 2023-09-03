@@ -22,13 +22,14 @@ pub async fn list_degrees(
     auth_utils::get_admin(session_handle, conn).await?;
 
     let degrees = fenix_service.get_degrees().await?;
+    let active_year = fenix_service.get_active_year().await?;
 
     let degrees_with_elections = stream::iter(degrees.into_iter())
-        .then(|degree| async move {
+        .then(|degree| async {
             Ok(DegreeElectionsDto {
                 elections: Election::find()
                     .filter(election::Column::DegreeId.eq(degree.id.clone()))
-                    // TODO .filter(election::Column::AcademicYear.eq(fenix_service.get_active_year()))
+                    .filter(election::Column::AcademicYear.eq(active_year.clone()))
                     .all(conn)
                     .await?
                     .into_iter()
