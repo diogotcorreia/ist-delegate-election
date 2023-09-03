@@ -1,13 +1,18 @@
-use std::env;
+use std::{
+    env,
+    time::Duration,
+};
 
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
-use crate::{dtos::DegreeDto, errors::AppError};
+use crate::{cache::Cached, dtos::DegreeDto, errors::AppError};
 
 const FENIX_DEFAULT_BASE_URL: &str = "https://fenix.tecnico.ulisboa.pt";
 const TECNICO_API_PREFIX: &str = "/tecnico-api/v2";
 const FENIX_OAUTH_PREFIX: &str = "/oauth";
+
+const CACHE_DURATION: Duration = Duration::from_secs(60 * 10); // 10 minutes
 
 #[derive(Clone)]
 pub struct FenixService {
@@ -15,6 +20,8 @@ pub struct FenixService {
     client_id: String,
     client_secret: String,
     redirect_url: String,
+
+    cached_degrees: Cached<Vec<DegreeDto>>,
 }
 
 impl FenixService {
@@ -32,6 +39,8 @@ impl FenixService {
                 .map_err(|_| "Environment variable FENIX_CLIENT_SECRET is not defined")?,
             redirect_url: env::var("FENIX_REDIRECT_URL")
                 .map_err(|_| "Environment variable FENIX_REDIRECT_URL is not defined")?,
+
+            cached_degrees: Cached::new(CACHE_DURATION),
         };
 
         debug!(
@@ -130,10 +139,13 @@ impl FenixService {
     /// If no degrees are cached, or if the cached list has been invalidated, they will be fetched
     /// again.
     pub async fn get_degrees(&self) -> Result<Vec<DegreeDto>, AppError> {
-        // TODO cache this
-        self.fetch_degrees_from_fenix()
+        self.cached_degrees
+            .get(|| async {
+                self.fetch_degrees_from_fenix()
+                    .await
+                    .map_err(|_| AppError::FenixError)
+            })
             .await
-            .map_err(|_| AppError::FenixError)
     }
 
     async fn fetch_degrees_from_fenix(&self) -> reqwest::Result<Vec<DegreeDto>> {

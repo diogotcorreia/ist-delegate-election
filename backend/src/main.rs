@@ -15,6 +15,7 @@ use tracing::{info, warn};
 use rand::Rng;
 
 mod auth_utils;
+mod cache;
 mod dtos;
 mod errors;
 mod routes;

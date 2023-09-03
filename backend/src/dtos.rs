@@ -29,7 +29,7 @@ pub struct AddAdminDto {
 
 type LocalizedStringDto = HashMap<String, String>;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct DegreeDto {
     pub id: String,
