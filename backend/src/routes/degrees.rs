@@ -1,4 +1,4 @@
-use axum::{Extension, Json};
+use axum::{extract::State, Extension, Json};
 use axum_sessions::SessionHandle;
 
 use entity::election::{self, Entity as Election};
@@ -15,8 +15,8 @@ use crate::{
 
 pub async fn list_degrees(
     Extension(ref session_handle): Extension<SessionHandle>,
-    Extension(ref conn): Extension<DatabaseConnection>,
-    Extension(ref fenix_service): Extension<FenixService>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
 ) -> Result<Json<Vec<DegreeElectionsDto>>, AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;

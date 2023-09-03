@@ -2,7 +2,10 @@ use crate::{
     errors::AppError,
     services::fenix::{AuthDto, FenixService},
 };
-use axum::{extract::Query, Extension, Json};
+use axum::{
+    extract::{Query, State},
+    Extension, Json,
+};
 use axum_sessions::SessionHandle;
 use serde::Deserialize;
 
@@ -13,7 +16,7 @@ pub struct FenixLoginQuery {
 
 pub async fn login(
     Query(code): Query<FenixLoginQuery>,
-    Extension(ref fenix_service): Extension<FenixService>,
+    State(ref fenix_service): State<FenixService>,
     Extension(ref session_handle): Extension<SessionHandle>,
 ) -> Result<Json<AuthDto>, AppError> {
     let (auth_details, oauth_tokens) = fenix_service
