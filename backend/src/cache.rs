@@ -1,6 +1,6 @@
 use std::{
     future::Future,
-    sync::{Arc},
+    sync::Arc,
     time::{Duration, Instant},
 };
 use tokio::sync::RwLock;
@@ -21,7 +21,8 @@ impl<T: Clone> CachedValue<T> {
     }
 
     fn get_value(&self) -> Option<&T> {
-        self.value.as_ref()
+        self.value
+            .as_ref()
             .filter(|_| self.instant.elapsed().as_secs() < self.duration_seconds)
     }
 

@@ -1,7 +1,4 @@
-use std::{
-    env,
-    time::Duration,
-};
+use std::{env, time::Duration};
 
 use serde::{Deserialize, Serialize};
 use tracing::debug;
