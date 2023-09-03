@@ -15,6 +15,7 @@ use tracing::{info, warn};
 use rand::Rng;
 
 mod auth_utils;
+mod cache;
 mod dtos;
 mod errors;
 mod routes;
@@ -50,6 +51,7 @@ async fn main() {
         .route("/admins", get(routes::admin::list_admins))
         .route("/admin", post(routes::admin::add_admin))
         .route("/admin/:username", delete(routes::admin::remove_admin))
+        .route("/degrees", get(routes::degrees::list_degrees))
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));
 

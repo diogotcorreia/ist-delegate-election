@@ -1479,6 +1479,7 @@ dependencies = [
  "axum-sessions",
  "chrono",
  "entity",
+ "futures",
  "hex",
  "migration",
  "rand",
