@@ -20,11 +20,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Election::AcademicYear).string().not_null())
                     .col(ColumnDef::new(Election::DegreeId).string().not_null())
-                    .col(
-                        ColumnDef::new(Election::CurricularYear)
-                            .integer()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Election::CurricularYear).integer().null())
                     .col(
                         ColumnDef::new(Election::CandidacyPeriodStart)
                             .timestamp()
