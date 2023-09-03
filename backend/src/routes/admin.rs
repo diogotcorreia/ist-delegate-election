@@ -1,4 +1,7 @@
-use axum::{extract::Path, Extension, Json};
+use axum::{
+    extract::{Path, State},
+    Extension, Json,
+};
 use axum_sessions::SessionHandle;
 
 use entity::admin::{self, Entity as Admin};
@@ -12,7 +15,7 @@ use crate::{
 
 pub async fn list_admins(
     Extension(ref session_handle): Extension<SessionHandle>,
-    Extension(ref conn): Extension<DatabaseConnection>,
+    State(ref conn): State<DatabaseConnection>,
 ) -> Result<Json<Vec<AdminDto>>, AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
@@ -30,7 +33,7 @@ pub async fn list_admins(
 
 pub async fn add_admin(
     Extension(ref session_handle): Extension<SessionHandle>,
-    Extension(ref conn): Extension<DatabaseConnection>,
+    State(ref conn): State<DatabaseConnection>,
     Json(admin_dto): Json<AddAdminDto>,
 ) -> Result<(), AppError> {
     // assert admin only
@@ -61,7 +64,7 @@ pub async fn add_admin(
 pub async fn remove_admin(
     Path(username): Path<String>,
     Extension(ref session_handle): Extension<SessionHandle>,
-    Extension(ref conn): Extension<DatabaseConnection>,
+    State(ref conn): State<DatabaseConnection>,
 ) -> Result<(), AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
@@ -88,7 +91,7 @@ pub async fn remove_admin(
 
 pub async fn setup_first_admin(
     Extension(ref session_handle): Extension<SessionHandle>,
-    Extension(ref conn): Extension<DatabaseConnection>,
+    State(ref conn): State<DatabaseConnection>,
 ) -> Result<(), AppError> {
     // assert logged in
     let username = auth_utils::get_user(session_handle).await?;
