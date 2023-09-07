@@ -17,6 +17,7 @@ use rand::Rng;
 
 mod auth_utils;
 mod cache;
+mod crypto_utils;
 mod dtos;
 mod errors;
 mod routes;
@@ -26,6 +27,7 @@ mod services;
 struct AppState {
     fenix_service: FenixService,
     conn: DatabaseConnection,
+    signing_key: [u8; 64],
 }
 
 #[tokio::main]
@@ -47,6 +49,9 @@ async fn main() {
         |secret| hex::decode(secret).expect("Invalid SESSION_SECRET: not a hex string"));
     let session_layer = SessionLayer::new(session_store, &session_secret);
 
+    let mut signing_key = [0u8; 64];
+    rand::thread_rng().fill(&mut signing_key);
+
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     let conn = Database::connect(database_url)
         .await
@@ -56,6 +61,7 @@ async fn main() {
     let state = AppState {
         fenix_service,
         conn,
+        signing_key,
     };
 
     let api_routes = Router::new()
@@ -64,6 +70,7 @@ async fn main() {
         .route("/admin", post(routes::admin::add_admin))
         .route("/admin/:username", delete(routes::admin::remove_admin))
         .route("/degrees", get(routes::degrees::list_degrees))
+        .route("/search-user", post(routes::search_user::search_user))
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));
 

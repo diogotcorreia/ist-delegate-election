@@ -72,3 +72,17 @@ pub struct DegreeElectionsDto {
     pub degree: DegreeDto,
     pub elections: Vec<ElectionDto>,
 }
+
+#[derive(Deserialize)]
+pub struct SearchPersonDto {
+    pub election: i32,
+    pub query: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SignedPersonSearchResultDto {
+    pub username: String,
+    pub display_name: String,
+    pub signature: String, // in ascii
+}

@@ -94,7 +94,7 @@ pub async fn setup_first_admin(
     State(ref conn): State<DatabaseConnection>,
 ) -> Result<(), AppError> {
     // assert logged in
-    let username = auth_utils::get_user(session_handle).await?;
+    let user = auth_utils::get_user(session_handle).await?;
 
     let txn = conn.begin().await?;
 
@@ -106,7 +106,7 @@ pub async fn setup_first_admin(
     let now = chrono::offset::Utc::now().naive_utc();
 
     let admin = admin::ActiveModel {
-        username: Set(username.to_string()),
+        username: Set(user.username.to_string()),
         date_added: Set(now),
     };
     admin.insert(&txn).await?;

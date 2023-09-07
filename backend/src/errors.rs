@@ -12,6 +12,7 @@ pub enum AppError {
     DuplicateAdmin,
     UnknownAdmin,
     NotEnoughAdmins,
+    UnknownElection,
     Unauthorized,
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
@@ -30,6 +31,7 @@ impl IntoResponse for AppError {
             AppError::DuplicateAdmin => (StatusCode::CONFLICT, "error.duplicate.admin"),
             AppError::UnknownAdmin => (StatusCode::NOT_FOUND, "error.unknown.admin"),
             AppError::NotEnoughAdmins => (StatusCode::NOT_FOUND, "error.not.enough.admins"),
+            AppError::UnknownElection => (StatusCode::NOT_FOUND, "error.unknown.election"),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {
