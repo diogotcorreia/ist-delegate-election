@@ -44,13 +44,11 @@ pub async fn is_admin(username: &str, conn: &DatabaseConnection) -> Result<bool,
 }
 
 pub fn can_vote_on_election(user: &AuthDto, election: &Election) -> bool {
-    user.degree_entries
-        .iter()
-        .any(|entry| {
-            entry.degree_id == election.degree_id
-                && election
-                    .curricular_year
-                    .map(|year| year == entry.curricular_year as i32)
-                    .unwrap_or(true)
-        })
+    user.degree_entries.iter().any(|entry| {
+        entry.degree_id == election.degree_id
+            && election
+                .curricular_year
+                .map(|year| year == entry.curricular_year as i32)
+                .unwrap_or(true)
+    })
 }
