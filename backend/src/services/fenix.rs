@@ -134,6 +134,28 @@ impl FenixService {
             .await
     }
 
+    /// Search for Fénix user in specific degree.
+    pub async fn search_user_in_degree(
+        &self,
+        oauth_token: &str,
+        query: &str,
+        degree_id: &str,
+    ) -> reqwest::Result<PersonSearchResponse> {
+        let client = reqwest::Client::new();
+
+        client
+            .get(format!(
+                "{}{}/person/search",
+                self.base_url, TECNICO_API_PREFIX
+            ))
+            .query(&[("name", query), ("role", "STUDENT"), ("degree", degree_id)])
+            .header("Authorization", format!("Bearer {}", oauth_token))
+            .send()
+            .await?
+            .json()
+            .await
+    }
+
     /// Get cached degree list from Fénix
     /// If no degrees are cached, or if the cached list has been invalidated, they will be fetched
     /// again.
@@ -189,8 +211,8 @@ impl FenixService {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct DegreeEntryDto {
-    degree_id: String,
-    curricular_year: u8,
+    pub degree_id: String,
+    pub curricular_year: u8,
 }
 
 impl From<CurriculumResponse> for DegreeEntryDto {
@@ -211,8 +233,8 @@ pub struct AuthDto {
 
 #[derive(Deserialize, Serialize, Clone)]
 pub struct OAuthResponse {
-    access_token: String,
-    refresh_token: String,
+    pub access_token: String,
+    pub refresh_token: String,
 }
 
 #[derive(Deserialize)]
@@ -251,4 +273,17 @@ struct ExecutionSemester {
 struct ExecutionYear {
     begin_year: u32,
     end_year: u32,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PersonSearchResponse {
+    pub total_items: i32,
+    pub items: Vec<PersonSearchResult>,
+}
+
+#[derive(Deserialize)]
+pub struct PersonSearchResult {
+    pub username: String,
+    pub name: String,
 }

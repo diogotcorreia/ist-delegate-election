@@ -21,11 +21,13 @@ chrono = "0.4.26"
 entity = { path = "entity" }
 futures = "0.3.28"
 hex = "0.4.3"
+hmac = "0.12.1"
 migration = { path = "migration" }
 rand = "0.8.5"
 reqwest = { version = "0.11.18", features = ["json"] }
 sea-orm.workspace = true
 serde = { version = "1.0.164", features = ["derive"] }
+sha2 = "0.10.7"
 tokio = { version = "1.28.2", features = ["macros", "rt-multi-thread"] }
 tower = "0.4.13"
 tower-http = { version = "0.4.3", features = ["add-extension", "trace"] }

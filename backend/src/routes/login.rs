@@ -1,4 +1,5 @@
 use crate::{
+    auth_utils::get_user,
     errors::AppError,
     services::fenix::{AuthDto, FenixService},
 };
@@ -34,10 +35,5 @@ pub async fn login(
 pub async fn whoami(
     Extension(ref session_handle): Extension<SessionHandle>,
 ) -> Result<Json<AuthDto>, AppError> {
-    let session = session_handle.read().await;
-    let user = session
-        .get::<AuthDto>("user")
-        .ok_or(AppError::Unauthorized)?;
-
-    Ok(Json(user))
+    Ok(Json(get_user(session_handle).await?))
 }
