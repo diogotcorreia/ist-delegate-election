@@ -29,12 +29,18 @@ pub async fn get_admin(
 ) -> Result<AuthDto, AppError> {
     let user = get_user(session_handle).await?;
 
-    admin::Entity::find_by_id(&user.username)
+    if is_admin(&user.username, conn).await? {
+        Ok(user)
+    } else {
+        Err(AppError::Unauthorized)
+    }
+}
+
+pub async fn is_admin(username: &str, conn: &DatabaseConnection) -> Result<bool, AppError> {
+    Ok(admin::Entity::find_by_id(username)
         .one(conn)
         .await?
-        .ok_or(AppError::Unauthorized)?;
-
-    Ok(user)
+        .is_some())
 }
 
 pub fn can_vote_on_election(user: &AuthDto, election: &Election) -> bool {

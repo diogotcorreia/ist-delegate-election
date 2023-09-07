@@ -27,8 +27,9 @@ pub async fn search_user(
         .await?
         .ok_or(AppError::UnknownElection)?;
 
-    // TODO allow admins as well
-    if !auth_utils::can_vote_on_election(&user, &election) {
+    if !auth_utils::can_vote_on_election(&user, &election)
+        && !auth_utils::is_admin(&user.username, conn).await?
+    {
         return Err(AppError::Unauthorized);
     }
 
