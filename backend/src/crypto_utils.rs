@@ -24,8 +24,7 @@ pub fn sign_person_search_result(
     search_result: PersonSearchResult,
     signing_key: &[u8],
 ) -> SignedPersonSearchResultDto {
-    // TODO when does this fail?
-    let mut mac = HmacSha256::new_from_slice(signing_key).unwrap();
+    let mut mac = HmacSha256::new_from_slice(signing_key).expect("invalid key length");
     let payload =
         serialize_person_search_result(election_id, &search_result.username, &search_result.name);
     mac.update(&payload);
@@ -45,7 +44,7 @@ pub fn validate_person_search_result(
     signed_search_result: SignedPersonSearchResultDto,
     signing_key: &[u8],
 ) -> Result<(), IncorrectSignatureError> {
-    let mut mac = HmacSha256::new_from_slice(signing_key).unwrap();
+    let mut mac = HmacSha256::new_from_slice(signing_key).expect("invalid key length");
     let payload = serialize_person_search_result(
         election_id,
         &signed_search_result.username,
