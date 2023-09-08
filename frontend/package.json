@@ -32,7 +32,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier -w '**/*.{html,css,js,ts,tsx,json}'",
-    "format:check": "prettier -c '**/*.{html,css,js,ts,tsx,json}'"
+    "format:check": "prettier -c '**/*.{html,css,js,ts,tsx,json}'",
+    "format:typeshare": "prettier -w 'src/@types/api.d.ts'"
   },
   "eslintConfig": {
     "extends": [

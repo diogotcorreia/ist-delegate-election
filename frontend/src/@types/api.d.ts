@@ -3,45 +3,44 @@
 */
 
 export interface AdminDto {
-	username: string;
-	dateAdded: DateTimeUtc;
+  username: string;
+  dateAdded: DateTimeUtc;
 }
 
 export interface AddAdminDto {
-	username: string;
+  username: string;
 }
 
 export interface DegreeDto {
-	id: string;
-	acronym: string;
-	name: LocalizedStringDto;
-	degreeType: LocalizedStringDto;
+  id: string;
+  acronym: string;
+  name: LocalizedStringDto;
+  degreeType: LocalizedStringDto;
 }
 
 export interface ElectionDto {
-	id: number;
-	academicYear: string;
-	curricularYear?: number;
-	candidacyPeriodStart?: DateTimeUtc;
-	candidacyPeriodEnd?: DateTimeUtc;
-	votingPeriodStart: DateTimeUtc;
-	votingPeriodEnd: DateTimeUtc;
-	round: number;
+  id: number;
+  academicYear: string;
+  curricularYear?: number;
+  candidacyPeriodStart?: DateTimeUtc;
+  candidacyPeriodEnd?: DateTimeUtc;
+  votingPeriodStart: DateTimeUtc;
+  votingPeriodEnd: DateTimeUtc;
+  round: number;
 }
 
 export interface DegreeElectionsDto {
-	degree: DegreeDto;
-	elections: ElectionDto[];
+  degree: DegreeDto;
+  elections: ElectionDto[];
 }
 
 export interface SearchPersonDto {
-	election: number;
-	query: string;
+  election: number;
+  query: string;
 }
 
 export interface SignedPersonSearchResultDto {
-	username: string;
-	displayName: string;
-	signature: string;
+  username: string;
+  displayName: string;
+  signature: string;
 }
-
