@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::errors::AppError;
 
+#[typeshare]
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AdminDto {
@@ -22,6 +23,7 @@ impl AdminDto {
     }
 }
 
+#[typeshare]
 #[derive(Deserialize)]
 pub struct AddAdminDto {
     pub username: String,
@@ -29,6 +31,7 @@ pub struct AddAdminDto {
 
 type LocalizedStringDto = HashMap<String, String>;
 
+#[typeshare]
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct DegreeDto {
@@ -38,6 +41,7 @@ pub struct DegreeDto {
     pub degree_type: LocalizedStringDto,
 }
 
+#[typeshare]
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ElectionDto {
@@ -67,18 +71,21 @@ impl ElectionDto {
     }
 }
 
+#[typeshare]
 #[derive(Serialize)]
 pub struct DegreeElectionsDto {
     pub degree: DegreeDto,
     pub elections: Vec<ElectionDto>,
 }
 
+#[typeshare]
 #[derive(Deserialize)]
 pub struct SearchPersonDto {
     pub election: i32,
     pub query: String,
 }
 
+#[typeshare]
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SignedPersonSearchResultDto {

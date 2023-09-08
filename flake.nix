@@ -20,6 +20,7 @@
             rust-analyzer
             clippy
             sea-orm-cli
+            typeshare
             nodejs
             yarn
           ];
