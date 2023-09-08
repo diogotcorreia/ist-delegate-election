@@ -10,6 +10,23 @@ use crate::errors::AppError;
 #[typeshare]
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
+pub struct AppConfigDto {
+    pub fenix: FenixConfigDto,
+    pub is_setup: bool,
+}
+
+#[typeshare]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FenixConfigDto {
+    pub base_url: String,
+    pub client_id: String,
+    pub redirect_url: String,
+}
+
+#[typeshare]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct AdminDto {
     username: String,
     date_added: DateTimeUtc,
