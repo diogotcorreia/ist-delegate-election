@@ -65,11 +65,12 @@ async fn main() {
     };
 
     let api_routes = Router::new()
-        .route("/login", get(routes::login::login))
         .route("/admins", get(routes::admin::list_admins))
         .route("/admin", post(routes::admin::add_admin))
         .route("/admin/:username", delete(routes::admin::remove_admin))
+        .route("/config", get(routes::config::get_config))
         .route("/degrees", get(routes::degrees::list_degrees))
+        .route("/login", get(routes::login::login))
         .route("/search-user", post(routes::search_user::search_user))
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));

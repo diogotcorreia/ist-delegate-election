@@ -3,7 +3,11 @@ use std::{env, time::Duration};
 use serde::{Deserialize, Serialize};
 use tracing::debug;
 
-use crate::{cache::Cached, dtos::DegreeDto, errors::AppError};
+use crate::{
+    cache::Cached,
+    dtos::{DegreeDto, FenixConfigDto},
+    errors::AppError,
+};
 
 const FENIX_DEFAULT_BASE_URL: &str = "https://fenix.tecnico.ulisboa.pt";
 const TECNICO_API_PREFIX: &str = "/tecnico-api/v2";
@@ -48,6 +52,15 @@ impl FenixService {
         );
 
         Ok(service)
+    }
+
+    /// Export this service's configuration as a DTO
+    pub fn to_dto(&self) -> FenixConfigDto {
+        FenixConfigDto {
+            base_url: self.base_url.clone(),
+            client_id: self.client_id.clone(),
+            redirect_url: self.redirect_url.clone(),
+        }
     }
 
     /// Given an OAuth code, authenticate with Fénix and fetch information about
