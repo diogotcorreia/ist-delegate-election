@@ -6,8 +6,8 @@ import enGbTranslation from './locales/en-GB/translation.json';
 import ptPtTranslation from './locales/pt-PT/translation.json';
 
 export const resources = {
-    'en-GB': { translation: enGbTranslation },
-    'pt-PT': { translation: ptPtTranslation },
+  'en-GB': { translation: enGbTranslation },
+  'pt-PT': { translation: ptPtTranslation },
 } as const;
 
 i18n
@@ -20,7 +20,7 @@ i18n
     resources,
 
     detection: {
-      order: ["localStorage", "navigator"]
+      order: ['localStorage', 'navigator'],
     },
   });
 

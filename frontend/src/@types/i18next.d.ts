@@ -1,8 +1,8 @@
-import "i18next";
-import { resources } from "./i18n";
+import 'i18next';
+import { resources } from './i18n';
 
-declare module "i18next" {
+declare module 'i18next' {
   interface CustomTypeOptions {
-    resources: typeof resources["en-GB"];
+    resources: (typeof resources)['en-GB'];
   }
 }

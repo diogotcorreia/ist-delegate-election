@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-import "./i18n";
+import './i18n';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -34,7 +34,7 @@ function App() {
   );
 
   // TODO remove; just for testing
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <ThemeProvider theme={theme}>
