@@ -1,25 +1,40 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  createTheme,
+  CssBaseline,
+  responsiveFontSizes,
+  ThemeOptions,
+  ThemeProvider,
+  useMediaQuery,
+} from '@mui/material';
+
+function getThemeOptions(dark: boolean): ThemeOptions {
+  return {
+    palette: {
+      mode: dark ? 'dark' : 'light',
+      primary: {
+        main: '#009de0',
+      },
+      secondary: {
+        main: '#45555f',
+      },
+    },
+  };
+}
 
 function App() {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () => responsiveFontSizes(createTheme(getThemeOptions(prefersDarkMode))),
+    [prefersDarkMode]
+  );
+
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <img src={logo} className='App-logo' alt='logo' />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className='App-link'
-          href='https://reactjs.org'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <h1>Hello world</h1>
+    </ThemeProvider>
   );
 }
 
