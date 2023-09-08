@@ -7,6 +7,9 @@ import {
   ThemeProvider,
   useMediaQuery,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+
+import "./i18n";
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -30,10 +33,13 @@ function App() {
     [prefersDarkMode]
   );
 
+  // TODO remove; just for testing
+  const {t} = useTranslation();
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <h1>Hello world</h1>
+      <h1>{t('hello-world')}</h1>
     </ThemeProvider>
   );
 }
