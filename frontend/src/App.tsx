@@ -7,9 +7,10 @@ import {
   ThemeProvider,
   useMediaQuery,
 } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 
 import './i18n';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Root from './routes/root';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -25,6 +26,13 @@ function getThemeOptions(dark: boolean): ThemeOptions {
   };
 }
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+  },
+]);
+
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -33,13 +41,10 @@ function App() {
     [prefersDarkMode]
   );
 
-  // TODO remove; just for testing
-  const { t } = useTranslation();
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <h1>{t('hello-world')}</h1>
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 }
