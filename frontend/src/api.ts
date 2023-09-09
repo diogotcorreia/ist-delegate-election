@@ -1,6 +1,20 @@
-import { AppConfigDto, AuthDto, LoginDto } from './@types/api';
+import { AppConfigDto, AppErrorDto, AuthDto, LoginDto } from './@types/api';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '/api';
+
+export class ApiError extends Error {
+  private json: AppErrorDto;
+  constructor(json: AppErrorDto) {
+    super(`API request failed: ${ json.key }`)
+    this.name = 'ApiError';
+
+    this.json = json;
+  }
+
+  public getError(): AppErrorDto {
+    return this.json;
+  }
+}
 
 async function wrapFetch<T>(responsePromise: Promise<Response>): Promise<T> {
   try {
@@ -11,10 +25,10 @@ async function wrapFetch<T>(responsePromise: Promise<Response>): Promise<T> {
     if (response.ok) {
       return json;
     }
-    throw json;
+    throw new ApiError(json);
   } catch (e) {
     console.error(e);
-    throw { key: 'error.unknown' };
+    throw new ApiError({ key: 'error.unknown' });
   }
 }
 

@@ -9,6 +9,12 @@ use crate::errors::AppError;
 
 #[typeshare]
 #[derive(Serialize)]
+pub struct AppErrorDto {
+    pub key: String,
+}
+
+#[typeshare]
+#[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AppConfigDto {
     pub fenix: FenixConfigDto,
