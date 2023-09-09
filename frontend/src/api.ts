@@ -5,7 +5,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '/api';
 export class ApiError extends Error {
   private json: AppErrorDto;
   constructor(json: AppErrorDto) {
-    super(`API request failed: ${ json.key }`)
+    super(`API request failed: ${json.key}`);
     this.name = 'ApiError';
 
     this.json = json;
