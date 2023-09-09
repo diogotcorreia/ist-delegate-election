@@ -1,3 +1,9 @@
 {
-  "hello-world": "Hello World"
+  "login": {
+    "error": {
+      "description": "Oops! An error has occurred while logging in",
+      "button": "Retry"
+    },
+    "loading": "Hang tight... We're logging you in"
+  }
 }

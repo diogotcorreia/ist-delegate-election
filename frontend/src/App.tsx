@@ -10,7 +10,8 @@ import {
 
 import './i18n';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Root from './routes/root';
+import Root, { loader as rootLoader } from './routes/root';
+import LoginCallback, { loader as loginCallbackLoader } from './routes/login';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -29,7 +30,13 @@ function getThemeOptions(dark: boolean): ThemeOptions {
 const router = createBrowserRouter([
   {
     path: '/',
+    loader: rootLoader,
     element: <Root />,
+  },
+  {
+    path: '/login-callback',
+    loader: loginCallbackLoader,
+    element: <LoginCallback />,
   },
 ]);
 

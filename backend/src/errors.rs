@@ -5,7 +5,8 @@ use axum::{
     Json,
 };
 use sea_orm::error::DbErr;
-use serde::Serialize;
+
+use crate::dtos::AppErrorDto;
 
 pub enum AppError {
     BadInput(&'static str),
@@ -17,11 +18,6 @@ pub enum AppError {
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
     DbError(DbErr),
-}
-
-#[derive(Serialize)]
-struct JsonError {
-    key: String,
 }
 
 impl IntoResponse for AppError {
@@ -39,7 +35,7 @@ impl IntoResponse for AppError {
             }
         };
 
-        let error = JsonError {
+        let error = AppErrorDto {
             key: key.to_string(),
         };
 

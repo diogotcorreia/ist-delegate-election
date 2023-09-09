@@ -5,7 +5,7 @@ use tracing::debug;
 
 use crate::{
     cache::Cached,
-    dtos::{DegreeDto, FenixConfigDto},
+    dtos::{AuthDto, DegreeDto, DegreeEntryDto, FenixConfigDto},
     errors::AppError,
 };
 
@@ -222,12 +222,6 @@ impl FenixService {
     }
 }
 
-#[derive(Deserialize, Serialize, Clone)]
-pub struct DegreeEntryDto {
-    pub degree_id: String,
-    pub curricular_year: u8,
-}
-
 impl From<CurriculumResponse> for DegreeEntryDto {
     fn from(value: CurriculumResponse) -> Self {
         DegreeEntryDto {
@@ -235,13 +229,6 @@ impl From<CurriculumResponse> for DegreeEntryDto {
             curricular_year: value.curricular_year,
         }
     }
-}
-
-#[derive(Deserialize, Serialize, Clone)]
-pub struct AuthDto {
-    pub username: String,
-    pub display_name: String,
-    pub degree_entries: Vec<DegreeEntryDto>,
 }
 
 #[derive(Deserialize, Serialize, Clone)]

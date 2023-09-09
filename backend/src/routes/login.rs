@@ -1,29 +1,21 @@
 use crate::{
     auth_utils::get_user,
+    dtos::{AuthDto, LoginDto},
     errors::AppError,
-    services::fenix::{AuthDto, FenixService},
+    services::fenix::FenixService,
 };
-use axum::{
-    extract::{Query, State},
-    Extension, Json,
-};
+use axum::{extract::State, Extension, Json};
 use axum_sessions::SessionHandle;
-use serde::Deserialize;
-
-#[derive(Deserialize)]
-pub struct FenixLoginQuery {
-    code: String,
-}
 
 pub async fn login(
-    Query(code): Query<FenixLoginQuery>,
     State(ref fenix_service): State<FenixService>,
     Extension(ref session_handle): Extension<SessionHandle>,
+    Json(login_dto): Json<LoginDto>,
 ) -> Result<Json<AuthDto>, AppError> {
     let (auth_details, oauth_tokens) = fenix_service
-        .authenticate_from_code(&code.code)
+        .authenticate_from_code(&login_dto.code)
         .await
-        .expect("failed authenticate from code");
+        .map_err(|_| AppError::Unauthorized)?;
 
     let mut session = session_handle.write().await;
     session.insert("user", auth_details.clone())?;

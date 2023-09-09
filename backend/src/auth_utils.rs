@@ -4,10 +4,7 @@ use sea_orm::{DatabaseConnection, EntityTrait};
 
 use entity::election::Model as Election;
 
-use crate::{
-    errors::AppError,
-    services::fenix::{AuthDto, OAuthResponse},
-};
+use crate::{dtos::AuthDto, errors::AppError, services::fenix::OAuthResponse};
 
 pub async fn get_user(session_handle: &SessionHandle) -> Result<AuthDto, AppError> {
     let session = session_handle.read().await;

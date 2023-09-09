@@ -9,6 +9,12 @@ use crate::errors::AppError;
 
 #[typeshare]
 #[derive(Serialize)]
+pub struct AppErrorDto {
+    pub key: String,
+}
+
+#[typeshare]
+#[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AppConfigDto {
     pub fenix: FenixConfigDto,
@@ -22,6 +28,29 @@ pub struct FenixConfigDto {
     pub base_url: String,
     pub client_id: String,
     pub redirect_url: String,
+}
+
+#[typeshare]
+#[derive(Deserialize)]
+pub struct LoginDto {
+    pub code: String,
+}
+
+#[typeshare]
+#[derive(Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DegreeEntryDto {
+    pub degree_id: String,
+    pub curricular_year: u8,
+}
+
+#[typeshare]
+#[derive(Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct AuthDto {
+    pub username: String,
+    pub display_name: String,
+    pub degree_entries: Vec<DegreeEntryDto>,
 }
 
 #[typeshare]
