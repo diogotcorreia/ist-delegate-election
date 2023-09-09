@@ -13,6 +13,21 @@ export interface AppConfigDto {
   isSetup: boolean;
 }
 
+export interface LoginDto {
+  code: string;
+}
+
+export interface DegreeEntryDto {
+  degreeId: string;
+  curricularYear: number;
+}
+
+export interface AuthDto {
+  username: string;
+  displayName: string;
+  degreeEntries: DegreeEntryDto[];
+}
+
 export interface AdminDto {
   username: string;
   dateAdded: DateTimeUtc;

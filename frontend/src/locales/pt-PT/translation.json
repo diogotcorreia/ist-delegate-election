@@ -1,3 +1,9 @@
 {
-  "hello-world": "Olá Mundo"
+  "login": {
+    "error": {
+      "description": "Oops! Ocorreu um erro a efetuar o login",
+      "button": "Tentar Novamente"
+    },
+    "loading": "Aguarde enquanto efetuamos o login"
+  }
 }

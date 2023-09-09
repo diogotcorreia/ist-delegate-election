@@ -25,6 +25,29 @@ pub struct FenixConfigDto {
 }
 
 #[typeshare]
+#[derive(Deserialize)]
+pub struct LoginDto {
+    pub code: String,
+}
+
+#[typeshare]
+#[derive(Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DegreeEntryDto {
+    pub degree_id: String,
+    pub curricular_year: u8,
+}
+
+#[typeshare]
+#[derive(Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct AuthDto {
+    pub username: String,
+    pub display_name: String,
+    pub degree_entries: Vec<DegreeEntryDto>,
+}
+
+#[typeshare]
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AdminDto {
