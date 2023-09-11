@@ -1,5 +1,6 @@
 use axum::{
     extract::{Path, State},
+    http::StatusCode,
     Extension, Json,
 };
 use axum_sessions::SessionHandle;
@@ -92,7 +93,7 @@ pub async fn remove_admin(
 pub async fn setup_first_admin(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<(), AppError> {
+) -> Result<StatusCode, AppError> {
     // assert logged in
     let user = auth_utils::get_user(session_handle).await?;
 
@@ -112,5 +113,5 @@ pub async fn setup_first_admin(
     admin.insert(&txn).await?;
 
     txn.commit().await?;
-    Ok(())
+    Ok(StatusCode::NO_CONTENT)
 }
