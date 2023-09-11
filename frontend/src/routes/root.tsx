@@ -1,6 +1,6 @@
+import { Avatar, Box, Container, Typography } from '@mui/material';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useLoaderData } from 'react-router-dom';
+import { Outlet, useLoaderData } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { getAppConfig, getWhoAmI } from '../api';
 
@@ -18,7 +18,6 @@ export async function loader(): Promise<RootData> {
 
 function Root() {
   const { appConfig, user } = useLoaderData() as RootData;
-  const { t } = useTranslation();
 
   // redirect logged-out users to SSO
   useEffect(() => {
@@ -38,9 +37,18 @@ function Root() {
   }, [user, appConfig.isSetup]);
 
   return (
-    <div>
-      {t('hello-world')} inside router {JSON.stringify(appConfig)} {JSON.stringify(user)}
-    </div>
+    <Container>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', my: 4 }}>
+        <Typography sx={{ mr: 2 }} variant='h6' component='span'>
+          {user?.displayName}
+        </Typography>
+        <Avatar
+          alt={user?.username}
+          src={`${appConfig.fenix.baseUrl}/user/photo/${user?.username}?s=64`}
+        />
+      </Box>
+      <Outlet />
+    </Container>
   );
 }
 
