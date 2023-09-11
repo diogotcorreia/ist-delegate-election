@@ -36,7 +36,7 @@ function Root() {
   useEffect(() => {
     if (auth && !appConfig.isSetup) {
       setupFirstAdmin()
-        .then(() => navigate('/?admin'))
+        .then(() => navigate('/'))
         .catch(console.error); // ignore errors
     }
   }, [auth, appConfig.isSetup, navigate]);
