@@ -1,9 +1,9 @@
 import { Avatar, Box, Button, Container, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLoaderData } from 'react-router-dom';
+import { Outlet, useLoaderData, useNavigate } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
-import { getAppConfig, getWhoAmI } from '../api';
+import { getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
 
 interface RootData {
   appConfig: AppConfigDto;
@@ -18,6 +18,7 @@ export async function loader(): Promise<RootData> {
 }
 
 function Root() {
+  const navigate = useNavigate();
   const { appConfig, auth } = useLoaderData() as RootData;
   const { t } = useTranslation();
 
@@ -34,9 +35,11 @@ function Root() {
   // create first admin user
   useEffect(() => {
     if (auth && !appConfig.isSetup) {
-      // TODO
+      setupFirstAdmin()
+        .then(() => navigate("/?admin"))
+        .catch(console.error); // ignore errors
     }
-  }, [auth, appConfig.isSetup]);
+  }, [auth, appConfig.isSetup, navigate]);
 
   return (
     <Container>

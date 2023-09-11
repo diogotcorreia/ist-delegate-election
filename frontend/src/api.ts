@@ -20,6 +20,10 @@ async function wrapFetch<T>(responsePromise: Promise<Response>): Promise<T> {
   try {
     const response = await responsePromise;
 
+    if (response.status === 204) { // no content
+        return undefined as T;
+    }
+
     const json = await response.json();
 
     if (response.ok) {
@@ -28,11 +32,14 @@ async function wrapFetch<T>(responsePromise: Promise<Response>): Promise<T> {
     throw new ApiError(json);
   } catch (e) {
     console.error(e);
+    if (e instanceof ApiError) {
+      throw e;
+    }
     throw new ApiError({ key: 'error.unknown' });
   }
 }
 
-function buildJsonBody<T>(method: string, body: T): RequestInit {
+function buildJsonBody<T>(method: string, body?: T): RequestInit {
   return { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
 }
 
@@ -46,4 +53,8 @@ export function getWhoAmI(): Promise<AuthDto> {
 
 export function login(payload: LoginDto): Promise<AuthDto> {
   return wrapFetch(fetch(`${BASE_URL}/login`, buildJsonBody('POST', payload)));
+}
+
+export function setupFirstAdmin(): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/setup/admin`, buildJsonBody('POST')));
 }
