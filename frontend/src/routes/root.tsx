@@ -1,50 +1,58 @@
-import { Avatar, Box, Container, Typography } from '@mui/material';
+import { Avatar, Box, Button, Container, Typography } from '@mui/material';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Outlet, useLoaderData } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { getAppConfig, getWhoAmI } from '../api';
 
 interface RootData {
   appConfig: AppConfigDto;
-  user?: AuthDto;
+  auth?: AuthDto;
 }
 
 export async function loader(): Promise<RootData> {
   const appConfig = await getAppConfig();
-  const user = await getWhoAmI().catch(() => undefined);
+  const auth = await getWhoAmI().catch(() => undefined);
 
-  return { appConfig, user };
+  return { appConfig, auth };
 }
 
 function Root() {
-  const { appConfig, user } = useLoaderData() as RootData;
+  const { appConfig, auth } = useLoaderData() as RootData;
+  const { t } = useTranslation();
 
   // redirect logged-out users to SSO
   useEffect(() => {
-    if (!user) {
+    if (!auth) {
       const { baseUrl, clientId, redirectUrl } = appConfig.fenix;
       window.location.href = `${baseUrl}/oauth/userdialog?client_id=${encodeURIComponent(
         clientId
       )}&redirect_uri=${encodeURIComponent(redirectUrl)}`;
     }
-  }, [user, appConfig.fenix]);
+  }, [auth, appConfig.fenix]);
 
   // create first admin user
   useEffect(() => {
-    if (user && !appConfig.isSetup) {
+    if (auth && !appConfig.isSetup) {
       // TODO
     }
-  }, [user, appConfig.isSetup]);
+  }, [auth, appConfig.isSetup]);
 
   return (
     <Container>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', my: 4 }}>
+        {auth?.isAdmin && (
+          <>
+            <Button>{t('navbar.admin-button')}</Button>
+            <Box sx={{ flexGrow: 1 }} />
+          </>
+        )}
         <Typography sx={{ mr: 2 }} variant='h6' component='span'>
-          {user?.displayName}
+          {auth?.user.displayName}
         </Typography>
         <Avatar
-          alt={user?.username}
-          src={`${appConfig.fenix.baseUrl}/user/photo/${user?.username}?s=64`}
+          alt={auth?.user.username}
+          src={`${appConfig.fenix.baseUrl}/user/photo/${auth?.user.username}?s=64`}
         />
       </Box>
       <Outlet />

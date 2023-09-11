@@ -26,10 +26,15 @@ export interface DegreeEntryDto {
   curricularYear: number;
 }
 
-export interface AuthDto {
+export interface UserDto {
   username: string;
   displayName: string;
   degreeEntries: DegreeEntryDto[];
+}
+
+export interface AuthDto {
+  user: UserDto;
+  isAdmin: boolean;
 }
 
 export interface AdminDto {
