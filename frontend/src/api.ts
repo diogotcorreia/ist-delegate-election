@@ -20,8 +20,9 @@ async function wrapFetch<T>(responsePromise: Promise<Response>): Promise<T> {
   try {
     const response = await responsePromise;
 
-    if (response.status === 204) { // no content
-        return undefined as T;
+    if (response.status === 204) {
+      // no content
+      return undefined as T;
     }
 
     const json = await response.json();
