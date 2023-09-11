@@ -46,7 +46,7 @@ function Root() {
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', my: 4 }}>
         {auth?.isAdmin && (
           <>
-            <Button>{t('navbar.admin-button')}</Button>
+            <Button>{t('admin.page.title')}</Button>
             <Box sx={{ flexGrow: 1 }} />
           </>
         )}

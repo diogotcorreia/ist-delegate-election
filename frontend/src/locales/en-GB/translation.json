@@ -1,12 +1,24 @@
 {
+  "admin": {
+    "page": {
+      "title": "Admin Area"
+    },
+    "subpages": {
+      "admin-management": {
+        "title": "Admin Management",
+        "subtitle": "Add and remove administrations to/from this platform"
+      },
+      "election-management": {
+        "title": "Election Management",
+        "subtitle": "Create, edit and see results of elections"
+      }
+    }
+  },
   "login": {
     "error": {
       "description": "Oops! An error has occurred while logging in",
       "button": "Retry"
     },
     "loading": "Hang tight... We're logging you in"
-  },
-  "navbar": {
-    "admin-button": "Admin Area"
   }
 }
