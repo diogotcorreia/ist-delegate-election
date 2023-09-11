@@ -4,12 +4,12 @@ use sea_orm::{DatabaseConnection, EntityTrait};
 
 use entity::election::Model as Election;
 
-use crate::{dtos::AuthDto, errors::AppError, services::fenix::OAuthResponse};
+use crate::{dtos::UserDto, errors::AppError, services::fenix::OAuthResponse};
 
-pub async fn get_user(session_handle: &SessionHandle) -> Result<AuthDto, AppError> {
+pub async fn get_user(session_handle: &SessionHandle) -> Result<UserDto, AppError> {
     let session = session_handle.read().await;
 
-    let user: AuthDto = session.get("user").ok_or(AppError::Unauthorized)?;
+    let user: UserDto = session.get("user").ok_or(AppError::Unauthorized)?;
     Ok(user)
 }
 
@@ -23,7 +23,7 @@ pub async fn get_user_tokens(session_handle: &SessionHandle) -> Result<OAuthResp
 pub async fn get_admin(
     session_handle: &SessionHandle,
     conn: &DatabaseConnection,
-) -> Result<AuthDto, AppError> {
+) -> Result<UserDto, AppError> {
     let user = get_user(session_handle).await?;
 
     if is_admin(&user.username, conn).await? {
@@ -40,7 +40,7 @@ pub async fn is_admin(username: &str, conn: &DatabaseConnection) -> Result<bool,
         .is_some())
 }
 
-pub fn can_vote_on_election(user: &AuthDto, election: &Election) -> bool {
+pub fn can_vote_on_election(user: &UserDto, election: &Election) -> bool {
     user.degree_entries.iter().any(|entry| {
         entry.degree_id == election.degree_id
             && election

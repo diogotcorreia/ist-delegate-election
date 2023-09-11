@@ -5,7 +5,7 @@ use tracing::debug;
 
 use crate::{
     cache::Cached,
-    dtos::{AuthDto, DegreeDto, DegreeEntryDto, FenixConfigDto},
+    dtos::{DegreeDto, DegreeEntryDto, FenixConfigDto, UserDto},
     errors::AppError,
 };
 
@@ -70,7 +70,7 @@ impl FenixService {
     pub async fn authenticate_from_code(
         &self,
         code: &str,
-    ) -> reqwest::Result<(AuthDto, OAuthResponse)> {
+    ) -> reqwest::Result<(UserDto, OAuthResponse)> {
         let oauth_response = self.authorize_fenix_oauth_code(code).await?;
         let access_token = &oauth_response.access_token;
         let person = self.get_user_details(access_token).await?;
@@ -83,7 +83,7 @@ impl FenixService {
             .collect();
 
         Ok((
-            AuthDto {
+            UserDto {
                 username: person.username,
                 display_name: person.display_name,
                 degree_entries,

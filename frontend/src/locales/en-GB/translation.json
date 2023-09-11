@@ -5,5 +5,8 @@
       "button": "Retry"
     },
     "loading": "Hang tight... We're logging you in"
+  },
+  "navbar": {
+    "admin-button": "Admin Area"
   }
 }

@@ -48,6 +48,14 @@ pub struct DegreeEntryDto {
 #[derive(Deserialize, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AuthDto {
+    pub user: UserDto,
+    pub is_admin: bool,
+}
+
+#[typeshare]
+#[derive(Deserialize, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct UserDto {
     pub username: String,
     pub display_name: String,
     pub degree_entries: Vec<DegreeEntryDto>,

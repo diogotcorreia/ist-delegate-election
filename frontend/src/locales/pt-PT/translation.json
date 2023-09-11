@@ -5,5 +5,8 @@
       "button": "Tentar Novamente"
     },
     "loading": "Aguarde enquanto efetuamos o login"
+  },
+  "navbar": {
+    "admin-button": "Área de Administração"
   }
 }
