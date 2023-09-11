@@ -1,12 +1,24 @@
 {
+  "admin": {
+    "page": {
+      "title": "Área de Administração"
+    },
+    "subpages": {
+      "admin-management": {
+        "title": "Gestão de Administratores",
+        "subtitle": "Adicionar e remover administratores desta plataforma"
+      },
+      "election-management": {
+        "title": "Gestão de Eleições",
+        "subtitle": "Criar, editar e ver resultados de eleições"
+      }
+    }
+  },
   "login": {
     "error": {
       "description": "Oops! Ocorreu um erro a efetuar o login",
       "button": "Tentar Novamente"
     },
     "loading": "Aguarde enquanto efetuamos o login"
-  },
-  "navbar": {
-    "admin-button": "Área de Administração"
   }
 }
