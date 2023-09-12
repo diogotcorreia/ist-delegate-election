@@ -22,6 +22,10 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
     },
+
+    interpolation: {
+      escapeValue: false, // react already protects from XSS
+    },
   });
 
 export default i18n;

@@ -36,7 +36,7 @@ pub async fn add_admin(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
     Json(admin_dto): Json<AddAdminDto>,
-) -> Result<(), AppError> {
+) -> Result<StatusCode, AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
@@ -59,14 +59,14 @@ pub async fn add_admin(
     };
     admin.insert(conn).await?;
 
-    Ok(())
+    Ok(StatusCode::NO_CONTENT)
 }
 
 pub async fn remove_admin(
     Path(username): Path<String>,
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
-) -> Result<(), AppError> {
+) -> Result<StatusCode, AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
@@ -86,7 +86,7 @@ pub async fn remove_admin(
     txn.commit().await?;
     match res.rows_affected {
         0 => Err(AppError::UnknownAdmin),
-        _ => Ok(()),
+        _ => Ok(StatusCode::NO_CONTENT),
     }
 }
 

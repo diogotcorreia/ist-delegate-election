@@ -1,4 +1,4 @@
-import { AppConfigDto, AppErrorDto, AuthDto, LoginDto } from './@types/api';
+import { AddAdminDto, AdminDto, AppConfigDto, AppErrorDto, AuthDto, LoginDto } from './@types/api';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '/api';
 
@@ -54,6 +54,18 @@ export function getWhoAmI(): Promise<AuthDto> {
 
 export function login(payload: LoginDto): Promise<AuthDto> {
   return wrapFetch(fetch(`${BASE_URL}/login`, buildJsonBody('POST', payload)));
+}
+
+export function getAdmins(): Promise<AdminDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/admins`));
+}
+
+export function addAdmin(payload: AddAdminDto): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/admin`, buildJsonBody('POST', payload)));
+}
+
+export function removeAdmin(username: string): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/admin/${username}`, buildJsonBody('DELETE')));
 }
 
 export function setupFirstAdmin(): Promise<void> {

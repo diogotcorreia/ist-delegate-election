@@ -5,7 +5,7 @@ import { Outlet, useLoaderData, useNavigate } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
 
-interface RootData {
+export interface RootData {
   appConfig: AppConfigDto;
   auth?: AuthDto;
 }
@@ -55,7 +55,9 @@ function Root() {
         </Typography>
         <Avatar
           alt={auth?.user.username}
-          src={`${appConfig.fenix.baseUrl}/user/photo/${auth?.user.username}?s=64`}
+          src={`${appConfig.fenix.baseUrl}/user/photo/${encodeURIComponent(
+            auth?.user.username ?? ''
+          )}?s=64`}
         />
       </Box>
       <Outlet />
