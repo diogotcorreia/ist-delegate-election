@@ -1,4 +1,4 @@
-import { Add, AddRounded } from '@mui/icons-material';
+import { AddRounded } from '@mui/icons-material';
 import {
   Avatar,
   Box,
