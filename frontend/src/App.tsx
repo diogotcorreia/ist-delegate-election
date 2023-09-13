@@ -13,6 +13,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root, { loader as rootLoader } from './routes/root';
 import LoginCallback, { loader as loginCallbackLoader } from './routes/login';
 import AdminRoot from './routes/admin/root';
+import Admins, {
+  addAction as addAdminAction,
+  AdminsAdd,
+  AdminsRemove,
+  loader as adminsLoader,
+  removeAction as removeAdminAction,
+} from './routes/admin/admins';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -30,10 +37,22 @@ function getThemeOptions(dark: boolean): ThemeOptions {
 
 const router = createBrowserRouter([
   {
+    id: 'root',
     path: '/',
     loader: rootLoader,
     element: <Root />,
-    children: [{ path: 'admin', element: <AdminRoot /> }],
+    children: [
+      { path: 'admin', element: <AdminRoot /> },
+      {
+        path: 'admin/admins',
+        loader: adminsLoader,
+        element: <Admins />,
+        children: [
+          { path: 'add', element: <AdminsAdd />, action: addAdminAction },
+          { path: 'remove/:username', element: <AdminsRemove />, action: removeAdminAction },
+        ],
+      },
+    ],
   },
   {
     path: '/login-callback',

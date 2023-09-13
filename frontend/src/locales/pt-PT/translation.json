@@ -6,7 +6,25 @@
     "subpages": {
       "admin-management": {
         "title": "Gestão de Administratores",
-        "subtitle": "Adicionar e remover administratores desta plataforma"
+        "subtitle": "Adicionar e remover administratores desta plataforma",
+        "since": "Administrador desde <tooltip><time>{{dateAdded, datetime}}</time></tooltip>",
+        "you": "Eu",
+        "remove-button": "Remover",
+        "add-button": "Adicionar Administrador",
+        "remove-dialog": {
+          "title": "Remover o administrador '{{username}}'?",
+          "description": "Ao remover este administrador, o utilizador irá deixar de ter acesso à área de administração, com efeito imediato. O administrador pode ser adicionado novamente a qualquer momento.",
+          "cancel-button": "Cancelar",
+          "remove-button": "Remover"
+        },
+        "add-dialog": {
+          "title": "Adicionar novo administrador",
+          "description": "Ao adicionar um administrador, o utilizador irá ganhar acesso à área de administração, com efeito imediato. É importante garantir que o nome de utilizador inserido é válido, dado que não existe qualquer tipo de validação.",
+          "username-label": "Nome de Utilizador",
+          "username-placeholder": "istXXXXXXX",
+          "cancel-button": "Cancelar",
+          "add-button": "Adicionar"
+        }
       },
       "election-management": {
         "title": "Gestão de Eleições",

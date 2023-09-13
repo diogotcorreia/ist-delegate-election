@@ -6,7 +6,25 @@
     "subpages": {
       "admin-management": {
         "title": "Admin Management",
-        "subtitle": "Add and remove administrations to/from this platform"
+        "subtitle": "Add and remove administrations to/from this platform",
+        "since": "Admin since <tooltip><time>{{dateAdded, datetime}}</time></tooltip>",
+        "you": "You",
+        "remove-button": "Remove",
+        "add-button": "Add Admin",
+        "remove-dialog": {
+          "title": "Remove admin '{{username}}'?",
+          "description": "By removing this administrator, the user will immediately lose access to the admin area. The administrator can be re-added at any time.",
+          "cancel-button": "Cancel",
+          "remove-button": "Remove"
+        },
+        "add-dialog": {
+          "title": "Add new admin",
+          "description": "By adding a new administrator, the user will immediately gain access to the admin area. Be sure to insert a valid username, since it is not validated against existing users.",
+          "username-label": "Username",
+          "username-placeholder": "istXXXXXXX",
+          "cancel-button": "Cancel",
+          "add-button": "Add"
+        }
       },
       "election-management": {
         "title": "Election Management",
