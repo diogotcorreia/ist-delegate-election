@@ -84,6 +84,7 @@ pub struct AddAdminDto {
     pub username: String,
 }
 
+#[typeshare]
 type LocalizedStringDto = HashMap<String, String>;
 
 #[typeshare]

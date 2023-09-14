@@ -20,6 +20,7 @@ import Admins, {
   loader as adminsLoader,
   removeAction as removeAdminAction,
 } from './routes/admin/admins';
+import Elections, { loader as electionsLoader } from './routes/admin/elections';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -51,6 +52,11 @@ const router = createBrowserRouter([
           { path: 'add', element: <AdminsAdd />, action: addAdminAction },
           { path: 'remove/:username', element: <AdminsRemove />, action: removeAdminAction },
         ],
+      },
+      {
+        path: 'admin/elections',
+        loader: electionsLoader,
+        element: <Elections />,
       },
     ],
   },

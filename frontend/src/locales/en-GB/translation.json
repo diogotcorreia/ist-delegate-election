@@ -30,6 +30,24 @@
         "title": "Election Management",
         "subtitle": "Create, edit and see results of elections"
       }
+    },
+    "degree-type-elections": {
+      "election-curricular-year_ordinal_one": "{{count}}st Year",
+      "election-curricular-year_ordinal_two": "{{count}}nd Year",
+      "election-curricular-year_ordinal_few": "{{count}}rd Year",
+      "election-curricular-year_ordinal_other": "{{count}}th Year",
+      "election-curricular-year-none": "Degree",
+      "election-round_ordinal_one": "{{count}}st Round",
+      "election-round_ordinal_two": "{{count}}nd Round",
+      "election-round_ordinal_few": "{{count}}rd Round",
+      "election-round_ordinal_other": "{{count}}th Round",
+      "empty_one": "{{count}} degree without elections",
+      "empty_other": "{{count}} degrees without elections"
+    }
+  },
+  "error": {
+    "languagestring": {
+      "unknown": "Error: translation not found"
     }
   },
   "login": {
