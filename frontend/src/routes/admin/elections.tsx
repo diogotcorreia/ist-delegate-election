@@ -1,10 +1,27 @@
-import { Typography } from '@mui/material';
+import { AddRounded } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from '@mui/material';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLoaderData } from 'react-router-dom';
+import {
+  Link,
+  Outlet,
+  redirect,
+  useLoaderData,
+  useNavigate,
+  useOutletContext,
+} from 'react-router-dom';
 import { DegreeElectionsDto } from '../../@types/api';
 import { getDegrees } from '../../api';
 import DegreeTypeElections from '../../components/admin/DegreeTypeElections';
-import useSortAndGroupDegrees from '../../hooks/useSortAndGroupDegrees';
+import useSortAndGroupDegrees, { DegreeTypeAggregator } from '../../hooks/useSortAndGroupDegrees';
 
 interface ElectionsData {
   degrees: DegreeElectionsDto[];
@@ -26,11 +43,35 @@ function Elections() {
       <Typography variant='h2' gutterBottom>
         {t('admin.subpages.election-management.title')}
       </Typography>
+      <Box my={4} display='flex' flexDirection='row-reverse'>
+        <Button component={Link} to='bulk-add' variant='contained' startIcon={<AddRounded />}>
+          Create elections
+        </Button>
+      </Box>
       {sortedDegrees.map((aggregator) => (
         <DegreeTypeElections key={aggregator.degreeTypeHash} aggregator={aggregator} />
       ))}
-      <Outlet />
+      <Outlet context={{ sortedDegrees }} />
     </>
+  );
+}
+
+export function bulkAddAction() {
+  // TODO
+  return redirect('..');
+}
+
+export function ElectionsBulkAdd() {
+  const navigate = useNavigate();
+  const { sortedDegrees } = useOutletContext<{ sortedDegrees: DegreeTypeAggregator[] }>();
+
+  const closeDialog = useCallback(() => navigate('..'), [navigate]);
+
+  return (
+    <Dialog open onClose={closeDialog} fullWidth>
+      <DialogTitle>Create bulk elections</DialogTitle>
+      <DialogContent></DialogContent>
+    </Dialog>
   );
 }
 

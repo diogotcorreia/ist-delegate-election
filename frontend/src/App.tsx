@@ -20,7 +20,11 @@ import Admins, {
   loader as adminsLoader,
   removeAction as removeAdminAction,
 } from './routes/admin/admins';
-import Elections, { loader as electionsLoader } from './routes/admin/elections';
+import Elections, {
+  bulkAddAction as bulkAddElectionAction,
+  ElectionsBulkAdd,
+  loader as electionsLoader,
+} from './routes/admin/elections';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -57,6 +61,9 @@ const router = createBrowserRouter([
         path: 'admin/elections',
         loader: electionsLoader,
         element: <Elections />,
+        children: [
+          { path: 'bulk-add', element: <ElectionsBulkAdd />, action: bulkAddElectionAction },
+        ],
       },
     ],
   },
