@@ -30,6 +30,22 @@
         "title": "Gestão de Eleições",
         "subtitle": "Criar, editar e ver resultados de eleições"
       }
+    },
+    "degree-type-elections": {
+      "degree-count_one": "{{count}} curso",
+      "degree-count_other": "{{count}} cursos",
+      "election-count_one": "{{count}} eleição",
+      "election-count_other": "{{count}} eleições",
+      "election-curricular-year": "{{count}}º Ano",
+      "election-curricular-year-none": "Curso",
+      "election-round": "{{count}}ª Volta",
+      "empty_one": "{{count}} curso sem eleições",
+      "empty_other": "{{count}} cursos sem eleições"
+    }
+  },
+  "error": {
+    "languagestring": {
+      "unknown": "Erro: tradução não encontrada"
     }
   },
   "login": {

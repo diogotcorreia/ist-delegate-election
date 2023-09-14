@@ -14,7 +14,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    fallbackLng: 'en-GB',
+    fallbackLng: ['en-GB', 'pt-PT'],
 
     supportedLngs: ['en-GB', 'pt-PT'],
     resources,

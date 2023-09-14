@@ -1,4 +1,12 @@
-import { AddAdminDto, AdminDto, AppConfigDto, AppErrorDto, AuthDto, LoginDto } from './@types/api';
+import {
+  AddAdminDto,
+  AdminDto,
+  AppConfigDto,
+  AppErrorDto,
+  AuthDto,
+  DegreeElectionsDto,
+  LoginDto,
+} from './@types/api';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '/api';
 
@@ -70,4 +78,8 @@ export function removeAdmin(username: string): Promise<void> {
 
 export function setupFirstAdmin(): Promise<void> {
   return wrapFetch(fetch(`${BASE_URL}/setup/admin`, buildJsonBody('POST')));
+}
+
+export function getDegrees(): Promise<DegreeElectionsDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/degrees`));
 }
