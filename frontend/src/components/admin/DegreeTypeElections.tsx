@@ -37,11 +37,31 @@ function DegreeTypeElections({ aggregator }: Props) {
     [degreeElections]
   );
 
+  const electionCount = useMemo(
+    () => degreesWithElections.reduce((acc, dElections) => acc + dElections.elections.length, 0),
+    [degreesWithElections]
+  );
+
   return (
     <Accordion defaultExpanded={degreesWithElections.length > 0}>
-      <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-        {translateLs(degreeType)}
-        <Chip label={degreeElections.length} />
+      <AccordionSummary
+        expandIcon={<ExpandMoreRounded />}
+        sx={{ display: 'flex', alignItems: 'center' }}
+      >
+        <span>{translateLs(degreeType)}</span>
+        <Chip
+          label={t('admin.degree-type-elections.degree-count', { count: degreeElections.length })}
+          size='small'
+          sx={{ ml: 1 }}
+        />
+        {electionCount > 0 && (
+          <Chip
+            label={t('admin.degree-type-elections.election-count', { count: electionCount })}
+            size='small'
+            sx={{ ml: 1 }}
+            color='primary'
+          />
+        )}
       </AccordionSummary>
       <AccordionDetails>
         {degreesWithElections.map((dElections) => (
