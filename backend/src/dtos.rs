@@ -149,3 +149,29 @@ pub struct SignedPersonSearchResultDto {
     pub display_name: String,
     pub signature: String, // in ascii
 }
+
+#[typeshare]
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DateRangeDto {
+    pub start: DateTimeUtc,
+    pub end: DateTimeUtc,
+}
+
+#[typeshare]
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BulkCreateElectionsDegreesDto {
+    pub degree_id: String,
+    pub curricular_year: Option<i32>,
+}
+
+#[typeshare]
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BulkCreateElectionsDto {
+    pub candidacy_period: Option<DateRangeDto>,
+    pub voting_period: DateRangeDto,
+    pub round: i32,
+    pub degrees: Vec<BulkCreateElectionsDegreesDto>,
+}

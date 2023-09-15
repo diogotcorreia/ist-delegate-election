@@ -81,3 +81,20 @@ export interface SignedPersonSearchResultDto {
   displayName: string;
   signature: string;
 }
+
+export interface DateRangeDto {
+  start: DateTimeUtc;
+  end: DateTimeUtc;
+}
+
+export interface BulkCreateElectionsDegreesDto {
+  degreeId: string;
+  curricularYear?: number;
+}
+
+export interface BulkCreateElectionsDto {
+  candidacyPeriod?: DateRangeDto;
+  votingPeriod: DateRangeDto;
+  round: number;
+  degrees: BulkCreateElectionsDegreesDto[];
+}
