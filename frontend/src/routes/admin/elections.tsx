@@ -2,13 +2,18 @@ import { AddRounded } from '@mui/icons-material';
 import {
   Box,
   Button,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Step,
+  StepContent,
+  StepLabel,
+  Stepper,
   Typography,
 } from '@mui/material';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Link,
@@ -64,13 +69,38 @@ export function bulkAddAction() {
 export function ElectionsBulkAdd() {
   const navigate = useNavigate();
   const { sortedDegrees } = useOutletContext<{ sortedDegrees: DegreeTypeAggregator[] }>();
+  const [activeStep, setActiveStep] = useState(0);
 
   const closeDialog = useCallback(() => navigate('..'), [navigate]);
 
+  const handleNext = useCallback(() => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  }, []);
+  const handleBack = useCallback(() => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  }, []);
+
   return (
-    <Dialog open onClose={closeDialog} fullWidth>
+    <Dialog open onClose={closeDialog} fullScreen>
       <DialogTitle>Create bulk elections</DialogTitle>
-      <DialogContent></DialogContent>
+      <DialogContent>
+      <Container>
+        <Stepper activeStep={activeStep} orientation="vertical">
+          <Step>
+            <StepLabel>Choose Round</StepLabel>
+            <StepContent>Lorem ipsum</StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Choose Dates</StepLabel>
+            <StepContent>Lorem ipsum</StepContent>
+          </Step>
+          <Step>
+            <StepLabel>Choose Degrees</StepLabel>
+            <StepContent>Lorem ipsum</StepContent>
+          </Step>
+        </Stepper>
+        </Container>
+      </DialogContent>
     </Dialog>
   );
 }
