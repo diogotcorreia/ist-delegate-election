@@ -25,6 +25,8 @@ import Elections, {
   ElectionsBulkAdd,
   loader as electionsLoader,
 } from './routes/admin/elections';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -84,8 +86,10 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }
