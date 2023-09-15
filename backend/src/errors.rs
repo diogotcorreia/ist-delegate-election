@@ -18,6 +18,7 @@ pub enum AppError {
     ElectionCandidacyAfterVoting,
     DuplicateElection,
     InvalidRound,
+    InvalidDegree,
     Unauthorized,
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
@@ -39,6 +40,7 @@ impl IntoResponse for AppError {
             ),
             AppError::DuplicateElection => (StatusCode::CONFLICT, "error.duplicate.election"),
             AppError::InvalidRound => (StatusCode::CONFLICT, "error.round.invalid"),
+            AppError::InvalidDegree => (StatusCode::CONFLICT, "error.degree.invalid"),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {

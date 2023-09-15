@@ -32,7 +32,12 @@ pub async fn bulk_create_elections(
         }
     }
 
-    // TODO validate degrees
+    for degree in &elections_dto.degrees {
+        fenix_service
+            .get_degree(&degree.degree_id)
+            .await?
+            .ok_or(AppError::InvalidDegree)?;
+    }
 
     let academic_year = fenix_service.get_active_year().await?;
 
