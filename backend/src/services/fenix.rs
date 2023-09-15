@@ -1,4 +1,4 @@
-use std::{env, time::Duration};
+use std::{collections::HashMap, env, time::Duration};
 
 use serde::{Deserialize, Serialize};
 use tracing::debug;
@@ -22,7 +22,7 @@ pub struct FenixService {
     client_secret: String,
     redirect_url: String,
 
-    cached_degrees: Cached<Vec<DegreeDto>>,
+    cached_degrees: Cached<HashMap<String, DegreeDto>>,
     cached_academic_year: Cached<String>,
 }
 
@@ -172,7 +172,20 @@ impl FenixService {
     /// Get cached degree list from Fénix
     /// If no degrees are cached, or if the cached list has been invalidated, they will be fetched
     /// again.
-    pub async fn get_degrees(&self) -> Result<Vec<DegreeDto>, AppError> {
+    pub async fn get_degrees(&self) -> Result<impl Iterator<Item = DegreeDto>, AppError> {
+        self.get_degrees_map().await.map(|map| map.into_values())
+    }
+
+    /// Get cached degree from Fénix
+    /// If no degrees are cached, or if the cached list has been invalidated, they will be fetched
+    /// again.
+    pub async fn get_degree(&self, degree_id: &str) -> Result<Option<DegreeDto>, AppError> {
+        self.get_degrees_map()
+            .await
+            .map(|map| map.get(degree_id).cloned())
+    }
+
+    async fn get_degrees_map(&self) -> Result<HashMap<String, DegreeDto>, AppError> {
         self.cached_degrees
             .get(|| async {
                 self.fetch_degrees_from_fenix()
@@ -182,15 +195,21 @@ impl FenixService {
             .await
     }
 
-    async fn fetch_degrees_from_fenix(&self) -> reqwest::Result<Vec<DegreeDto>> {
+    async fn fetch_degrees_from_fenix(&self) -> reqwest::Result<HashMap<String, DegreeDto>> {
         let client = reqwest::Client::new();
 
         client
             .get(format!("{}{}/degrees", self.base_url, TECNICO_API_PREFIX))
             .send()
             .await?
-            .json()
+            .json::<Vec<DegreeDto>>()
             .await
+            .map(|degrees| {
+                degrees
+                    .into_iter()
+                    .map(|degree| (degree.id.clone(), degree))
+                    .collect()
+            })
     }
 
     /// Get cached active academic year from Fénix
