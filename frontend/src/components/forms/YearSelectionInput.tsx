@@ -209,9 +209,7 @@ function YearSelectionInput({
                             <Checkbox
                               checked={selectedYears[year]?.has(degree.id) || false}
                               onChange={(_, checked) =>
-                                checked
-                                  ? select(year, degree.id)
-                                  : unselect(year, degree.id)
+                                checked ? select(year, degree.id) : unselect(year, degree.id)
                               }
                             />
                           </TableCell>

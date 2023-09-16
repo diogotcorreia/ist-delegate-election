@@ -16,7 +16,7 @@ import { Dayjs } from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-    ActionFunctionArgs,
+  ActionFunctionArgs,
   Form,
   Link,
   Outlet,
@@ -57,7 +57,7 @@ function Elections() {
       </Typography>
       <Box my={4} display='flex' flexDirection='row-reverse'>
         <Button component={Link} to='bulk-add' variant='contained' startIcon={<AddRounded />}>
-          Create elections
+          {t('admin.subpages.election-management.create-elections')}
         </Button>
       </Box>
       {sortedDegrees.map((aggregator) => (
@@ -68,10 +68,10 @@ function Elections() {
   );
 }
 
-export async function bulkAddAction({ request } :ActionFunctionArgs) {
-    const payload = await request.json();
+export async function bulkAddAction({ request }: ActionFunctionArgs) {
+  const payload = await request.json();
 
-   await bulkCreateElections(payload) ;
+  await bulkCreateElections(payload);
 
   return redirect('..');
 }
@@ -121,7 +121,7 @@ export function ElectionsBulkAdd() {
 
   return (
     <Dialog open onClose={closeDialog} fullScreen>
-      <DialogTitle>Create bulk elections</DialogTitle>
+      <DialogTitle>{t('admin.subpages.election-management.bulk-dialog.title')}</DialogTitle>
       <DialogContent>
         <Form method='post'>
           <Container>
@@ -131,7 +131,7 @@ export function ElectionsBulkAdd() {
                   optional={
                     activeStep > 0 && (
                       <Typography variant='caption'>
-                        {t('admin.degree-type-elections.election-round', {
+                        {t('election.round', {
                           ordinal: true,
                           count: round,
                         })}
@@ -139,14 +139,17 @@ export function ElectionsBulkAdd() {
                     )
                   }
                 >
-                  Choose Round
+                  {t('admin.subpages.election-management.bulk-dialog.steps.round')}
                 </StepLabel>
                 <StepContent>
                   <RoundInput round={round} setRound={setRound} />
 
-                  <Box mt={3}>
+                  <Box mt={3} display='flex' gap={1}>
+                    <Button onClick={closeDialog} color='inherit'>
+                      {t('common.back')}
+                    </Button>
                     <Button onClick={handleNext} variant='contained'>
-                      Next
+                      {t('common.next')}
                     </Button>
                   </Box>
                 </StepContent>
@@ -163,7 +166,7 @@ export function ElectionsBulkAdd() {
                     </Typography>
                   }
                 >
-                  Choose Dates Candidacy
+                  {t('admin.subpages.election-management.bulk-dialog.steps.candidacy')}
                 </StepLabel>
                 <StepContent>
                   <RangeInput
@@ -174,11 +177,11 @@ export function ElectionsBulkAdd() {
                   />
                   <Box mt={3} display='flex' gap={1}>
                     <Button onClick={handleBack} color='inherit'>
-                      Back
+                      {t('common.back')}
                     </Button>
-                    <Button onClick={handleSkipCandidacy}>Skip</Button>
+                    <Button onClick={handleSkipCandidacy}>{t('common.skip')}</Button>
                     <Button onClick={handleNext} variant='contained' disabled={!validCandidacyDate}>
-                      Next
+                      {t('common.next')}
                     </Button>
                   </Box>
                 </StepContent>
@@ -194,7 +197,7 @@ export function ElectionsBulkAdd() {
                     </Typography>
                   }
                 >
-                  Choose Dates Voting
+                  {t('admin.subpages.election-management.bulk-dialog.steps.voting')}
                 </StepLabel>
                 <StepContent>
                   <RangeInput
@@ -206,16 +209,18 @@ export function ElectionsBulkAdd() {
                   />
                   <Box mt={3} display='flex' gap={1}>
                     <Button onClick={handleBack} color='inherit'>
-                      Back
+                      {t('common.back')}
                     </Button>
                     <Button onClick={handleNext} variant='contained' disabled={!validVotingDate}>
-                      Next
+                      {t('common.next')}
                     </Button>
                   </Box>
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel>Choose Degrees</StepLabel>
+                <StepLabel>
+                  {t('admin.subpages.election-management.bulk-dialog.steps.degrees')}
+                </StepLabel>
                 <StepContent>
                   <DegreeSelectionInput
                     degrees={sortedDegrees}
@@ -224,20 +229,22 @@ export function ElectionsBulkAdd() {
                   />
                   <Box mt={3} display='flex' gap={1}>
                     <Button onClick={handleBack} color='inherit'>
-                      Back
+                      {t('common.back')}
                     </Button>
                     <Button
                       onClick={handleNext}
                       variant='contained'
                       disabled={selectedDegrees.size === 0}
                     >
-                      Next
+                      {t('common.next')}
                     </Button>
                   </Box>
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel>Choose Years</StepLabel>
+                <StepLabel>
+                  {t('admin.subpages.election-management.bulk-dialog.steps.years')}
+                </StepLabel>
                 <StepContent>
                   <YearSelectionInput
                     degrees={sortedDegrees}
@@ -247,27 +254,36 @@ export function ElectionsBulkAdd() {
                   />
                   <Box mt={3} display='flex' gap={1}>
                     <Button onClick={handleBack} color='inherit'>
-                      Back
+                      {t('common.back')}
                     </Button>
                     <Button
                       onClick={handleNext}
                       variant='contained'
-                      disabled={!selectedYears.some(years => years?.size > 0)}
+                      disabled={!selectedYears.some((years) => years?.size > 0)}
                     >
-                      Next
+                      {t('common.next')}
                     </Button>
                   </Box>
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel>Finish</StepLabel>
+                <StepLabel>
+                  {t('admin.subpages.election-management.bulk-dialog.steps.finish')}
+                </StepLabel>
                 <StepContent>
                   Finish :)
                   <Box mt={3} display='flex' gap={1}>
                     <Button onClick={handleBack} color='inherit'>
-                      Back
+                      {t('common.back')}
                     </Button>
-                    <BulkCreateElectionsSubmitButton candidacyStart={candidacyStart} candidacyEnd={candidacyEnd} votingStart={votingStart} votingEnd ={votingEnd} round={round} selectedYears={selectedYears}/>
+                    <BulkCreateElectionsSubmitButton
+                      candidacyStart={candidacyStart}
+                      candidacyEnd={candidacyEnd}
+                      votingStart={votingStart}
+                      votingEnd={votingEnd}
+                      round={round}
+                      selectedYears={selectedYears}
+                    />
                   </Box>
                 </StepContent>
               </Step>

@@ -32,16 +32,22 @@
       }
     },
     "degree-type-elections": {
-      "degree-count_one": "{{count}} curso",
-      "degree-count_other": "{{count}} cursos",
-      "election-count_one": "{{count}} eleição",
-      "election-count_other": "{{count}} eleições",
-      "election-curricular-year": "{{count}}º Ano",
-      "election-curricular-year-none": "Curso",
-      "election-round": "{{count}}ª Volta",
       "empty_one": "{{count}} curso sem eleições",
       "empty_other": "{{count}} cursos sem eleições"
     }
+  },
+  "degree": {
+    "count_one": "{{count}} curso",
+    "count_other": "{{count}} cursos",
+    "selected-count_one": "{{count}} selecionado",
+    "selected-count_other": "{{count}} selecionados"
+  },
+  "election": {
+    "count_one": "{{count}} eleição",
+    "count_other": "{{count}} eleições",
+    "curricular-year": "{{count}}º Ano",
+    "curricular-year-none": "Curso",
+    "round": "{{count}}ª Volta"
   },
   "error": {
     "languagestring": {

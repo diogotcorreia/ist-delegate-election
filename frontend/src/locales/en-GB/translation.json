@@ -27,27 +27,50 @@
         }
       },
       "election-management": {
+        "bulk-dialog": {
+          "title": "Create Elections in Bulk",
+          "steps": {
+            "candidacy": "Choose Candidacy Period",
+            "degrees": "Choose Degrees",
+            "finish": "Review & Finish",
+            "round": "Choose Round",
+            "voting": "Choose Voting Period",
+            "years": "Choose Years"
+          }
+        },
+        "create-elections": "Create Elections",
         "title": "Election Management",
         "subtitle": "Create, edit and see results of elections"
       }
     },
     "degree-type-elections": {
-      "degree-count_one": "{{count}} degree",
-      "degree-count_other": "{{count}} degrees",
-      "election-count_one": "{{count}} election",
-      "election-count_other": "{{count}} elections",
-      "election-curricular-year_ordinal_one": "{{count}}st Year",
-      "election-curricular-year_ordinal_two": "{{count}}nd Year",
-      "election-curricular-year_ordinal_few": "{{count}}rd Year",
-      "election-curricular-year_ordinal_other": "{{count}}th Year",
-      "election-curricular-year-none": "Degree",
-      "election-round_ordinal_one": "{{count}}st Round",
-      "election-round_ordinal_two": "{{count}}nd Round",
-      "election-round_ordinal_few": "{{count}}rd Round",
-      "election-round_ordinal_other": "{{count}}th Round",
       "empty_one": "{{count}} degree without elections",
       "empty_other": "{{count}} degrees without elections"
     }
+  },
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "optional": "Optional",
+    "skip": "Skip"
+  },
+  "degree": {
+    "count_one": "{{count}} degree",
+    "count_other": "{{count}} degrees",
+    "selected-count": "{{count}} selected"
+  },
+  "election": {
+    "count_one": "{{count}} election",
+    "count_other": "{{count}} elections",
+    "curricular-year_ordinal_one": "{{count}}st Year",
+    "curricular-year_ordinal_two": "{{count}}nd Year",
+    "curricular-year_ordinal_few": "{{count}}rd Year",
+    "curricular-year_ordinal_other": "{{count}}th Year",
+    "curricular-year-none": "Degree",
+    "round_ordinal_one": "{{count}}st Round",
+    "round_ordinal_two": "{{count}}nd Round",
+    "round_ordinal_few": "{{count}}rd Round",
+    "round_ordinal_other": "{{count}}th Round"
   },
   "error": {
     "languagestring": {

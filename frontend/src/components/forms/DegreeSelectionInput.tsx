@@ -85,14 +85,14 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
               />
               <span>{translateLs(degreeType)}</span>
               <Chip
-                label={t('admin.degree-type-elections.degree-count', {
+                label={t('degree.count', {
                   count: degreeElections.length,
                 })}
                 size='small'
               />
               {selectedByType[degreeTypeHash] > 0 && (
                 <Chip
-                  label={t('admin.degree-type-elections.election-count', {
+                  label={t('degree.selected-count', {
                     count: selectedByType[degreeTypeHash],
                   })}
                   size='small'
@@ -107,9 +107,7 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
                 <FormControlLabel
                   key={degree.id}
                   checked={selected.has(degree.id)}
-                  onChange={(_, checked) =>
-                    checked ? select(degree.id) : unselect(degree.id)
-                  }
+                  onChange={(_, checked) => (checked ? select(degree.id) : unselect(degree.id))}
                   control={<Checkbox />}
                   label={`${degree.acronym} - ${translateLs(degree.name)}`}
                 />
