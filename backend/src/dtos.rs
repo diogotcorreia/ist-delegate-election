@@ -5,7 +5,7 @@ use sea_orm::prelude::*;
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
-use crate::errors::AppError;
+use crate::{errors::AppError, services::fenix::FenixService};
 
 #[typeshare]
 #[derive(Serialize)]
@@ -98,32 +98,88 @@ pub struct DegreeDto {
 }
 
 #[typeshare]
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ElectionDto {
     pub id: i32,
     pub academic_year: String,
-    // TODO pub degree: Degree,
+    pub degree: Option<DegreeDto>,
     pub curricular_year: Option<i32>,
-    pub candidacy_period_start: Option<DateTimeUtc>,
-    pub candidacy_period_end: Option<DateTimeUtc>,
-    pub voting_period_start: DateTimeUtc,
-    pub voting_period_end: DateTimeUtc,
+    pub candidacy_period: Option<DateRangeDto>,
+    pub voting_period: DateRangeDto,
     pub round: i32,
+    pub status: ElectionStatusDto,
 }
 
 impl ElectionDto {
     pub fn from_entity(entity: election::Model) -> Result<Self, AppError> {
         Ok(Self {
+            status: ElectionStatusDto::from_election(&entity),
             id: entity.id,
             academic_year: entity.academic_year,
             curricular_year: entity.curricular_year,
-            candidacy_period_start: entity.candidacy_period_start.map(|date| date.and_utc()),
-            candidacy_period_end: entity.candidacy_period_end.map(|date| date.and_utc()),
-            voting_period_start: entity.voting_period_start.and_utc(),
-            voting_period_end: entity.voting_period_end.and_utc(),
+            candidacy_period: match (entity.candidacy_period_start, entity.candidacy_period_end) {
+                (Some(start), Some(end)) => Some(DateRangeDto {
+                    start: start.and_utc(),
+                    end: end.and_utc(),
+                }),
+                _ => None,
+            },
+            voting_period: DateRangeDto {
+                start: entity.voting_period_start.and_utc(),
+                end: entity.voting_period_end.and_utc(),
+            },
             round: entity.round,
+
+            ..Default::default()
         })
+    }
+    pub async fn from_entity_for_user(
+        entity: election::Model,
+        fenix_service: &FenixService,
+    ) -> Result<Self, AppError> {
+        let degree_id = entity.degree_id.clone();
+        let mut dto = Self::from_entity(entity)?;
+
+        dto.degree = fenix_service.get_degree(&degree_id).await?;
+
+        Ok(dto)
+    }
+}
+
+#[typeshare]
+#[derive(Serialize, Default)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum ElectionStatusDto {
+    #[default]
+    NotStarted,
+    Candidacy,
+    Processing,
+    Voting,
+    Ended,
+}
+
+impl ElectionStatusDto {
+    fn from_election(entity: &election::Model) -> Self {
+        let now = chrono::Utc::now();
+        if now > entity.voting_period_end.and_utc() {
+            return Self::Ended;
+        }
+        if now >= entity.voting_period_start.and_utc() {
+            return Self::Voting;
+        }
+        if let Some(end) = entity.candidacy_period_end {
+            if now > end.and_utc() {
+                return Self::Processing;
+            }
+        }
+        if let Some(start) = entity.candidacy_period_start {
+            if now >= start.and_utc() {
+                return Self::Candidacy;
+            }
+        }
+
+        Self::NotStarted
     }
 }
 
@@ -151,7 +207,7 @@ pub struct SignedPersonSearchResultDto {
 }
 
 #[typeshare]
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct DateRangeDto {
     pub start: DateTimeUtc,

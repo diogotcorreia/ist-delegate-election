@@ -74,6 +74,10 @@ async fn main() {
             "/elections/bulk",
             post(routes::elections::bulk_create_elections),
         )
+        .route(
+            "/elections/user",
+            get(routes::elections::get_user_elections),
+        )
         .route("/login", post(routes::login::login))
         .route("/search-user", post(routes::search_user::search_user))
         .route("/setup/admin", post(routes::admin::setup_first_admin))

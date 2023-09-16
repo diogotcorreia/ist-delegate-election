@@ -1,11 +1,14 @@
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use axum_sessions::SessionHandle;
-
 use entity::election::{self, Entity as Election};
-use sea_orm::{prelude::*, DatabaseConnection, Set, TransactionTrait};
+use futures::stream::{self, StreamExt};
+use sea_orm::{prelude::*, Condition, DatabaseConnection, Set, TransactionTrait};
 
 use crate::{
-    auth_utils, dtos::BulkCreateElectionsDto, errors::AppError, services::fenix::FenixService,
+    auth_utils,
+    dtos::{BulkCreateElectionsDto, ElectionDto},
+    errors::AppError,
+    services::fenix::FenixService,
 };
 
 pub async fn bulk_create_elections(
@@ -73,4 +76,41 @@ pub async fn bulk_create_elections(
     txn.commit().await?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn get_user_elections(
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<Vec<ElectionDto>>, AppError> {
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let elections = Election::find()
+        .filter(
+            user.degree_entries
+                .iter()
+                .fold(Condition::any(), |acc, entry| {
+                    acc.add(
+                        Condition::all()
+                            .add(election::Column::DegreeId.eq(&entry.degree_id))
+                            .add(election::Column::CurricularYear.eq(entry.curricular_year)),
+                    )
+                    .add(
+                        Condition::all()
+                            .add(election::Column::DegreeId.eq(&entry.degree_id))
+                            .add(election::Column::CurricularYear.is_null()),
+                    )
+                }),
+        )
+        .all(conn)
+        .await?;
+
+    let dtos = stream::iter(elections)
+        .then(|election| async { ElectionDto::from_entity_for_user(election, fenix_service).await })
+        .collect::<Vec<_>>()
+        .await
+        .into_iter()
+        .collect::<Result<_, _>>()?;
+
+    Ok(Json(dtos))
 }
