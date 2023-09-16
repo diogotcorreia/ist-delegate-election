@@ -16,6 +16,7 @@ import { Dayjs } from 'dayjs';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+    ActionFunctionArgs,
   Form,
   Link,
   Outlet,
@@ -25,8 +26,9 @@ import {
   useOutletContext,
 } from 'react-router-dom';
 import { DegreeElectionsDto } from '../../@types/api';
-import { getDegrees } from '../../api';
+import { bulkCreateElections, getDegrees } from '../../api';
 import DegreeTypeElections from '../../components/admin/DegreeTypeElections';
+import BulkCreateElectionsSubmitButton from '../../components/forms/BulkCreateElectionsSubmitButton';
 import DegreeSelectionInput from '../../components/forms/DegreeSelectionInput';
 import RangeInput from '../../components/forms/RangeInput';
 import RoundInput from '../../components/forms/RoundInput';
@@ -66,8 +68,11 @@ function Elections() {
   );
 }
 
-export function bulkAddAction() {
-  // TODO
+export async function bulkAddAction({ request } :ActionFunctionArgs) {
+    const payload = await request.json();
+
+   await bulkCreateElections(payload) ;
+
   return redirect('..');
 }
 
@@ -240,6 +245,30 @@ export function ElectionsBulkAdd() {
                     selectedYears={selectedYears}
                     setSelectedYears={setSelectedYears}
                   />
+                  <Box mt={3} display='flex' gap={1}>
+                    <Button onClick={handleBack} color='inherit'>
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleNext}
+                      variant='contained'
+                      disabled={!selectedYears.some(years => years?.size > 0)}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                </StepContent>
+              </Step>
+              <Step>
+                <StepLabel>Finish</StepLabel>
+                <StepContent>
+                  Finish :)
+                  <Box mt={3} display='flex' gap={1}>
+                    <Button onClick={handleBack} color='inherit'>
+                      Back
+                    </Button>
+                    <BulkCreateElectionsSubmitButton candidacyStart={candidacyStart} candidacyEnd={candidacyEnd} votingStart={votingStart} votingEnd ={votingEnd} round={round} selectedYears={selectedYears}/>
+                  </Box>
                 </StepContent>
               </Step>
             </Stepper>

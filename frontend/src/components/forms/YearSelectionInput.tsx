@@ -65,20 +65,20 @@ function YearSelectionInput({
   }, [selectedDegrees]);
 
   const select = useCallback(
-    (year: number, acroynm: string) =>
+    (year: number, id: string) =>
       setSelectedYears((selected) => {
         const newArray = [...selected];
-        newArray[year] = new Set(newArray[year]).add(acroynm);
+        newArray[year] = new Set(newArray[year]).add(id);
         return newArray;
       }),
     [setSelectedYears]
   );
   const unselect = useCallback(
-    (year: number, acroynm: string) =>
+    (year: number, id: string) =>
       setSelectedYears((selected) => {
         const newArray = [...selected];
         newArray[year] = new Set(newArray[year]);
-        newArray[year].delete(acroynm);
+        newArray[year].delete(id);
         return newArray;
       }),
     [setSelectedYears]
@@ -89,7 +89,7 @@ function YearSelectionInput({
       degrees.reduce(
         (acc, { degreeTypeHash, degreeElections }) => {
           acc[degreeTypeHash] = degreeElections.reduce(
-            (count, { degree }) => count + (selectedDegrees.has(degree.acronym) ? 1 : 0),
+            (count, { degree }) => count + (selectedDegrees.has(degree.id) ? 1 : 0),
             0
           );
           return acc;
@@ -105,7 +105,7 @@ function YearSelectionInput({
         degrees.reduce(
           (acc, { degreeTypeHash, degreeElections }) => {
             acc[degreeTypeHash] = degreeElections.reduce(
-              (count, { degree }) => count + (selected?.has(degree.acronym) ? 1 : 0),
+              (count, { degree }) => count + (selected?.has(degree.id) ? 1 : 0),
               0
             );
             return acc;
@@ -124,12 +124,12 @@ function YearSelectionInput({
         const newSelected = new Set(newArray[year]);
         if (checked) {
           degrees
-            .filter(({ degree }) => selectedDegrees.has(degree.acronym))
-            .forEach(({ degree }) => newSelected.add(degree.acronym));
+            .filter(({ degree }) => selectedDegrees.has(degree.id))
+            .forEach(({ degree }) => newSelected.add(degree.id));
         } else {
           degrees
-            .filter(({ degree }) => selectedDegrees.has(degree.acronym))
-            .forEach(({ degree }) => newSelected.delete(degree.acronym));
+            .filter(({ degree }) => selectedDegrees.has(degree.id))
+            .forEach(({ degree }) => newSelected.delete(degree.id));
         }
         newArray[year] = newSelected;
         return newArray;
@@ -192,10 +192,10 @@ function YearSelectionInput({
                 </TableRow>
                 {open.has(degreeTypeHash) &&
                   degreeElections
-                    .filter(({ degree }) => selectedDegrees.has(degree.acronym))
+                    .filter(({ degree }) => selectedDegrees.has(degree.id))
                     .map(({ degree }) => (
                       <TableRow
-                        key={degree.acronym}
+                        key={degree.id}
                         sx={{
                           bgcolor: (theme) => theme.palette.action.hover,
                         }}
@@ -207,11 +207,11 @@ function YearSelectionInput({
                         {Array.from({ length: maxYears + 1 }, (_, year) => (
                           <TableCell key={year}>
                             <Checkbox
-                              checked={selectedYears[year]?.has(degree.acronym) || false}
+                              checked={selectedYears[year]?.has(degree.id) || false}
                               onChange={(_, checked) =>
                                 checked
-                                  ? select(year, degree.acronym)
-                                  : unselect(year, degree.acronym)
+                                  ? select(year, degree.id)
+                                  : unselect(year, degree.id)
                               }
                             />
                           </TableCell>

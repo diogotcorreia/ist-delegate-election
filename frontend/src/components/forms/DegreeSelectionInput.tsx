@@ -26,15 +26,15 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
   const translateLs = useLocalizedString();
 
   const select = useCallback(
-    (acroynm: string) => setSelected((selected) => new Set(selected).add(acroynm)),
+    (id: string) => setSelected((selected) => new Set(selected).add(id)),
     [setSelected]
   );
   const unselect = useCallback(
-    (acroynm: string) =>
+    (id: string) =>
       setSelected((selected) => {
         // we have to clone, since react state must be immutable
         const selectedClone = new Set(selected);
-        selectedClone.delete(acroynm);
+        selectedClone.delete(id);
         return selectedClone;
       }),
     [setSelected]
@@ -45,7 +45,7 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
       degrees.reduce(
         (acc, { degreeTypeHash, degreeElections }) => {
           acc[degreeTypeHash] = degreeElections.reduce(
-            (count, { degree }) => count + (selected.has(degree.acronym) ? 1 : 0),
+            (count, { degree }) => count + (selected.has(degree.id) ? 1 : 0),
             0
           );
           return acc;
@@ -60,9 +60,9 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
       setSelected((selected) => {
         const newSelected = new Set(selected);
         if (checked) {
-          degrees.forEach(({ degree }) => newSelected.add(degree.acronym));
+          degrees.forEach(({ degree }) => newSelected.add(degree.id));
         } else {
-          degrees.forEach(({ degree }) => newSelected.delete(degree.acronym));
+          degrees.forEach(({ degree }) => newSelected.delete(degree.id));
         }
         return newSelected;
       });
@@ -105,10 +105,10 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
             <FormGroup>
               {degreeElections.map(({ degree }) => (
                 <FormControlLabel
-                  key={degree.acronym}
-                  checked={selected.has(degree.acronym)}
+                  key={degree.id}
+                  checked={selected.has(degree.id)}
                   onChange={(_, checked) =>
-                    checked ? select(degree.acronym) : unselect(degree.acronym)
+                    checked ? select(degree.id) : unselect(degree.id)
                   }
                   control={<Checkbox />}
                   label={`${degree.acronym} - ${translateLs(degree.name)}`}
