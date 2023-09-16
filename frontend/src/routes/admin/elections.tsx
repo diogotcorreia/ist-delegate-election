@@ -1,4 +1,4 @@
-import { AddRounded } from '@mui/icons-material';
+import { AddRounded, CloseRounded } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -7,10 +7,12 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  IconButton,
   Step,
   StepContent,
   StepLabel,
   Stepper,
+  Toolbar,
   Typography,
 } from '@mui/material';
 import { Dayjs } from 'dayjs';
@@ -131,7 +133,14 @@ export function ElectionsBulkAdd() {
 
   return (
     <Dialog open onClose={closeDialog} fullScreen>
-      <DialogTitle>{t('admin.subpages.election-management.bulk-dialog.title')}</DialogTitle>
+      <DialogTitle>
+        <Toolbar sx={{ gap: 1 }}>
+          <IconButton onClick={closeDialog}>
+            <CloseRounded />
+          </IconButton>
+          {t('admin.subpages.election-management.bulk-dialog.title')}
+        </Toolbar>
+      </DialogTitle>
       <DialogContent>
         <Container>
           <Stepper activeStep={activeStep} orientation='vertical'>
