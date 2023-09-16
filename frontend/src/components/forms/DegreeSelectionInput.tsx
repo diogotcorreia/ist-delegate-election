@@ -71,12 +71,7 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
   return (
     <Box>
       {degrees.map(({ degreeType, degreeTypeHash, degreeElections }) => (
-        <Accordion
-          onChange={(event) => {
-            event.preventDefault();
-          }}
-          key={degreeTypeHash}
-        >
+        <Accordion key={degreeTypeHash}>
           <AccordionSummary expandIcon={<ExpandMoreRounded />}>
             <Box display='flex' alignItems='center' gap={1}>
               <Checkbox

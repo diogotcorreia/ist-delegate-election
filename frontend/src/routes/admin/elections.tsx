@@ -30,6 +30,7 @@ import DegreeTypeElections from '../../components/admin/DegreeTypeElections';
 import DegreeSelectionInput from '../../components/forms/DegreeSelectionInput';
 import RangeInput from '../../components/forms/RangeInput';
 import RoundInput from '../../components/forms/RoundInput';
+import YearSelectionInput from '../../components/forms/YearSelectionInput';
 import useSortAndGroupDegrees, { DegreeTypeAggregator } from '../../hooks/useSortAndGroupDegrees';
 
 interface ElectionsData {
@@ -82,6 +83,7 @@ export function ElectionsBulkAdd() {
   const [votingStart, setVotingStart] = useState<Dayjs | null>(null);
   const [votingEnd, setVotingEnd] = useState<Dayjs | null>(null);
   const [selectedDegrees, setSelectedDegrees] = useState<Set<string>>(() => new Set());
+  const [selectedYears, setSelectedYears] = useState<Set<string>[]>([]);
 
   const closeDialog = useCallback(() => navigate('..'), [navigate]);
 
@@ -215,11 +217,30 @@ export function ElectionsBulkAdd() {
                     selected={selectedDegrees}
                     setSelected={setSelectedDegrees}
                   />
+                  <Box mt={3} display='flex' gap={1}>
+                    <Button onClick={handleBack} color='inherit'>
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleNext}
+                      variant='contained'
+                      disabled={selectedDegrees.size === 0}
+                    >
+                      Next
+                    </Button>
+                  </Box>
                 </StepContent>
               </Step>
               <Step>
                 <StepLabel>Choose Years</StepLabel>
-                <StepContent>Lorem ipsum</StepContent>
+                <StepContent>
+                  <YearSelectionInput
+                    degrees={sortedDegrees}
+                    selectedDegrees={selectedDegrees}
+                    selectedYears={selectedYears}
+                    setSelectedYears={setSelectedYears}
+                  />
+                </StepContent>
               </Step>
             </Stepper>
           </Container>
