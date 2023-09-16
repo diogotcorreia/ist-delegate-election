@@ -1,4 +1,4 @@
-import { ExpandLessRounded, ExpandMoreRounded } from '@mui/icons-material';
+import { AddRounded, ExpandLessRounded, ExpandMoreRounded } from '@mui/icons-material';
 import {
   Box,
   Checkbox,
@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import {
@@ -145,6 +146,11 @@ function YearSelectionInput({
     [setOpen]
   );
 
+  const handleIncreaseMaxYears = useCallback(
+    () => setMaxYears((years) => years + 1),
+    [setMaxYears]
+  );
+
   return (
     <Box>
       <Table>
@@ -158,6 +164,13 @@ function YearSelectionInput({
                 {t('election.curricular-year', { count: year + 1, ordinal: true })}
               </TableCell>
             ))}
+            <TableCell>
+              <Tooltip title={t('admin.forms.year-selection-input.increase-max-years')}>
+                <IconButton onClick={handleIncreaseMaxYears}>
+                  <AddRounded />
+                </IconButton>
+              </Tooltip>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -186,6 +199,7 @@ function YearSelectionInput({
                       />
                     </TableCell>
                   ))}
+                  <TableCell />
                 </TableRow>
                 {open.has(degreeTypeHash) &&
                   degreeElections
@@ -212,6 +226,7 @@ function YearSelectionInput({
                             />
                           </TableCell>
                         ))}
+                        <TableCell />
                       </TableRow>
                     ))}
               </Fragment>

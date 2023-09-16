@@ -66,7 +66,8 @@
         "end": "Fim"
       },
       "year-selection-input": {
-        "degree": "Tipo de Curso / Curso"
+        "degree": "Tipo de Curso / Curso",
+        "increase-max-years": "Adicionar ano curricular"
       }
     }
   },
