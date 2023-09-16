@@ -27,27 +27,73 @@
         }
       },
       "election-management": {
+        "bulk-dialog": {
+          "candidacy-period": "Candidacies from {{start, datetime}} to {{end, datetime}}",
+          "candidacy-period-empty": "No candidacy period chosen",
+          "degrees-selected_one": "{{count}} degree selected",
+          "degrees-selected_other": "{{count}} degrees selected",
+          "finish": "Review the selected options and click the button below to complete the operation.",
+          "help": {
+            "years": "In \"Degree-wide\" elections, all students of a given degree, regardless of their curricular year, can cast a vote. They should be used when there aren't elections per curricular year, but an election for the whole degree."
+          },
+          "title": "Create Elections in Bulk",
+          "steps": {
+            "candidacy": "Choose Candidacy Period",
+            "degrees": "Choose Degrees",
+            "finish": "Review & Finish",
+            "round": "Choose Round",
+            "voting": "Choose Voting Period",
+            "years": "Choose Curricular Years"
+          },
+          "voting-period": "Voting from {{start, datetime}} to {{end, datetime}}"
+        },
+        "create-elections": "Create Elections",
         "title": "Election Management",
         "subtitle": "Create, edit and see results of elections"
       }
     },
     "degree-type-elections": {
-      "degree-count_one": "{{count}} degree",
-      "degree-count_other": "{{count}} degrees",
-      "election-count_one": "{{count}} election",
-      "election-count_other": "{{count}} elections",
-      "election-curricular-year_ordinal_one": "{{count}}st Year",
-      "election-curricular-year_ordinal_two": "{{count}}nd Year",
-      "election-curricular-year_ordinal_few": "{{count}}rd Year",
-      "election-curricular-year_ordinal_other": "{{count}}th Year",
-      "election-curricular-year-none": "Degree",
-      "election-round_ordinal_one": "{{count}}st Round",
-      "election-round_ordinal_two": "{{count}}nd Round",
-      "election-round_ordinal_few": "{{count}}rd Round",
-      "election-round_ordinal_other": "{{count}}th Round",
       "empty_one": "{{count}} degree without elections",
       "empty_other": "{{count}} degrees without elections"
+    },
+    "forms": {
+      "bulk-create-elections-submit-button": {
+        "label_one": "Create {{count}} election",
+        "label_other": "Create {{count}} elections"
+      },
+      "date-range-input": {
+        "start": "Start",
+        "end": "End"
+      },
+      "year-selection-input": {
+        "degree": "Degree Type / Degree",
+        "increase-max-years": "Add curricular year"
+      }
     }
+  },
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "optional": "Optional",
+    "skip": "Skip"
+  },
+  "degree": {
+    "count_one": "{{count}} degree",
+    "count_other": "{{count}} degrees",
+    "selected-count": "{{count}} selected"
+  },
+  "election": {
+    "count_one": "{{count}} election",
+    "count_other": "{{count}} elections",
+    "curricular-year_ordinal_one": "{{count}}st Year",
+    "curricular-year_ordinal_two": "{{count}}nd Year",
+    "curricular-year_ordinal_few": "{{count}}rd Year",
+    "curricular-year_ordinal_other": "{{count}}th Year",
+    "curricular-year-none": "Degree-wide",
+    "round_ordinal_one": "{{count}}st Round",
+    "round_ordinal_two": "{{count}}nd Round",
+    "round_ordinal_few": "{{count}}rd Round",
+    "round_ordinal_other": "{{count}}th Round"
   },
   "error": {
     "languagestring": {

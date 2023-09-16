@@ -43,20 +43,20 @@ function DegreeTypeElections({ aggregator }: Props) {
   );
 
   return (
-    <Accordion defaultExpanded={degreesWithElections.length > 0}>
+    <Accordion>
       <AccordionSummary
         expandIcon={<ExpandMoreRounded />}
         sx={{ display: 'flex', alignItems: 'center' }}
       >
         <span>{translateLs(degreeType)}</span>
         <Chip
-          label={t('admin.degree-type-elections.degree-count', { count: degreeElections.length })}
+          label={t('degree.count', { count: degreeElections.length })}
           size='small'
           sx={{ ml: 1 }}
         />
         {electionCount > 0 && (
           <Chip
-            label={t('admin.degree-type-elections.election-count', { count: electionCount })}
+            label={t('election.count', { count: electionCount })}
             size='small'
             sx={{ ml: 1 }}
             color='primary'
@@ -115,18 +115,18 @@ function ElectionCard({ election }: { election: ElectionDto }) {
       <Card variant='outlined'>
         <CardContent>
           <Typography variant='subtitle2' color='textSecondary' component='p'>
-            {t('admin.degree-type-elections.election-round', {
+            {t('election.round', {
               count: election.round,
               ordinal: true,
             })}
           </Typography>
           <Typography variant='subtitle1' component='p' gutterBottom>
-            {election.curricularYear === undefined
-              ? t('admin.degree-type-elections.election-curricular-year-none')
-              : t('admin.degree-type-elections.election-curricular-year', {
+            {election.curricularYear
+              ? t('election.curricular-year', {
                   count: election.curricularYear,
                   ordinal: true,
-                })}
+                })
+              : t('election.curricular-year-none')}
           </Typography>
         </CardContent>
       </Card>

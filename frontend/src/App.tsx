@@ -20,7 +20,13 @@ import Admins, {
   loader as adminsLoader,
   removeAction as removeAdminAction,
 } from './routes/admin/admins';
-import Elections, { loader as electionsLoader } from './routes/admin/elections';
+import Elections, {
+  bulkAddAction as bulkAddElectionAction,
+  ElectionsBulkAdd,
+  loader as electionsLoader,
+} from './routes/admin/elections';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -57,6 +63,9 @@ const router = createBrowserRouter([
         path: 'admin/elections',
         loader: electionsLoader,
         element: <Elections />,
+        children: [
+          { path: 'bulk-add', element: <ElectionsBulkAdd />, action: bulkAddElectionAction },
+        ],
       },
     ],
   },
@@ -77,8 +86,10 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }
