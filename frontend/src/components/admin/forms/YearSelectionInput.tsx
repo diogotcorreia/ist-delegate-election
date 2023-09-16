@@ -1,19 +1,14 @@
 import { ExpandLessRounded, ExpandMoreRounded } from '@mui/icons-material';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Checkbox,
-  Chip,
-  FormControlLabel,
-  FormGroup,
   IconButton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  Typography,
 } from '@mui/material';
 import {
   Dispatch,
@@ -25,9 +20,9 @@ import {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DegreeElectionsDto } from '../../@types/api';
-import useLocalizedString from '../../hooks/useLocalizedString';
-import { DegreeTypeAggregator } from '../../hooks/useSortAndGroupDegrees';
+import { DegreeElectionsDto } from '../../../@types/api';
+import useLocalizedString from '../../../hooks/useLocalizedString';
+import { DegreeTypeAggregator } from '../../../hooks/useSortAndGroupDegrees';
 
 interface YearSelectionInputProps {
   degrees: DegreeTypeAggregator[];
@@ -59,10 +54,10 @@ function YearSelectionInput({
     // i.e. when user goes back and changes degree selection
     setSelectedYears((selYears) =>
       selYears.map(
-        (selected) => new Set([...selected].filter((degree) => selectedDegrees.has(degree)))
+        (selected) => new Set([...(selected || [])].filter((degree) => selectedDegrees.has(degree)))
       )
     );
-  }, [selectedDegrees]);
+  }, [setSelectedYears, selectedDegrees]);
 
   const select = useCallback(
     (year: number, id: string) =>
@@ -156,10 +151,12 @@ function YearSelectionInput({
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell>degree</TableCell>
-            <TableCell>geral</TableCell>
+            <TableCell>{t('admin.forms.year-selection-input.degree')}</TableCell>
+            <TableCell>{t('election.curricular-year-none')}</TableCell>
             {Array.from({ length: maxYears }, (_, year) => (
-              <TableCell key={year}>{year + 1} ano</TableCell>
+              <TableCell key={year}>
+                {t('election.curricular-year', { count: year + 1, ordinal: true })}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -202,7 +199,8 @@ function YearSelectionInput({
                       >
                         <TableCell />
                         <TableCell>
-                          {degree.acronym} - {translateLs(degree.name)}
+                          <Typography variant='caption'>{degree.acronym}</Typography>
+                          <Typography variant='body2'>{translateLs(degree.name)}</Typography>
                         </TableCell>
                         {Array.from({ length: maxYears + 1 }, (_, year) => (
                           <TableCell key={year}>

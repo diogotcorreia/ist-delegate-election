@@ -1,10 +1,10 @@
-import { Box, Button } from '@mui/material';
-import { DateOrTimeView, DateTimePicker } from '@mui/x-date-pickers';
+import { Button } from '@mui/material';
 import { Dayjs } from 'dayjs';
-import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSubmit } from 'react-router-dom';
 import { SubmitTarget } from 'react-router-dom/dist/dom';
-import { BulkCreateElectionsDto } from '../../@types/api';
+import { BulkCreateElectionsDto } from '../../../@types/api';
 
 interface BulkCreateElectionsSubmitButtonProps {
   candidacyStart: Dayjs | null;
@@ -24,6 +24,7 @@ function BulkCreateElectionsSubmitButton({
   round,
   selectedYears,
 }: BulkCreateElectionsSubmitButtonProps) {
+  const { t } = useTranslation();
   const submit = useSubmit();
   const payload: BulkCreateElectionsDto = useMemo(
     () => ({
@@ -35,7 +36,7 @@ function BulkCreateElectionsSubmitButton({
       round,
 
       degrees: selectedYears.flatMap((degrees, year) =>
-        [...degrees].map((degree) => ({
+        [...(degrees || [])].map((degree) => ({
           degreeId: degree,
           curricularYear: year === 0 ? undefined : year,
         }))
@@ -52,7 +53,13 @@ function BulkCreateElectionsSubmitButton({
     });
   }, [submit, payload]);
 
-  return <Button onClick={handleClick}>Create {payload.degrees.length} elections</Button>;
+  return (
+    <Button onClick={handleClick} variant='contained'>
+      {t('admin.forms.bulk-create-elections-submit-button.label', {
+        count: payload.degrees.length,
+      })}
+    </Button>
+  );
 }
 
 export default BulkCreateElectionsSubmitButton;

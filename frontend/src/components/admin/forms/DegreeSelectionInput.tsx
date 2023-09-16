@@ -11,9 +11,9 @@ import {
 } from '@mui/material';
 import { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DegreeElectionsDto } from '../../@types/api';
-import useLocalizedString from '../../hooks/useLocalizedString';
-import { DegreeTypeAggregator } from '../../hooks/useSortAndGroupDegrees';
+import { DegreeElectionsDto } from '../../../@types/api';
+import useLocalizedString from '../../../hooks/useLocalizedString';
+import { DegreeTypeAggregator } from '../../../hooks/useSortAndGroupDegrees';
 
 interface DegreeSelectionInputProps {
   degrees: DegreeTypeAggregator[];

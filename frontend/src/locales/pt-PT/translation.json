@@ -27,6 +27,27 @@
         }
       },
       "election-management": {
+        "bulk-dialog": {
+          "candidacy-period": "Candidaturas de {{start, datetime}} até {{end, datetime}}",
+          "candidacy-period-empty": "Período de candidaturas não definido",
+          "degrees-selected_one": "{{count}} curso selecionado",
+          "degrees-selected_other": "{{count}} cursos selecionados",
+          "finish": "Reveja os dados introduzidos e clique no botão abaixo para finalizar a operação.",
+          "help": {
+            "years": "Em eleições para \"Todo o Curso\", todos os alunos de um determinado curso, independentemente do ano curricular, podem votar. Estas devem ser utilizadas em casos em que não existem eleições discriminadas por ano curricular, mas sim uma eleição para o curso."
+          },
+          "title": "Criar Eleições em Massa",
+          "steps": {
+            "candidacy": "Definir Período de Candidaturas",
+            "degrees": "Definir Cursos",
+            "finish": "Rever & Submeter",
+            "round": "Escolher Volta Eleitoral",
+            "voting": "Definir Período de Votação",
+            "years": "Definir Anos Curriculares"
+          },
+          "voting-period": "Votação de {{start, datetime}} até {{end, datetime}}"
+        },
+        "create-elections": "Criar Eleições",
         "title": "Gestão de Eleições",
         "subtitle": "Criar, editar e ver resultados de eleições"
       }
@@ -34,7 +55,26 @@
     "degree-type-elections": {
       "empty_one": "{{count}} curso sem eleições",
       "empty_other": "{{count}} cursos sem eleições"
+    },
+    "forms": {
+      "bulk-create-elections-submit-button": {
+        "label_one": "Criar {{count}} eleição",
+        "label_other": "Criar {{count}} eleições"
+      },
+      "date-range-input": {
+        "start": "Início",
+        "end": "Fim"
+      },
+      "year-selection-input": {
+        "degree": "Tipo de Curso / Curso"
+      }
     }
+  },
+  "common": {
+    "back": "Voltar",
+    "next": "Avançar",
+    "optional": "Opcional",
+    "skip": "Saltar"
   },
   "degree": {
     "count_one": "{{count}} curso",
@@ -46,7 +86,7 @@
     "count_one": "{{count}} eleição",
     "count_other": "{{count}} eleições",
     "curricular-year": "{{count}}º Ano",
-    "curricular-year-none": "Curso",
+    "curricular-year-none": "Todo o Curso",
     "round": "{{count}}ª Volta"
   },
   "error": {

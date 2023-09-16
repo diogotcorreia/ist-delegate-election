@@ -43,7 +43,7 @@ function DegreeTypeElections({ aggregator }: Props) {
   );
 
   return (
-    <Accordion defaultExpanded={degreesWithElections.length > 0}>
+    <Accordion>
       <AccordionSummary
         expandIcon={<ExpandMoreRounded />}
         sx={{ display: 'flex', alignItems: 'center' }}
