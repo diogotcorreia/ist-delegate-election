@@ -109,6 +109,8 @@ pub struct ElectionDto {
     pub voting_period: DateRangeDto,
     pub round: i32,
     pub status: ElectionStatusDto,
+    pub has_nominated: Option<bool>,
+    pub has_voted: Option<bool>,
 }
 
 impl ElectionDto {
@@ -137,11 +139,15 @@ impl ElectionDto {
     pub async fn from_entity_for_user(
         entity: election::Model,
         fenix_service: &FenixService,
+        has_nominated: bool,
+        has_voted: bool,
     ) -> Result<Self, AppError> {
         let degree_id = entity.degree_id.clone();
         let mut dto = Self::from_entity(entity)?;
 
         dto.degree = fenix_service.get_degree(&degree_id).await?;
+        dto.has_nominated = Some(has_nominated);
+        dto.has_voted = Some(has_voted);
 
         Ok(dto)
     }

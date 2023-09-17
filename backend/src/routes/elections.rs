@@ -1,8 +1,12 @@
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use axum_sessions::SessionHandle;
-use entity::election::{self, Entity as Election};
+use entity::{
+    election::{self, Entity as Election},
+    nomination_log::{self, Entity as NominationLog},
+    vote_log::{self, Entity as VoteLog},
+};
 use futures::stream::{self, StreamExt};
-use sea_orm::{prelude::*, Condition, DatabaseConnection, Set, TransactionTrait};
+use sea_orm::{prelude::*, Condition, DatabaseConnection, QueryOrder, Set, TransactionTrait};
 
 use crate::{
     auth_utils,
@@ -85,6 +89,8 @@ pub async fn get_user_elections(
 ) -> Result<Json<Vec<ElectionDto>>, AppError> {
     let user = auth_utils::get_user(session_handle).await?;
 
+    let txn = conn.begin().await?;
+
     let elections = Election::find()
         .filter(
             user.degree_entries
@@ -102,11 +108,37 @@ pub async fn get_user_elections(
                     )
                 }),
         )
-        .all(conn)
+        .all(&txn)
         .await?;
 
+    let nominations: Vec<i32> = NominationLog::find()
+        .filter(nomination_log::Column::Nominator.eq(&user.username))
+        .order_by_asc(nomination_log::Column::Election)
+        .all(&txn)
+        .await?
+        .iter()
+        .map(|model| model.election)
+        .collect();
+    let votes: Vec<i32> = VoteLog::find()
+        .filter(vote_log::Column::Voter.eq(&user.username))
+        .order_by_asc(vote_log::Column::Election)
+        .all(&txn)
+        .await?
+        .iter()
+        .map(|model| model.election)
+        .collect();
+
     let dtos = stream::iter(elections)
-        .then(|election| async { ElectionDto::from_entity_for_user(election, fenix_service).await })
+        .then(|election| async {
+            let election_id = election.id;
+            ElectionDto::from_entity_for_user(
+                election,
+                fenix_service,
+                nominations.binary_search(&election_id).is_ok(),
+                votes.binary_search(&election_id).is_ok(),
+            )
+            .await
+        })
         .collect::<Vec<_>>()
         .await
         .into_iter()
