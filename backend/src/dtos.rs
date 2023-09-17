@@ -237,3 +237,9 @@ pub struct BulkCreateElectionsDto {
     pub round: i32,
     pub degrees: Vec<BulkCreateElectionsDegreesDto>,
 }
+
+#[typeshare]
+#[derive(Deserialize)]
+pub struct CastVoteDto {
+    pub username: Option<String>,
+}

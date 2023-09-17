@@ -1,16 +1,25 @@
-use axum::{extract::State, http::StatusCode, Extension, Json};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    Extension, Json,
+};
 use axum_sessions::SessionHandle;
 use entity::{
     election::{self, Entity as Election},
+    election_vote::{self, Entity as ElectionVote},
+    nomination::{self, Entity as Nomination},
     nomination_log::{self, Entity as NominationLog},
     vote_log::{self, Entity as VoteLog},
 };
 use futures::stream::{self, StreamExt};
-use sea_orm::{prelude::*, Condition, DatabaseConnection, QueryOrder, Set, TransactionTrait};
+use migration::OnConflict;
+use sea_orm::{
+    prelude::*, ActiveValue, Condition, DatabaseConnection, QueryOrder, Set, TransactionTrait,
+};
 
 use crate::{
     auth_utils,
-    dtos::{BulkCreateElectionsDto, ElectionDto},
+    dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto},
     errors::AppError,
     services::fenix::FenixService,
 };
@@ -145,4 +154,90 @@ pub async fn get_user_elections(
         .collect::<Result<_, _>>()?;
 
     Ok(Json(dtos))
+}
+
+pub async fn cast_vote(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    Json(vote_dto): Json<CastVoteDto>,
+) -> Result<StatusCode, AppError> {
+    // assert admin only
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn.begin().await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+    if !auth_utils::can_vote_on_election(&user, &election) {
+        return Err(AppError::Unauthorized);
+    }
+
+    // don't allow voting if not all nominations have been verified
+    if Nomination::find()
+        .filter(
+            Condition::all()
+                .add(nomination::Column::Election.eq(election_id))
+                .add(nomination::Column::Valid.eq(false)),
+        )
+        .count(&txn)
+        .await?
+        > 0
+    {
+        return Err(AppError::ElectionWithUnverifedNomination);
+    }
+
+    let vote_log = vote_log::ActiveModel {
+        election: ActiveValue::set(election_id),
+        voter: ActiveValue::set(user.username),
+    };
+    vote_log
+        .insert(&txn)
+        .await
+        .map_err(|_| AppError::DuplicateVote)?;
+
+    if let Some(vote_username) = vote_dto.username {
+        if Nomination::find()
+            .filter(
+                Condition::all()
+                    .add(nomination::Column::Election.eq(election_id))
+                    .add(nomination::Column::Username.eq(&vote_username)),
+            )
+            .count(&txn)
+            .await?
+            == 0
+        {
+            return Err(AppError::UnknownVoteOption);
+        }
+
+        let vote_count = ElectionVote::find_by_id((election_id, vote_username.clone()))
+            .one(&txn)
+            .await?
+            .map(|v| v.count)
+            .unwrap_or(0);
+
+        let vote = election_vote::ActiveModel {
+            election: ActiveValue::set(election_id),
+            nomination_username: ActiveValue::set(vote_username),
+            count: ActiveValue::set(vote_count + 1),
+        };
+
+        ElectionVote::insert(vote)
+            .on_conflict(
+                OnConflict::columns([
+                    election_vote::Column::Election,
+                    election_vote::Column::NominationUsername,
+                ])
+                .update_column(election_vote::Column::Count)
+                .to_owned(),
+            )
+            .exec(&txn)
+            .await?;
+    }
+
+    txn.commit().await?;
+
+    Ok(StatusCode::NO_CONTENT)
 }
