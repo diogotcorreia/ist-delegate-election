@@ -77,6 +77,8 @@ export interface ElectionDto {
   votingPeriod: DateRangeDto;
   round: number;
   status: ElectionStatusDto;
+  hasNominated?: boolean;
+  hasVoted?: boolean;
 }
 
 export interface DegreeElectionsDto {
