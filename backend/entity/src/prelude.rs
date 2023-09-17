@@ -4,4 +4,5 @@ pub use super::admin::Entity as Admin;
 pub use super::election::Entity as Election;
 pub use super::election_vote::Entity as ElectionVote;
 pub use super::nomination::Entity as Nomination;
+pub use super::nomination_log::Entity as NominationLog;
 pub use super::vote_log::Entity as VoteLog;
