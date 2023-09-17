@@ -3,30 +3,29 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "election_vote")]
+#[sea_orm(table_name = "nomination_log")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub election: i32,
     #[sea_orm(primary_key, auto_increment = false)]
-    pub nomination_username: String,
-    pub count: i32,
+    pub nominator: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::nomination::Entity",
+        belongs_to = "super::election::Entity",
         from = "Column::Election",
-        to = "super::nomination::Column::Election",
+        to = "super::election::Column::Id",
         on_update = "Cascade",
         on_delete = "Restrict"
     )]
-    Nomination,
+    Election,
 }
 
-impl Related<super::nomination::Entity> for Entity {
+impl Related<super::election::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Nomination.def()
+        Relation::Election.def()
     }
 }
 
