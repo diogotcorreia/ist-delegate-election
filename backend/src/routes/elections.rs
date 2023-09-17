@@ -162,7 +162,6 @@ pub async fn cast_vote(
     State(ref conn): State<DatabaseConnection>,
     Json(vote_dto): Json<CastVoteDto>,
 ) -> Result<StatusCode, AppError> {
-    // assert admin only
     let user = auth_utils::get_user(session_handle).await?;
 
     let txn = conn.begin().await?;
