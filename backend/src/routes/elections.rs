@@ -1,11 +1,18 @@
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use axum_sessions::SessionHandle;
-
-use entity::election::{self, Entity as Election};
-use sea_orm::{prelude::*, DatabaseConnection, Set, TransactionTrait};
+use entity::{
+    election::{self, Entity as Election},
+    nomination_log::{self, Entity as NominationLog},
+    vote_log::{self, Entity as VoteLog},
+};
+use futures::stream::{self, StreamExt};
+use sea_orm::{prelude::*, Condition, DatabaseConnection, QueryOrder, Set, TransactionTrait};
 
 use crate::{
-    auth_utils, dtos::BulkCreateElectionsDto, errors::AppError, services::fenix::FenixService,
+    auth_utils,
+    dtos::{BulkCreateElectionsDto, ElectionDto},
+    errors::AppError,
+    services::fenix::FenixService,
 };
 
 pub async fn bulk_create_elections(
@@ -73,4 +80,69 @@ pub async fn bulk_create_elections(
     txn.commit().await?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn get_user_elections(
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<Vec<ElectionDto>>, AppError> {
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn.begin().await?;
+
+    let elections = Election::find()
+        .filter(
+            user.degree_entries
+                .iter()
+                .fold(Condition::any(), |acc, entry| {
+                    acc.add(
+                        Condition::all()
+                            .add(election::Column::DegreeId.eq(&entry.degree_id))
+                            .add(election::Column::CurricularYear.eq(entry.curricular_year)),
+                    )
+                    .add(
+                        Condition::all()
+                            .add(election::Column::DegreeId.eq(&entry.degree_id))
+                            .add(election::Column::CurricularYear.is_null()),
+                    )
+                }),
+        )
+        .all(&txn)
+        .await?;
+
+    let nominations: Vec<i32> = NominationLog::find()
+        .filter(nomination_log::Column::Nominator.eq(&user.username))
+        .order_by_asc(nomination_log::Column::Election)
+        .all(&txn)
+        .await?
+        .iter()
+        .map(|model| model.election)
+        .collect();
+    let votes: Vec<i32> = VoteLog::find()
+        .filter(vote_log::Column::Voter.eq(&user.username))
+        .order_by_asc(vote_log::Column::Election)
+        .all(&txn)
+        .await?
+        .iter()
+        .map(|model| model.election)
+        .collect();
+
+    let dtos = stream::iter(elections)
+        .then(|election| async {
+            let election_id = election.id;
+            ElectionDto::from_entity_for_user(
+                election,
+                fenix_service,
+                nominations.binary_search(&election_id).is_ok(),
+                votes.binary_search(&election_id).is_ok(),
+            )
+            .await
+        })
+        .collect::<Vec<_>>()
+        .await
+        .into_iter()
+        .collect::<Result<_, _>>()?;
+
+    Ok(Json(dtos))
 }

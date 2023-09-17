@@ -55,15 +55,30 @@ export interface DegreeDto {
   degreeType: LocalizedStringDto;
 }
 
+export interface DateRangeDto {
+  start: DateTimeUtc;
+  end: DateTimeUtc;
+}
+
+export enum ElectionStatusDto {
+  NotStarted = 'NOT_STARTED',
+  Candidacy = 'CANDIDACY',
+  Processing = 'PROCESSING',
+  Voting = 'VOTING',
+  Ended = 'ENDED',
+}
+
 export interface ElectionDto {
   id: number;
   academicYear: string;
+  degree?: DegreeDto;
   curricularYear?: number;
-  candidacyPeriodStart?: DateTimeUtc;
-  candidacyPeriodEnd?: DateTimeUtc;
-  votingPeriodStart: DateTimeUtc;
-  votingPeriodEnd: DateTimeUtc;
+  candidacyPeriod?: DateRangeDto;
+  votingPeriod: DateRangeDto;
   round: number;
+  status: ElectionStatusDto;
+  hasNominated?: boolean;
+  hasVoted?: boolean;
 }
 
 export interface DegreeElectionsDto {
@@ -80,11 +95,6 @@ export interface SignedPersonSearchResultDto {
   username: string;
   displayName: string;
   signature: string;
-}
-
-export interface DateRangeDto {
-  start: DateTimeUtc;
-  end: DateTimeUtc;
 }
 
 export interface BulkCreateElectionsDegreesDto {
