@@ -19,6 +19,7 @@ mod auth_utils;
 mod cache;
 mod crypto_utils;
 mod dtos;
+mod election_utils;
 mod errors;
 mod routes;
 mod services;
@@ -77,6 +78,10 @@ async fn main() {
         .route(
             "/elections/user",
             get(routes::elections::get_user_elections),
+        )
+        .route(
+            "/election/:election_id/self-nominate",
+            post(routes::elections::self_nominate),
         )
         .route(
             "/election/:election_id/vote",

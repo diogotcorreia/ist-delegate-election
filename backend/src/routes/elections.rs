@@ -21,7 +21,7 @@ use crate::{
     auth_utils,
     dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto},
     errors::AppError,
-    services::fenix::FenixService,
+    services::fenix::FenixService, election_utils::is_in_candidacy_period,
 };
 
 pub async fn bulk_create_elections(
@@ -154,6 +154,57 @@ pub async fn get_user_elections(
         .collect::<Result<_, _>>()?;
 
     Ok(Json(dtos))
+}
+
+pub async fn self_nominate(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+) -> Result<StatusCode, AppError> {
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn.begin().await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+    if !auth_utils::can_vote_on_election(&user, &election) {
+        return Err(AppError::Unauthorized);
+    }
+
+    if !is_in_candidacy_period(&election) {
+        return Err(AppError::OutsideCandidacyPeriod);
+    }
+
+    let nomination_log = nomination_log::ActiveModel {
+        election: ActiveValue::set(election_id),
+        nominator: ActiveValue::set(user.username.clone()),
+    };
+    nomination_log
+        .insert(&txn)
+        .await
+        .map_err(|_| AppError::DuplicateNomination)?;
+
+    let vote = nomination::ActiveModel {
+        election: ActiveValue::set(election_id),
+        username: ActiveValue::set(user.username),
+        display_name: ActiveValue::set(user.display_name),
+        valid: ActiveValue::set(true),
+    };
+
+    Nomination::insert(vote)
+        .on_conflict(
+            OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
+                .update_column(nomination::Column::Valid)
+                .to_owned(),
+        )
+        .exec(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    Ok(StatusCode::NO_CONTENT)
 }
 
 pub async fn cast_vote(
