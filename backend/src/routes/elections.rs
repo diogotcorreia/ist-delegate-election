@@ -102,7 +102,9 @@ pub async fn get_user_elections(
 ) -> Result<Json<Vec<ElectionDto>>, AppError> {
     let user = auth_utils::get_user(session_handle).await?;
 
-    let txn = conn.begin().await?;
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
 
     let elections = Election::find()
         .filter(
@@ -140,6 +142,8 @@ pub async fn get_user_elections(
         .iter()
         .map(|model| model.election)
         .collect();
+
+    txn.commit().await?;
 
     let dtos = stream::iter(elections)
         .then(|election| async {
@@ -280,6 +284,8 @@ pub async fn get_vote_options(
         .filter(nomination::Column::Election.eq(election_id))
         .all(&txn)
         .await?;
+
+    txn.commit().await?;
 
     let vote_options = nominations
         .into_iter()
