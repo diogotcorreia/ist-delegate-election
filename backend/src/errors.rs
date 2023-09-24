@@ -19,9 +19,12 @@ pub enum AppError {
     ElectionWithUnverifedNomination,
     UnknownVoteOption,
     DuplicateVote,
+    DuplicateNomination,
     DuplicateElection,
     InvalidRound,
     InvalidDegree,
+    OutsideCandidacyPeriod,
+    ElectionUnauthorized,
     Unauthorized,
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
@@ -49,9 +52,19 @@ impl IntoResponse for AppError {
                 "error.election.unknown-vote-option",
             ),
             AppError::DuplicateVote => (StatusCode::FORBIDDEN, "error.election.duplicate-vote"),
+            AppError::DuplicateNomination => {
+                (StatusCode::FORBIDDEN, "error.election.duplicate-nomination")
+            }
             AppError::DuplicateElection => (StatusCode::CONFLICT, "error.duplicate.election"),
             AppError::InvalidRound => (StatusCode::CONFLICT, "error.round.invalid"),
             AppError::InvalidDegree => (StatusCode::CONFLICT, "error.degree.invalid"),
+            AppError::OutsideCandidacyPeriod => (
+                StatusCode::FORBIDDEN,
+                "error.election.candidacy.outside-period",
+            ),
+            AppError::ElectionUnauthorized => {
+                (StatusCode::FORBIDDEN, "error.election.unauthorized")
+            }
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {
