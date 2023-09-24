@@ -26,6 +26,7 @@ pub enum AppError {
     OutsideCandidacyPeriod,
     OutsideVotingPeriod,
     ElectionUnauthorized,
+    InvalidPersonSignature,
     Unauthorized,
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
@@ -69,6 +70,9 @@ impl IntoResponse for AppError {
             ),
             AppError::ElectionUnauthorized => {
                 (StatusCode::FORBIDDEN, "error.election.unauthorized")
+            }
+            AppError::InvalidPersonSignature => {
+                (StatusCode::UNAUTHORIZED, "error.person-signature.invalid")
             }
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),

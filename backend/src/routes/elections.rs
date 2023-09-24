@@ -18,8 +18,8 @@ use sea_orm::{
 };
 
 use crate::{
-    auth_utils,
-    dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto},
+    auth_utils, crypto_utils,
+    dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto, SignedPersonSearchResultDto},
     election_utils::{is_in_candidacy_period, is_in_voting_period},
     errors::AppError,
     services::fenix::FenixService,
@@ -182,19 +182,71 @@ pub async fn self_nominate(
         .await
         .map_err(|_| AppError::DuplicateNomination)?;
 
-    let vote = nomination::ActiveModel {
+    let nomination = nomination::ActiveModel {
         election: ActiveValue::set(election_id),
         username: ActiveValue::set(user.username),
         display_name: ActiveValue::set(user.display_name),
         valid: ActiveValue::set(true),
     };
 
-    Nomination::insert(vote)
+    Nomination::insert(nomination)
         .on_conflict(
             OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
                 .update_column(nomination::Column::Valid)
                 .to_owned(),
         )
+        .exec(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn nominate_others(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref signing_key): State<[u8; 64]>,
+    Json(nomination_dto): Json<SignedPersonSearchResultDto>,
+) -> Result<StatusCode, AppError> {
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn.begin().await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+    auth_utils::can_vote_on_election(&user, &election)?;
+    is_in_candidacy_period(&election)?;
+
+    crypto_utils::validate_person_search_result(election_id, &nomination_dto, signing_key)?;
+
+    let nomination_log = nomination_log::ActiveModel {
+        election: ActiveValue::set(election_id),
+        nominator: ActiveValue::set(user.username.clone()),
+    };
+    nomination_log
+        .insert(&txn)
+        .await
+        .map_err(|_| AppError::DuplicateNomination)?;
+
+    let nomination = nomination::ActiveModel {
+        election: ActiveValue::set(election_id),
+        valid: ActiveValue::set(nomination_dto.username == user.username),
+        username: ActiveValue::set(nomination_dto.username),
+        display_name: ActiveValue::set(nomination_dto.display_name),
+    };
+
+    Nomination::insert(nomination)
+        .on_conflict(
+            OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
+                .update_column(nomination::Column::Valid)
+                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).eq(false))
+                .to_owned(),
+        )
+        .do_nothing()
         .exec(&txn)
         .await?;
 
