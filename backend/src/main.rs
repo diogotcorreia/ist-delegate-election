@@ -80,16 +80,20 @@ async fn main() {
             get(routes::elections::get_user_elections),
         )
         .route(
-            "/election/:election_id/self-nominate",
-            post(routes::elections::self_nominate),
-        )
-        .route(
             "/election/:election_id/nominate",
             post(routes::elections::nominate_others),
         )
         .route(
+            "/election/:election_id/self-nominate",
+            post(routes::elections::self_nominate),
+        )
+        .route(
             "/election/:election_id/vote",
             post(routes::elections::cast_vote),
+        )
+        .route(
+            "/election/:election_id/vote-options",
+            get(routes::elections::get_vote_options),
         )
         .route("/login", post(routes::login::login))
         .route("/search-user", post(routes::search_user::search_user))

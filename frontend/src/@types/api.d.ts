@@ -109,6 +109,11 @@ export interface BulkCreateElectionsDto {
   degrees: BulkCreateElectionsDegreesDto[];
 }
 
+export interface VoteOptionDto {
+  username: string;
+  displayName: string;
+}
+
 export interface CastVoteDto {
   username?: string;
 }

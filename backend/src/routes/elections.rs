@@ -19,7 +19,10 @@ use sea_orm::{
 
 use crate::{
     auth_utils, crypto_utils,
-    dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto, SignedPersonSearchResultDto},
+    dtos::{
+        BulkCreateElectionsDto, CastVoteDto, ElectionDto, SignedPersonSearchResultDto,
+        VoteOptionDto,
+    },
     election_utils::{is_in_candidacy_period, is_in_voting_period},
     errors::AppError,
     services::fenix::FenixService,
@@ -253,6 +256,46 @@ pub async fn nominate_others(
     txn.commit().await?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn get_vote_options(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+) -> Result<Json<Vec<VoteOptionDto>>, AppError> {
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+    auth_utils::can_vote_on_election(&user, &election)?;
+    is_in_voting_period(&election)?;
+
+    let nominations = Nomination::find()
+        .filter(nomination::Column::Election.eq(election_id))
+        .all(&txn)
+        .await?;
+
+    let vote_options = nominations
+        .into_iter()
+        .map(|nomination| {
+            // don't show options if not all nominations have been verified
+            nomination
+                .valid
+                .then_some(VoteOptionDto {
+                    username: nomination.username,
+                    display_name: nomination.display_name,
+                })
+                .ok_or(AppError::ElectionWithUnverifedNomination)
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(Json(vote_options))
 }
 
 pub async fn cast_vote(

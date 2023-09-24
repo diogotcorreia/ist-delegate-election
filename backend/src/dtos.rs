@@ -239,6 +239,14 @@ pub struct BulkCreateElectionsDto {
 }
 
 #[typeshare]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct VoteOptionDto {
+    pub username: String,
+    pub display_name: String,
+}
+
+#[typeshare]
 #[derive(Deserialize)]
 pub struct CastVoteDto {
     pub username: Option<String>,
