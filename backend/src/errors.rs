@@ -24,6 +24,7 @@ pub enum AppError {
     InvalidRound,
     InvalidDegree,
     OutsideCandidacyPeriod,
+    OutsideVotingPeriod,
     ElectionUnauthorized,
     Unauthorized,
     FenixError,
@@ -61,6 +62,10 @@ impl IntoResponse for AppError {
             AppError::OutsideCandidacyPeriod => (
                 StatusCode::FORBIDDEN,
                 "error.election.candidacy.outside-period",
+            ),
+            AppError::OutsideVotingPeriod => (
+                StatusCode::FORBIDDEN,
+                "error.election.voting.outside-period",
             ),
             AppError::ElectionUnauthorized => {
                 (StatusCode::FORBIDDEN, "error.election.unauthorized")
