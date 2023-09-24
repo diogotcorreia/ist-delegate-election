@@ -20,7 +20,7 @@ use sea_orm::{
 use crate::{
     auth_utils,
     dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto},
-    election_utils::is_in_candidacy_period,
+    election_utils::{is_in_candidacy_period, is_in_voting_period},
     errors::AppError,
     services::fenix::FenixService,
 };
@@ -218,6 +218,7 @@ pub async fn cast_vote(
         .await?
         .ok_or(AppError::UnknownElection)?;
     auth_utils::can_vote_on_election(&user, &election)?;
+    is_in_voting_period(&election)?;
 
     // don't allow voting if not all nominations have been verified
     if Nomination::find()

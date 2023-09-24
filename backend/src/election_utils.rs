@@ -14,3 +14,13 @@ pub fn is_in_candidacy_period(election: &Election) -> Result<(), AppError> {
     .then_some(())
     .ok_or(AppError::OutsideCandidacyPeriod)
 }
+
+pub fn is_in_voting_period(election: &Election) -> Result<(), AppError> {
+    let now = chrono::Utc::now();
+
+    let start = election.voting_period_start;
+    let end = election.voting_period_end;
+    (now >= start.and_utc() && now <= end.and_utc())
+        .then_some(())
+        .ok_or(AppError::OutsideVotingPeriod)
+}
