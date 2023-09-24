@@ -204,7 +204,7 @@ pub struct SearchPersonDto {
 }
 
 #[typeshare]
-#[derive(Serialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SignedPersonSearchResultDto {
     pub username: String,

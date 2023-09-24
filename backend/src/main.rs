@@ -84,6 +84,10 @@ async fn main() {
             post(routes::elections::self_nominate),
         )
         .route(
+            "/election/:election_id/nominate",
+            post(routes::elections::nominate_others),
+        )
+        .route(
             "/election/:election_id/vote",
             post(routes::elections::cast_vote),
         )

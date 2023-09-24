@@ -1,12 +1,11 @@
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
-use crate::{dtos::SignedPersonSearchResultDto, services::fenix::PersonSearchResult};
+use crate::{
+    dtos::SignedPersonSearchResultDto, errors::AppError, services::fenix::PersonSearchResult,
+};
 
 type HmacSha256 = Hmac<Sha256>;
-
-#[derive(Debug, PartialEq)]
-pub struct IncorrectSignatureError;
 
 fn serialize_person_search_result(election_id: i32, username: &str, display_name: &str) -> Vec<u8> {
     [
@@ -37,13 +36,11 @@ pub fn sign_person_search_result(
     }
 }
 
-// TODO remove this
-#[allow(dead_code)]
 pub fn validate_person_search_result(
     election_id: i32,
-    signed_search_result: SignedPersonSearchResultDto,
+    signed_search_result: &SignedPersonSearchResultDto,
     signing_key: &[u8],
-) -> Result<(), IncorrectSignatureError> {
+) -> Result<(), AppError> {
     let mut mac = HmacSha256::new_from_slice(signing_key).expect("invalid key length");
     let payload = serialize_person_search_result(
         election_id,
@@ -52,10 +49,10 @@ pub fn validate_person_search_result(
     );
     mac.update(&payload);
 
-    let signature =
-        hex::decode(signed_search_result.signature).map_err(|_| IncorrectSignatureError)?;
+    let signature = hex::decode(&signed_search_result.signature)
+        .map_err(|_| AppError::InvalidPersonSignature)?;
     mac.verify_slice(&signature)
-        .map_err(|_| IncorrectSignatureError)
+        .map_err(|_| AppError::InvalidPersonSignature)
 }
 
 #[cfg(test)]
@@ -72,7 +69,7 @@ mod tests {
         };
         let signed = sign_person_search_result(1, search_result, KEY);
 
-        assert_eq!(validate_person_search_result(1, signed, KEY), Ok(()));
+        assert!(validate_person_search_result(1, &signed, KEY).is_ok());
     }
 
     #[test]
@@ -85,10 +82,7 @@ mod tests {
 
         signed.username = "ist1654321".to_string();
 
-        assert_eq!(
-            validate_person_search_result(1, signed, KEY),
-            Err(IncorrectSignatureError)
-        );
+        assert!(validate_person_search_result(1, &signed, KEY).is_err());
     }
 
     #[test]
@@ -101,10 +95,7 @@ mod tests {
 
         signed.display_name = "Jane Doe".to_string();
 
-        assert_eq!(
-            validate_person_search_result(1, signed, KEY),
-            Err(IncorrectSignatureError)
-        );
+        assert!(validate_person_search_result(1, &signed, KEY).is_err());
     }
 
     #[test]
@@ -115,10 +106,7 @@ mod tests {
         };
         let signed = sign_person_search_result(1, search_result, KEY);
 
-        assert_eq!(
-            validate_person_search_result(2, signed, KEY),
-            Err(IncorrectSignatureError)
-        );
+        assert!(validate_person_search_result(2, &signed, KEY).is_err());
     }
 
     #[test]
@@ -131,9 +119,6 @@ mod tests {
 
         signed.signature = signed.signature.replace('0', "1");
 
-        assert_eq!(
-            validate_person_search_result(1, signed, KEY),
-            Err(IncorrectSignatureError)
-        );
+        assert!(validate_person_search_result(1, &signed, KEY).is_err());
     }
 }
