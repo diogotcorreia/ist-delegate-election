@@ -20,8 +20,9 @@ use sea_orm::{
 use crate::{
     auth_utils,
     dtos::{BulkCreateElectionsDto, CastVoteDto, ElectionDto},
+    election_utils::is_in_candidacy_period,
     errors::AppError,
-    services::fenix::FenixService, election_utils::is_in_candidacy_period,
+    services::fenix::FenixService,
 };
 
 pub async fn bulk_create_elections(
@@ -169,13 +170,8 @@ pub async fn self_nominate(
         .one(&txn)
         .await?
         .ok_or(AppError::UnknownElection)?;
-    if !auth_utils::can_vote_on_election(&user, &election) {
-        return Err(AppError::Unauthorized);
-    }
-
-    if !is_in_candidacy_period(&election) {
-        return Err(AppError::OutsideCandidacyPeriod);
-    }
+    auth_utils::can_vote_on_election(&user, &election)?;
+    is_in_candidacy_period(&election)?;
 
     let nomination_log = nomination_log::ActiveModel {
         election: ActiveValue::set(election_id),
@@ -221,9 +217,7 @@ pub async fn cast_vote(
         .one(&txn)
         .await?
         .ok_or(AppError::UnknownElection)?;
-    if !auth_utils::can_vote_on_election(&user, &election) {
-        return Err(AppError::Unauthorized);
-    }
+    auth_utils::can_vote_on_election(&user, &election)?;
 
     // don't allow voting if not all nominations have been verified
     if Nomination::find()

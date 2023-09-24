@@ -27,10 +27,10 @@ pub async fn search_user(
         .await?
         .ok_or(AppError::UnknownElection)?;
 
-    if !auth_utils::can_vote_on_election(&user, &election)
+    if auth_utils::can_vote_on_election(&user, &election).is_err()
         && !auth_utils::is_admin(&user.username, conn).await?
     {
-        return Err(AppError::Unauthorized);
+        return Err(AppError::ElectionUnauthorized);
     }
 
     let results = fenix_service

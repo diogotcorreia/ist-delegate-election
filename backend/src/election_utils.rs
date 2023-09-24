@@ -1,9 +1,16 @@
-use entity::election::{Model as Election};
+use entity::election::Model as Election;
 
-pub fn is_in_candidacy_period(election: &Election) -> bool {
+use crate::errors::AppError;
+
+pub fn is_in_candidacy_period(election: &Election) -> Result<(), AppError> {
     let now = chrono::Utc::now();
-    match (election.candidacy_period_start, election.candidacy_period_end) {
+    match (
+        election.candidacy_period_start,
+        election.candidacy_period_end,
+    ) {
         (Some(start), Some(end)) => now >= start.and_utc() && now <= end.and_utc(),
-        _ => false
+        _ => false,
     }
+    .then_some(())
+    .ok_or(AppError::OutsideCandidacyPeriod)
 }
