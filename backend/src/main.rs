@@ -80,6 +80,10 @@ async fn main() {
             get(routes::elections::get_user_elections),
         )
         .route(
+            "/election/:election_id",
+            get(routes::elections::get_election),
+        )
+        .route(
             "/election/:election_id/nominate",
             post(routes::elections::nominate_others),
         )
