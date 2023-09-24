@@ -103,7 +103,9 @@ pub async fn get_election(
 ) -> Result<Json<ElectionDto>, AppError> {
     let user = auth_utils::get_user(session_handle).await?;
 
-    let txn = conn.begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly)).await?;
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
 
     let election = Election::find_by_id(election_id)
         .one(&txn)
