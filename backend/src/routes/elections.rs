@@ -95,6 +95,39 @@ pub async fn bulk_create_elections(
     Ok(StatusCode::NO_CONTENT)
 }
 
+pub async fn get_election(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<ElectionDto>, AppError> {
+    let user = auth_utils::get_user(session_handle).await?;
+
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+    auth_utils::can_vote_on_election(&user, &election)?;
+
+    let nominations = NominationLog::find_by_id((election_id, user.username.clone()))
+        .count(&txn)
+        .await?;
+    let votes = VoteLog::find_by_id((election_id, user.username.clone()))
+        .count(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    Ok(Json(
+        ElectionDto::from_entity_for_user(election, fenix_service, nominations > 0, votes > 0)
+            .await?,
+    ))
+}
+
 pub async fn get_user_elections(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
