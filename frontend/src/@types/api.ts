@@ -41,7 +41,7 @@ export interface AuthDto {
 
 export interface AdminDto {
   username: string;
-  dateAdded: DateTimeUtc;
+  dateAdded: string;
 }
 
 export interface AddAdminDto {
@@ -56,8 +56,8 @@ export interface DegreeDto {
 }
 
 export interface DateRangeDto {
-  start: DateTimeUtc;
-  end: DateTimeUtc;
+  start: string;
+  end: string;
 }
 
 export enum ElectionStatusDto {
