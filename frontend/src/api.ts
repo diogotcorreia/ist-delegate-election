@@ -6,6 +6,7 @@ import {
   AuthDto,
   BulkCreateElectionsDto,
   DegreeElectionsDto,
+  ElectionDto,
   LoginDto,
 } from './@types/api';
 
@@ -87,4 +88,8 @@ export function getDegrees(): Promise<DegreeElectionsDto[]> {
 
 export function bulkCreateElections(payload: BulkCreateElectionsDto): Promise<void> {
   return wrapFetch(fetch(`${BASE_URL}/elections/bulk`, buildJsonBody('POST', payload)));
+}
+
+export function getUserElections(): Promise<ElectionDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/elections/user`));
 }

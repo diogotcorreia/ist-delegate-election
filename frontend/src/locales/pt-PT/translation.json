@@ -77,6 +77,12 @@
     "optional": "Opcional",
     "skip": "Saltar"
   },
+  "dashboard": {
+    "elections": {
+      "empty": "Não existem eleições neste momento",
+      "title": "Eleições"
+    }
+  },
   "degree": {
     "count_one": "{{count}} curso",
     "count_other": "{{count}} cursos",
@@ -84,11 +90,25 @@
     "selected-count_other": "{{count}} selecionados"
   },
   "election": {
+    "candidacy-period": {
+      "title": "Período de Candidaturas",
+      "has-nominated": "Já nomeou um estudante para esta eleição",
+      "nominate-button": "Nomear Estudante",
+      "subtitle": "Candidaturas de {{start, datetime}} até {{end, datetime}}"
+    },
+    "completed": "Fim da Eleição",
     "count_one": "{{count}} eleição",
     "count_other": "{{count}} eleições",
     "curricular-year": "{{count}}º Ano",
     "curricular-year-none": "Todo o Curso",
-    "round": "{{count}}ª Volta"
+    "round": "{{count}}ª Volta",
+    "validating-nominations": "Validação de Candidaturas e Nomeações",
+    "voting-period": {
+      "title": "Período de Votação",
+      "has-voted": "Já votou nesta eleição",
+      "subtitle": "Votação de {{start, datetime}} até {{end, datetime}}",
+      "vote-button": "Votar"
+    }
   },
   "error": {
     "languagestring": {

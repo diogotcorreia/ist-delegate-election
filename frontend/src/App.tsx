@@ -20,13 +20,14 @@ import Admins, {
   loader as adminsLoader,
   removeAction as removeAdminAction,
 } from './routes/admin/admins';
-import Elections, {
+import AdminElections, {
   bulkAddAction as bulkAddElectionAction,
   ElectionsBulkAdd,
-  loader as electionsLoader,
+  loader as adminElectionsLoader,
 } from './routes/admin/elections';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import UserElections, { ElectionsError, loader as userElectionsLoader } from './routes/elections';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -49,6 +50,12 @@ const router = createBrowserRouter([
     loader: rootLoader,
     element: <Root />,
     children: [
+      {
+        index: true,
+        loader: userElectionsLoader,
+        element: <UserElections />,
+        errorElement: <ElectionsError />,
+      },
       { path: 'admin', element: <AdminRoot /> },
       {
         path: 'admin/admins',
@@ -61,8 +68,8 @@ const router = createBrowserRouter([
       },
       {
         path: 'admin/elections',
-        loader: electionsLoader,
-        element: <Elections />,
+        loader: adminElectionsLoader,
+        element: <AdminElections />,
         children: [
           { path: 'bulk-add', element: <ElectionsBulkAdd />, action: bulkAddElectionAction },
         ],
