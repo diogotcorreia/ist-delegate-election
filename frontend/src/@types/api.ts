@@ -5,116 +5,115 @@
 export type LocalizedStringDto = Record<string, string>;
 
 export interface AppErrorDto {
-	key: string;
+  key: string;
 }
 
 export interface FenixConfigDto {
-	baseUrl: string;
-	clientId: string;
-	redirectUrl: string;
+  baseUrl: string;
+  clientId: string;
+  redirectUrl: string;
 }
 
 export interface AppConfigDto {
-	fenix: FenixConfigDto;
-	isSetup: boolean;
+  fenix: FenixConfigDto;
+  isSetup: boolean;
 }
 
 export interface LoginDto {
-	code: string;
+  code: string;
 }
 
 export interface DegreeEntryDto {
-	degreeId: string;
-	curricularYear: number;
+  degreeId: string;
+  curricularYear: number;
 }
 
 export interface UserDto {
-	username: string;
-	displayName: string;
-	degreeEntries: DegreeEntryDto[];
+  username: string;
+  displayName: string;
+  degreeEntries: DegreeEntryDto[];
 }
 
 export interface AuthDto {
-	user: UserDto;
-	isAdmin: boolean;
+  user: UserDto;
+  isAdmin: boolean;
 }
 
 export interface AdminDto {
-	username: string;
-	dateAdded: string;
+  username: string;
+  dateAdded: string;
 }
 
 export interface AddAdminDto {
-	username: string;
+  username: string;
 }
 
 export interface DegreeDto {
-	id: string;
-	acronym: string;
-	name: LocalizedStringDto;
-	degreeType: LocalizedStringDto;
+  id: string;
+  acronym: string;
+  name: LocalizedStringDto;
+  degreeType: LocalizedStringDto;
 }
 
 export interface DateRangeDto {
-	start: string;
-	end: string;
+  start: string;
+  end: string;
 }
 
 export enum ElectionStatusDto {
-	NotStarted = "NOT_STARTED",
-	Candidacy = "CANDIDACY",
-	Processing = "PROCESSING",
-	Voting = "VOTING",
-	Ended = "ENDED",
+  NotStarted = 'NOT_STARTED',
+  Candidacy = 'CANDIDACY',
+  Processing = 'PROCESSING',
+  Voting = 'VOTING',
+  Ended = 'ENDED',
 }
 
 export interface ElectionDto {
-	id: number;
-	academicYear: string;
-	degree?: DegreeDto;
-	curricularYear?: number;
-	candidacyPeriod?: DateRangeDto;
-	votingPeriod: DateRangeDto;
-	round: number;
-	status: ElectionStatusDto;
-	hasNominated?: boolean;
-	hasVoted?: boolean;
+  id: number;
+  academicYear: string;
+  degree?: DegreeDto;
+  curricularYear?: number;
+  candidacyPeriod?: DateRangeDto;
+  votingPeriod: DateRangeDto;
+  round: number;
+  status: ElectionStatusDto;
+  hasNominated?: boolean;
+  hasVoted?: boolean;
 }
 
 export interface DegreeElectionsDto {
-	degree: DegreeDto;
-	elections: ElectionDto[];
+  degree: DegreeDto;
+  elections: ElectionDto[];
 }
 
 export interface SearchPersonDto {
-	election: number;
-	query: string;
+  election: number;
+  query: string;
 }
 
 export interface SignedPersonSearchResultDto {
-	username: string;
-	displayName: string;
-	signature: string;
+  username: string;
+  displayName: string;
+  signature: string;
 }
 
 export interface BulkCreateElectionsDegreesDto {
-	degreeId: string;
-	curricularYear?: number;
+  degreeId: string;
+  curricularYear?: number;
 }
 
 export interface BulkCreateElectionsDto {
-	candidacyPeriod?: DateRangeDto;
-	votingPeriod: DateRangeDto;
-	round: number;
-	degrees: BulkCreateElectionsDegreesDto[];
+  candidacyPeriod?: DateRangeDto;
+  votingPeriod: DateRangeDto;
+  round: number;
+  degrees: BulkCreateElectionsDegreesDto[];
 }
 
 export interface VoteOptionDto {
-	username: string;
-	displayName: string;
+  username: string;
+  displayName: string;
 }
 
 export interface CastVoteDto {
-	username?: string;
+  username?: string;
 }
-
