@@ -30,9 +30,9 @@ function BulkCreateElectionsSubmitButton({
     () => ({
       candidacyPeriod:
         candidacyStart !== null && candidacyEnd !== null
-          ? { start: candidacyStart, end: candidacyEnd }
+          ? { start: candidacyStart.toISOString(), end: candidacyEnd.toISOString() }
           : undefined,
-      votingPeriod: { start: votingStart, end: votingEnd },
+      votingPeriod: { start: votingStart?.toISOString() || "", end: votingEnd?.toISOString() || "" },
       round,
 
       degrees: selectedYears.flatMap((degrees, year) =>

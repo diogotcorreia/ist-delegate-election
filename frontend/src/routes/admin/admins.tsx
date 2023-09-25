@@ -88,7 +88,7 @@ function Admins() {
                     i18nKey='admin.subpages.admin-management.since'
                     values={{ dateAdded: new Date(admin.dateAdded) }}
                     components={{
-                      tooltip: <Tooltip title={admin.dateAdded}>{admin.dateAdded}</Tooltip>,
+                      tooltip: <Tooltip title={admin.dateAdded}><span/></Tooltip>,
                       time: <time dateTime={admin.dateAdded} />,
                     }}
                   />
