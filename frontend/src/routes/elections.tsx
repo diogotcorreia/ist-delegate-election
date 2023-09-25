@@ -1,8 +1,10 @@
-import { Typography } from '@mui/material';
+import { ChecklistRounded } from '@mui/icons-material';
+import { Alert, Card, CardContent, Typography } from '@mui/material';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useRouteError } from 'react-router-dom';
 import { ElectionDto } from '../@types/api';
-import { getUserElections } from '../api';
+import { ApiError, getUserElections } from '../api';
 import ElectionCard from '../components/election/ElectionCard';
 
 export interface ElectionsData {
@@ -21,16 +23,45 @@ function Elections() {
 
   return (
     <>
-      <Typography>elections</Typography>
+      <Typography variant='h3'>{t('dashboard.elections.title')}</Typography>
       {elections.map((election) => (
         <ElectionCard key={election.id} election={election} />
       ))}
+      {elections.length === 0 && (
+        <Card sx={{ my: 2 }} variant='outlined'>
+          <CardContent
+            sx={{
+              p: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 1,
+            }}
+          >
+            <Typography variant='h1' component='p'>
+              <ChecklistRounded fontSize='inherit' />
+            </Typography>
+            <Typography variant='h5'>{t('dashboard.elections.empty')}</Typography>
+          </CardContent>
+        </Card>
+      )}
     </>
   );
 }
 
 export function ElectionsError() {
-  return <>TODO error</>;
+  const { t } = useTranslation();
+  const error = useRouteError();
+
+  const errorKey = useMemo(() => {
+    if (error instanceof ApiError) {
+      return error.getError().key;
+    }
+    return 'error.unknown';
+  }, [error]);
+
+  return <Alert severity='error'>{t(errorKey)}</Alert>;
 }
 
 export default Elections;

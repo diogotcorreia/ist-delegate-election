@@ -77,6 +77,12 @@
     "optional": "Optional",
     "skip": "Skip"
   },
+  "dashboard": {
+    "elections": {
+      "empty": "There are no elections at the moment",
+      "title": "Elections"
+    }
+  },
   "degree": {
     "count_one": "{{count}} degree",
     "count_other": "{{count}} degrees",
@@ -85,6 +91,8 @@
   "election": {
     "candidacy-period": {
       "title": "Candidacy Period",
+      "has-nominated": "You have already nominated a student for this election",
+      "nominate-button": "Nominate Student",
       "subtitle": "Candidacies from {{start, datetime}} to {{end, datetime}}"
     },
     "completed": "Election Has Ended",
@@ -102,7 +110,9 @@
     "validating-nominations": "Validating Candacies and Nominations",
     "voting-period": {
       "title": "Voting Period",
-      "subtitle": "Voting from {{start, datetime}} to {{end, datetime}}"
+      "has-voted": "You have already voted in this election",
+      "subtitle": "Voting from {{start, datetime}} to {{end, datetime}}",
+      "vote-button": "Vote"
     }
   },
   "error": {

@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Step,
@@ -10,6 +11,7 @@ import {
 } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ElectionDto, ElectionStatusDto } from '../../@types/api';
 import useLocalizedString from '../../hooks/useLocalizedString';
 
@@ -78,7 +80,7 @@ function ElectionCard({ election }: Props) {
         <Box p={2}>
           <Stepper activeStep={activeStep} orientation='vertical'>
             {election.candidacyPeriod && (
-              <Step>
+              <Step completed={election.hasNominated}>
                 <StepLabel
                   optional={
                     <Typography variant='caption'>
@@ -92,7 +94,19 @@ function ElectionCard({ election }: Props) {
                 >
                   {t('election.candidacy-period.title')}
                 </StepLabel>
-                <StepContent>nominate someone</StepContent>
+                <StepContent>
+                  {election.hasNominated ? (
+                    <Typography>{t('election.candidacy-period.has-nominated')}</Typography>
+                  ) : (
+                    <Button
+                      component={Link}
+                      to={`/elections/${election.id}/nominate`}
+                      variant='contained'
+                    >
+                      {t('election.candidacy-period.nominate-button')}
+                    </Button>
+                  )}
+                </StepContent>
               </Step>
             )}
             {election.status === ElectionStatusDto.Processing && (
@@ -100,7 +114,7 @@ function ElectionCard({ election }: Props) {
                 <StepLabel>{t('election.validating-nominations')}</StepLabel>
               </Step>
             )}
-            <Step>
+            <Step completed={election.hasVoted}>
               <StepLabel
                 optional={
                   <Typography variant='caption'>
@@ -114,7 +128,19 @@ function ElectionCard({ election }: Props) {
               >
                 {t('election.voting-period.title')}
               </StepLabel>
-              <StepContent>vote for someone</StepContent>
+              <StepContent>
+                {election.hasVoted ? (
+                  <Typography>{t('election.voting-period.has-voted')}</Typography>
+                ) : (
+                  <Button
+                    component={Link}
+                    to={`/elections/${election.id}/vote`}
+                    variant='contained'
+                  >
+                    {t('election.voting-period.nominate-button')}
+                  </Button>
+                )}
+              </StepContent>
             </Step>
             <Step>
               <StepLabel>{t('election.completed')}</StepLabel>
