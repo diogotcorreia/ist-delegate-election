@@ -83,6 +83,11 @@
     "selected-count": "{{count}} selected"
   },
   "election": {
+    "candidacy-period": {
+      "title": "Candidacy Period",
+      "subtitle": "Candidacies from {{start, datetime}} to {{end, datetime}}"
+    },
+    "completed": "Election Has Ended",
     "count_one": "{{count}} election",
     "count_other": "{{count}} elections",
     "curricular-year_ordinal_one": "{{count}}st Year",
@@ -93,7 +98,12 @@
     "round_ordinal_one": "{{count}}st Round",
     "round_ordinal_two": "{{count}}nd Round",
     "round_ordinal_few": "{{count}}rd Round",
-    "round_ordinal_other": "{{count}}th Round"
+    "round_ordinal_other": "{{count}}th Round",
+    "validating-nominations": "Validating Candacies and Nominations",
+    "voting-period": {
+      "title": "Voting Period",
+      "subtitle": "Voting from {{start, datetime}} to {{end, datetime}}"
+    }
   },
   "error": {
     "languagestring": {

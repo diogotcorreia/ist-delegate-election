@@ -84,11 +84,21 @@
     "selected-count_other": "{{count}} selecionados"
   },
   "election": {
+    "candidacy-period": {
+      "title": "Período de Candidaturas",
+      "subtitle": "Candidaturas de {{start, datetime}} até {{end, datetime}}"
+    },
+    "completed": "Fim da Eleição",
     "count_one": "{{count}} eleição",
     "count_other": "{{count}} eleições",
     "curricular-year": "{{count}}º Ano",
     "curricular-year-none": "Todo o Curso",
-    "round": "{{count}}ª Volta"
+    "round": "{{count}}ª Volta",
+    "validating-nominations": "Validação de Candidaturas e Nomeações",
+    "voting-period": {
+      "title": "Período de Votação",
+      "subtitle": "Votação de {{start, datetime}} até {{end, datetime}}"
+    }
   },
   "error": {
     "languagestring": {
