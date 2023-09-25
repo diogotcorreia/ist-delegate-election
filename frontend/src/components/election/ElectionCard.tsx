@@ -47,7 +47,7 @@ function ElectionCard({ election }: Props) {
       case ElectionStatusDto.Ended:
         return 3;
     }
-  }, [election.status]);
+  }, [election.status, election.candidacyPeriod]);
 
   return (
     <Card sx={{ my: 2 }}>
