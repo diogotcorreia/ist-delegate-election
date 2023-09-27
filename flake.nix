@@ -27,7 +27,6 @@
             sea-orm-cli
             typeshare
             nodejs
-            yarn
           ];
 
           shellHook = ''
