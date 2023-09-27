@@ -1,7 +1,4 @@
-{
-buildNpmPackage
-, nodejs
-}:
+{ buildNpmPackage, nodejs }:
 buildNpmPackage {
   pname = "ist-delegate-election-frontend";
   version = "1.0.0";

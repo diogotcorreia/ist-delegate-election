@@ -4,15 +4,15 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in
-      {
+      let pkgs = import nixpkgs { inherit system; };
+      in {
         packages = rec {
-          ist-delegate-election-frontend = pkgs.callPackage ./nix/pkg-frontend.nix {};
-          ist-delegate-election-backend = pkgs.callPackage ./nix/pkg-backend.nix {};
+          ist-delegate-election-frontend =
+            pkgs.callPackage ./nix/pkg-frontend.nix { };
+          ist-delegate-election-backend =
+            pkgs.callPackage ./nix/pkg-backend.nix { };
           default = ist-delegate-election-backend;
         };
 
@@ -34,6 +34,5 @@
             export RUST_LOG=debug
           '';
         };
-      }
-    );
+      });
 }
