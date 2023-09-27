@@ -12,7 +12,8 @@
       {
         packages = rec {
           ist-delegate-election-frontend = pkgs.callPackage ./nix/pkg-frontend.nix {};
-          default = ist-delegate-election-frontend;
+          ist-delegate-election-backend = pkgs.callPackage ./nix/pkg-backend.nix {};
+          default = ist-delegate-election-backend;
         };
 
         devShell = pkgs.mkShell {
