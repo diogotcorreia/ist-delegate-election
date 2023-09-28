@@ -8,11 +8,6 @@
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = import nixpkgs { inherit system; };
       in {
-        nixosModules = rec {
-          ist-delegate-election = import ./nix/module.nix;
-          default = ist-delegate-election;
-        };
-
         packages = rec {
           ist-delegate-election-frontend =
             pkgs.callPackage ./nix/pkg-frontend.nix { };
@@ -39,5 +34,10 @@
             export RUST_LOG=debug
           '';
         };
-      });
+      }) // {
+        nixosModules = rec {
+          ist-delegate-election = import ./nix/module.nix;
+          default = ist-delegate-election;
+        };
+      };
 }
