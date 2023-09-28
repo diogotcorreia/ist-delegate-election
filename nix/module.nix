@@ -108,6 +108,7 @@ in {
       wantedBy = [ "multi-user.target" ];
 
       environment = {
+        RUST_LOG = "info,sqlx=warn";
         PORT = toString cfg.port;
         STATIC_DIR = cfg.frontendPackage;
         FENIX_REDIRECT_URL = "${cfg.fqdn}/login-callback";
