@@ -4,8 +4,8 @@ let
   inherit (lib) types mkEnableOption mkOption mkIf literalExpression;
   cfg = config.services.ist-delegate-election;
 
-  backendPkg = pkgs.callPackage ./pkg-backend.nix {};
-  frontendPkg = pkgs.callPackage ./pkg-frontend.nix {};
+  backendPkg = pkgs.callPackage ./pkg-backend.nix { };
+  frontendPkg = pkgs.callPackage ./pkg-frontend.nix { };
 in {
   options = {
     services.ist-delegate-election = {
@@ -131,7 +131,7 @@ in {
     };
 
     users.groups = mkIf (cfg.group == "ist-delegate-election") {
-      ist-delegate-election = {};
+      ist-delegate-election = { };
     };
   };
 }
