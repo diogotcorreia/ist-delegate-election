@@ -51,7 +51,8 @@ in {
       };
 
       frontendPackage = mkOption {
-        type = types.nullOr (types.oneOf [ types.str types.path types.package ]);
+        type =
+          types.nullOr (types.oneOf [ types.str types.path types.package ]);
         default = frontendPkg;
         defaultText = literalExpression "pkgs.ist-delegate-election-frontend";
         description = lib.mdDoc ''
@@ -120,7 +121,7 @@ in {
         Group = cfg.group;
         ExecStart = "${cfg.package}/bin/ist-delegate-election";
         Restart = "on-failure";
-        EnvironmentFile = cfg.settingsFile;
+        EnvironmentFile = [ cfg.settingsFile ];
 
         # systemd hardening
         NoNewPrivileges = true;
