@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  inherit (lib) types mkEnableOption mkOption literalExpression;
+  inherit (lib) types mkEnableOption mkOption mkIf literalExpression;
   cfg = config.services.ist-delegate-election;
 in {
   options = {
