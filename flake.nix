@@ -6,10 +6,16 @@
 
   outputs = { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in
-      {
+      let pkgs = import nixpkgs { inherit system; };
+      in {
+        packages = rec {
+          ist-delegate-election-frontend =
+            pkgs.callPackage ./nix/pkg-frontend.nix { };
+          ist-delegate-election-backend =
+            pkgs.callPackage ./nix/pkg-backend.nix { };
+          default = ist-delegate-election-backend;
+        };
+
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             cargo
@@ -28,6 +34,12 @@
             export RUST_LOG=debug
           '';
         };
-      }
-    );
+      }) // {
+        nixosModules = rec {
+          ist-delegate-election = import ./nix/module.nix;
+          default = ist-delegate-election;
+        };
+
+        overlay.default = import ./nix/overlay.nix;
+      };
 }
