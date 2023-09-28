@@ -3,6 +3,9 @@
 let
   inherit (lib) types mkEnableOption mkOption mkIf literalExpression;
   cfg = config.services.ist-delegate-election;
+
+  backendPkg = pkgs.callPackage ./pkg-backend.nix {};
+  frontendPkg = pkgs.callPackage ./pkg-frontend.nix {};
 in {
   options = {
     services.ist-delegate-election = {
@@ -40,7 +43,7 @@ in {
 
       package = mkOption {
         type = types.package;
-        default = pkgs.ist-delegate-election-backend;
+        default = backendPkg;
         defaultText = literalExpression "pkgs.ist-delegate-election-backend";
         description = lib.mdDoc ''
           IST Delegate Election (backend) package to use.
@@ -49,7 +52,7 @@ in {
 
       frontendPackage = mkOption {
         type = types.nullOr types.oneOf [ types.str types.path types.package ];
-        default = pkgs.ist-delegate-election-frontend;
+        default = frontendPkg;
         defaultText = literalExpression "pkgs.ist-delegate-election-frontend";
         description = lib.mdDoc ''
           IST Delegate Election (frontend) package to use.
