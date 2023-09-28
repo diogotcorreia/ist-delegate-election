@@ -122,13 +122,13 @@ in {
 
     users.users = mkIf (cfg.user == "ist-delegate-election") {
       ist-delegate-election = {
+        isSystemUser = true;
         group = cfg.group;
-        uid = config.ids.uids.ist-delegate-election;
       };
     };
 
     users.groups = mkIf (cfg.group == "ist-delegate-election") {
-      ist-delegate-election.gid = config.ids.gids.ist-delegate-election;
+      ist-delegate-election = {};
     };
   };
 }
