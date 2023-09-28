@@ -36,6 +36,14 @@ async fn main() {
     // enable console logging
     tracing_subscriber::fmt::init();
 
+    let port: u16 = std::env::var("PORT")
+        .map(|port_str| {
+            port_str
+                .parse()
+                .expect("port must be a number between 0 and 65525")
+        })
+        .unwrap_or(5000);
+
     let fenix_service = FenixService::new().expect("Failed to initialize FenixService");
 
     // TODO store session in database
@@ -113,7 +121,7 @@ async fn main() {
         )
         .with_state(state);
 
-    let sock_addr = SocketAddr::from((IpAddr::V6(Ipv6Addr::LOCALHOST), 5000));
+    let sock_addr = SocketAddr::from((IpAddr::V6(Ipv6Addr::LOCALHOST), port));
 
     info!("listening on http://{}", sock_addr);
 
