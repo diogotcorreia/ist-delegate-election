@@ -12,7 +12,7 @@ in {
       enable = mkEnableOption (lib.mdDoc "IST Delegate Election");
 
       fqdn = mkOption {
-        type = types.string;
+        type = types.str;
         default = "http://localhost:${cfg.port}";
         defaultText = literalExpression
           ''"http://localhost:''${services.ist-delegate-election.port}"'';
@@ -23,7 +23,7 @@ in {
       };
 
       port = mkOption {
-        type = types.integer;
+        type = types.port;
         default = 5000;
         description = lib.mdDoc "Port where IST Delegate Election listens.";
       };
