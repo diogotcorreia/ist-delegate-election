@@ -121,6 +121,43 @@ in {
         ExecStart = "${cfg.package}/bin/ist-delegate-election";
         Restart = "on-failure";
         EnvironmentFile = cfg.settingsFile;
+
+        # systemd hardening
+        NoNewPrivileges = true;
+        SystemCallArchitectures = "native";
+        RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" ];
+        RestrictNamespaces = !config.boot.isContainer;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        ProtectControlGroups = !config.boot.isContainer;
+        ProtectHostname = true;
+        ProtectKernelLogs = !config.boot.isContainer;
+        ProtectKernelModules = !config.boot.isContainer;
+        ProtectKernelTunables = !config.boot.isContainer;
+        LockPersonality = true;
+        PrivateTmp = !config.boot.isContainer;
+        PrivateDevices = true;
+        PrivateUsers = true;
+        RemoveIPC = true;
+
+        SystemCallFilter = [
+          "~@clock"
+          "~@aio"
+          "~@chown"
+          "~@cpu-emulation"
+          "~@debug"
+          "~@keyring"
+          "~@memlock"
+          "~@module"
+          "~@mount"
+          "~@obsolete"
+          "~@privileged"
+          "~@raw-io"
+          "~@reboot"
+          "~@setuid"
+          "~@swap"
+        ];
+        SystemCallErrorNumber = "EPERM";
       };
     };
 
