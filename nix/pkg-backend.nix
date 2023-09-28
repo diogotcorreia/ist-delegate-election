@@ -1,6 +1,6 @@
 { rustPlatform, openssl, pkg-config }:
 rustPlatform.buildRustPackage {
-  pname = "ist-delegate-election-frontend";
+  pname = "ist-delegate-election-backend";
   version = "1.0.0";
 
   nativeBuildInputs = [ pkg-config ];
