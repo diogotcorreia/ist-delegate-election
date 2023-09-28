@@ -1,15 +1,19 @@
 use crate::services::fenix::FenixService;
 use std::env;
 use std::net::{IpAddr, Ipv6Addr, SocketAddr};
+use std::path::PathBuf;
 
 use axum::extract::FromRef;
+
 use axum::routing::{delete, get, post};
 use axum::Router;
 use axum_sessions::SessionLayer;
 use migration::{Migrator, MigratorTrait};
 use sea_orm::{Database, DatabaseConnection};
+
 use tower::ServiceBuilder;
 
+use tower_http::services::{ServeDir, ServeFile};
 use tower_http::trace::TraceLayer;
 use tracing::{info, warn};
 
@@ -43,6 +47,7 @@ async fn main() {
                 .expect("port must be a number between 0 and 65525")
         })
         .unwrap_or(5000);
+    let static_dir = std::env::var("STATIC_DIR").ok();
 
     let fenix_service = FenixService::new().expect("Failed to initialize FenixService");
 
@@ -112,7 +117,7 @@ async fn main() {
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));
 
-    let app = Router::new()
+    let mut app = Router::new()
         .nest("/api", api_routes)
         .layer(
             ServiceBuilder::new()
@@ -120,6 +125,13 @@ async fn main() {
                 .layer(TraceLayer::new_for_http()),
         )
         .with_state(state);
+
+    if let Some(static_dir) = &static_dir {
+        app = app.fallback_service(
+            ServeDir::new(static_dir)
+                .fallback(ServeFile::new(PathBuf::from(static_dir).join("index.html"))),
+        );
+    }
 
     let sock_addr = SocketAddr::from((IpAddr::V6(Ipv6Addr::LOCALHOST), port));
 
