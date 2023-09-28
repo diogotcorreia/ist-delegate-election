@@ -111,7 +111,7 @@ in {
         PORT = toString cfg.port;
         STATIC_DIR = cfg.frontendPackage;
         FENIX_REDIRECT_URL = "${cfg.fqdn}/login-callback";
-      } // settings;
+      } // cfg.settings;
 
       serviceConfig = {
         Type = "simple";
