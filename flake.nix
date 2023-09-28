@@ -39,5 +39,7 @@
           ist-delegate-election = import ./nix/module.nix;
           default = ist-delegate-election;
         };
+
+        overlay.default = import ./nix/overlay.nix;
       };
 }
