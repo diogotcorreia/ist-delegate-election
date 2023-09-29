@@ -103,11 +103,18 @@
     "curricular-year_ordinal_few": "{{count}}rd Year",
     "curricular-year_ordinal_other": "{{count}}th Year",
     "curricular-year-none": "Degree-wide",
+    "nominate": {
+      "others": "I want to nominate another student",
+      "others-info": "Nominations are subject to approval by the Pedagogical Council. It is only possible to nominate other students participating in this election.",
+      "self": "I want to apply",
+      "submit": "Submit nomination",
+      "success": "Nomination submitted successfully"
+    },
     "round_ordinal_one": "{{count}}st Round",
     "round_ordinal_two": "{{count}}nd Round",
     "round_ordinal_few": "{{count}}rd Round",
     "round_ordinal_other": "{{count}}th Round",
-    "validating-nominations": "Validating Candacies and Nominations",
+    "validating-nominations": "Validating Candidacies and Nominations",
     "voting-period": {
       "title": "Voting Period",
       "has-voted": "You have already voted in this election",
@@ -126,5 +133,14 @@
       "button": "Retry"
     },
     "loading": "Hang tight... We're logging you in"
+  },
+  "navigation": {
+    "back-home": "Back to Election List"
+  },
+  "search-person-input": {
+    "label": "Student to Nominate",
+    "loading": "Loading results...",
+    "no-results": "No results have been found",
+    "placeholder": "Type a student's name"
   }
 }

@@ -27,27 +27,12 @@ const DATE_FORMAT = {
 
 interface Props {
   election: ElectionDto;
+  children?: React.ReactNode;
 }
 
-function ElectionCard({ election }: Props) {
+function ElectionCard({ election, children }: Props) {
   const { t } = useTranslation();
   const translateLs = useLocalizedString();
-
-  const activeStep = useMemo(() => {
-    switch (String(election.status)) {
-      case 'NOT_STARTED':
-      default:
-        return -1;
-      case ElectionStatusDto.Candidacy:
-        return 0;
-      case ElectionStatusDto.Processing:
-        return 1;
-      case ElectionStatusDto.Voting:
-        return election.candidacyPeriod ? 1 : 0;
-      case ElectionStatusDto.Ended:
-        return 3;
-    }
-  }, [election.status, election.candidacyPeriod]);
 
   return (
     <Card sx={{ my: 2 }}>
@@ -77,78 +62,102 @@ function ElectionCard({ election }: Props) {
           </Box>
         </Box>
 
-        <Box p={2}>
-          <Stepper activeStep={activeStep} orientation='vertical'>
-            {election.candidacyPeriod && (
-              <Step completed={election.hasNominated}>
-                <StepLabel
-                  optional={
-                    <Typography variant='caption'>
-                      {t('election.candidacy-period.subtitle', {
-                        start: new Date(election.candidacyPeriod.start),
-                        end: new Date(election.candidacyPeriod.end),
-                        formatParams: { start: DATE_FORMAT, end: DATE_FORMAT },
-                      })}
-                    </Typography>
-                  }
-                >
-                  {t('election.candidacy-period.title')}
-                </StepLabel>
-                <StepContent>
-                  {election.hasNominated ? (
-                    <Typography>{t('election.candidacy-period.has-nominated')}</Typography>
-                  ) : (
-                    <Button
-                      component={Link}
-                      to={`/elections/${election.id}/nominate`}
-                      variant='contained'
-                    >
-                      {t('election.candidacy-period.nominate-button')}
-                    </Button>
-                  )}
-                </StepContent>
-              </Step>
-            )}
-            {election.status === ElectionStatusDto.Processing && (
-              <Step>
-                <StepLabel>{t('election.validating-nominations')}</StepLabel>
-              </Step>
-            )}
-            <Step completed={election.hasVoted}>
-              <StepLabel
-                optional={
-                  <Typography variant='caption'>
-                    {t('election.voting-period.subtitle', {
-                      start: new Date(election.votingPeriod.start),
-                      end: new Date(election.votingPeriod.end),
-                      formatParams: { start: DATE_FORMAT, end: DATE_FORMAT },
-                    })}
-                  </Typography>
-                }
-              >
-                {t('election.voting-period.title')}
-              </StepLabel>
-              <StepContent>
-                {election.hasVoted ? (
-                  <Typography>{t('election.voting-period.has-voted')}</Typography>
-                ) : (
-                  <Button
-                    component={Link}
-                    to={`/elections/${election.id}/vote`}
-                    variant='contained'
-                  >
-                    {t('election.voting-period.nominate-button')}
-                  </Button>
-                )}
-              </StepContent>
-            </Step>
-            <Step>
-              <StepLabel>{t('election.completed')}</StepLabel>
-            </Step>
-          </Stepper>
-        </Box>
+        {children}
       </CardContent>
     </Card>
+  );
+}
+
+interface SummaryProps {
+  election: ElectionDto;
+}
+
+export function ElectionSummary({ election }: SummaryProps) {
+  const { t } = useTranslation();
+
+  const activeStep = useMemo(() => {
+    switch (String(election.status)) {
+      case 'NOT_STARTED':
+      default:
+        return -1;
+      case ElectionStatusDto.Candidacy:
+        return 0;
+      case ElectionStatusDto.Processing:
+        return 1;
+      case ElectionStatusDto.Voting:
+        return election.candidacyPeriod ? 1 : 0;
+      case ElectionStatusDto.Ended:
+        return 3;
+    }
+  }, [election.status, election.candidacyPeriod]);
+
+  return (
+    <Box p={2}>
+      <Stepper activeStep={activeStep} orientation='vertical'>
+        {election.candidacyPeriod && (
+          <Step completed={election.hasNominated}>
+            <StepLabel
+              optional={
+                <Typography variant='caption'>
+                  {t('election.candidacy-period.subtitle', {
+                    start: new Date(election.candidacyPeriod.start),
+                    end: new Date(election.candidacyPeriod.end),
+                    formatParams: { start: DATE_FORMAT, end: DATE_FORMAT },
+                  })}
+                </Typography>
+              }
+            >
+              {t('election.candidacy-period.title')}
+            </StepLabel>
+            <StepContent>
+              {election.hasNominated ? (
+                <Typography>{t('election.candidacy-period.has-nominated')}</Typography>
+              ) : (
+                <Button
+                  component={Link}
+                  to={`/election/${election.id}/nominate`}
+                  variant='contained'
+                >
+                  {t('election.candidacy-period.nominate-button')}
+                </Button>
+              )}
+            </StepContent>
+          </Step>
+        )}
+        {election.status === ElectionStatusDto.Processing && (
+          <Step>
+            <StepLabel>{t('election.validating-nominations')}</StepLabel>
+          </Step>
+        )}
+        <Step completed={election.hasVoted}>
+          <StepLabel
+            optional={
+              <Typography variant='caption'>
+                {t('election.voting-period.subtitle', {
+                  start: new Date(election.votingPeriod.start),
+                  end: new Date(election.votingPeriod.end),
+                  formatParams: { start: DATE_FORMAT, end: DATE_FORMAT },
+                })}
+              </Typography>
+            }
+          >
+            {t('election.voting-period.title')}
+          </StepLabel>
+          <StepContent>
+            {election.hasVoted ? (
+              <Typography>{t('election.voting-period.has-voted')}</Typography>
+            ) : (
+              <Button component={Link} to={`/election/${election.id}/vote`} variant='contained'>
+                {t('election.voting-period.nominate-button')}
+              </Button>
+            )}
+          </StepContent>
+        </Step>
+        <Step>
+          <StepLabel>{t('election.completed')}</StepLabel>
+        </Step>
+      </Stepper>
+    </Box>
   );
 }
 

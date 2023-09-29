@@ -28,6 +28,14 @@ import AdminElections, {
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import UserElections, { ElectionsError, loader as userElectionsLoader } from './routes/elections';
+import UserSingleElectionRoot, {
+  ElectionCardPage,
+  loader as userSingleElectionLoader,
+} from './routes/election/root';
+import ElectionNominate, {
+  action as electionNominateAction,
+  ElectionNominateSuccess,
+} from './routes/election/nominate';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -55,6 +63,17 @@ const router = createBrowserRouter([
         loader: userElectionsLoader,
         element: <UserElections />,
         errorElement: <ElectionsError />,
+      },
+      {
+        id: 'user-single-election',
+        path: 'election/:electionId',
+        loader: userSingleElectionLoader,
+        element: <UserSingleElectionRoot />,
+        children: [
+          { index: true, element: <ElectionCardPage /> },
+          { path: 'nominate', element: <ElectionNominate />, action: electionNominateAction },
+          { path: 'nominate/success', element: <ElectionNominateSuccess /> },
+        ],
       },
       { path: 'admin', element: <AdminRoot /> },
       {

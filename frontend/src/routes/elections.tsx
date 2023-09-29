@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useLoaderData, useRouteError } from 'react-router-dom';
 import { ElectionDto } from '../@types/api';
 import { ApiError, getUserElections } from '../api';
-import ElectionCard from '../components/election/ElectionCard';
+import ElectionCard, { ElectionSummary } from '../components/election/ElectionCard';
 
 export interface ElectionsData {
   elections: ElectionDto[];
@@ -25,7 +25,9 @@ function Elections() {
     <>
       <Typography variant='h3'>{t('dashboard.elections.title')}</Typography>
       {elections.map((election) => (
-        <ElectionCard key={election.id} election={election} />
+        <ElectionCard key={election.id} election={election}>
+          <ElectionSummary election={election} />
+        </ElectionCard>
       ))}
       {elections.length === 0 && (
         <Card sx={{ my: 2 }} variant='outlined'>

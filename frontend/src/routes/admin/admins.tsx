@@ -1,6 +1,5 @@
 import { AddRounded } from '@mui/icons-material';
 import {
-  Avatar,
   Box,
   Button,
   Card,
@@ -32,6 +31,7 @@ import {
 } from 'react-router-dom';
 import { AdminDto } from '../../@types/api';
 import { addAdmin, getAdmins, removeAdmin } from '../../api';
+import FenixAvatar from '../../components/fenix/FenixAvatar';
 import { RootData } from '../root';
 
 interface AdminsData {
@@ -45,7 +45,7 @@ export async function loader(): Promise<AdminsData> {
 }
 
 function Admins() {
-  const { appConfig, auth } = useRouteLoaderData('root') as RootData;
+  const { auth } = useRouteLoaderData('root') as RootData;
   const { admins } = useLoaderData() as AdminsData;
   const { t } = useTranslation();
 
@@ -66,13 +66,7 @@ function Admins() {
                   alignItems: 'center',
                 }}
               >
-                <Avatar
-                  alt={admin.username}
-                  src={`${appConfig.fenix.baseUrl}/user/photo/${encodeURIComponent(
-                    admin.username
-                  )}?s=128`}
-                  sx={{ width: 128, height: 128 }}
-                />
+                <FenixAvatar username={admin.username} size={128} />
                 <Typography variant='h6' component='span' sx={{ my: 2 }}>
                   {admin.username}
                   {admin.username === auth?.user.username && (
