@@ -115,7 +115,7 @@ export function ElectionSummary({ election }: SummaryProps) {
               ) : (
                 <Button
                   component={Link}
-                  to={`/elections/${election.id}/nominate`}
+                  to={`/election/${election.id}/nominate`}
                   variant='contained'
                 >
                   {t('election.candidacy-period.nominate-button')}
@@ -147,7 +147,7 @@ export function ElectionSummary({ election }: SummaryProps) {
             {election.hasVoted ? (
               <Typography>{t('election.voting-period.has-voted')}</Typography>
             ) : (
-              <Button component={Link} to={`/elections/${election.id}/vote`} variant='contained'>
+              <Button component={Link} to={`/election/${election.id}/vote`} variant='contained'>
                 {t('election.voting-period.nominate-button')}
               </Button>
             )}

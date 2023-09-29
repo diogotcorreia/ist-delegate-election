@@ -107,7 +107,8 @@
       "others": "I want to nominate another student",
       "others-info": "Nominations are subject to approval by the Pedagogical Council. It is only possible to nominate other students participating in this election.",
       "self": "I want to apply",
-      "submit": "Submit nomination"
+      "submit": "Submit nomination",
+      "success": "Nomination submitted successfully"
     },
     "round_ordinal_one": "{{count}}st Round",
     "round_ordinal_two": "{{count}}nd Round",

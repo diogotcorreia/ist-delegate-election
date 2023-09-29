@@ -103,3 +103,18 @@ export function getElection(electionId: number): Promise<ElectionDto> {
 export function searchUser(payload: SearchPersonDto): Promise<SignedPersonSearchResultDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/search-user`, buildJsonBody('POST', payload)));
 }
+
+export function electionSelfNominate(electionId: number): Promise<void> {
+  return wrapFetch(
+    fetch(`${BASE_URL}/election/${electionId}/self-nominate`, buildJsonBody('POST'))
+  );
+}
+
+export function electionNominate(
+  electionId: number,
+  payload: SignedPersonSearchResultDto
+): Promise<SignedPersonSearchResultDto[]> {
+  return wrapFetch(
+    fetch(`${BASE_URL}/election/${electionId}/nominate`, buildJsonBody('POST', payload))
+  );
+}

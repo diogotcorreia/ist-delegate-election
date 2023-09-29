@@ -105,7 +105,8 @@
       "others": "Quero nomear outro estudante",
       "others-info": "As nomeações estão sujeitas a aprovação posterior por parte do Conselho Pedagógico. Apenas é possível nomear outros estudantes que participem nesta eleição.",
       "self": "Quero candidatar-me",
-      "submit": "Efetuar nomeação"
+      "submit": "Efetuar nomeação",
+      "success": "Nomeação efetuada com sucesso"
     },
     "round": "{{count}}ª Volta",
     "validating-nominations": "Validação de Candidaturas e Nomeações",

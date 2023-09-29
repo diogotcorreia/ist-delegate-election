@@ -32,7 +32,10 @@ import UserSingleElectionRoot, {
   ElectionCardPage,
   loader as userSingleElectionLoader,
 } from './routes/election/root';
-import ElectionNominate from './routes/election/nominate';
+import ElectionNominate, {
+  action as electionNominateAction,
+  ElectionNominateSuccess,
+} from './routes/election/nominate';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -68,7 +71,8 @@ const router = createBrowserRouter([
         element: <UserSingleElectionRoot />,
         children: [
           { index: true, element: <ElectionCardPage /> },
-          { path: 'nominate', element: <ElectionNominate /> },
+          { path: 'nominate', element: <ElectionNominate />, action: electionNominateAction },
+          { path: 'nominate/success', element: <ElectionNominateSuccess /> },
         ],
       },
       { path: 'admin', element: <AdminRoot /> },
