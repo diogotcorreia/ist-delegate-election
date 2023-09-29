@@ -121,5 +121,8 @@
       "button": "Tentar Novamente"
     },
     "loading": "Aguarde enquanto efetuamos o login"
+  },
+  "navigation": {
+    "back-home": "Voltar à Lista de Eleições"
   }
 }

@@ -93,3 +93,7 @@ export function bulkCreateElections(payload: BulkCreateElectionsDto): Promise<vo
 export function getUserElections(): Promise<ElectionDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/elections/user`));
 }
+
+export function getElection(electionId: number): Promise<ElectionDto> {
+  return wrapFetch(fetch(`${BASE_URL}/election/${electionId}`));
+}

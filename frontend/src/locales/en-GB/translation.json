@@ -126,5 +126,8 @@
       "button": "Retry"
     },
     "loading": "Hang tight... We're logging you in"
+  },
+  "navigation": {
+    "back-home": "Back to Election List"
   }
 }
