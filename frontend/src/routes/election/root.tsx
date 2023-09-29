@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, LoaderFunctionArgs, Outlet, useRouteLoaderData } from 'react-router-dom';
 import { ElectionDto } from '../../@types/api';
 import { getElection } from '../../api';
-import ElectionCard from '../../components/election/ElectionCard';
+import ElectionCard, { ElectionSummary } from '../../components/election/ElectionCard';
 
 export interface RootData {
   election: ElectionDto;
@@ -34,7 +34,11 @@ function UserSingleElectionRoot() {
 export function ElectionCardPage() {
   const { election } = useRouteLoaderData('user-single-election') as RootData;
 
-  return <ElectionCard election={election} />;
+  return (
+    <ElectionCard election={election}>
+      <ElectionSummary election={election} />
+    </ElectionCard>
+  );
 }
 
 export default UserSingleElectionRoot;

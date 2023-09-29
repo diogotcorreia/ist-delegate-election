@@ -101,6 +101,12 @@
     "count_other": "{{count}} eleições",
     "curricular-year": "{{count}}º Ano",
     "curricular-year-none": "Todo o Curso",
+    "nominate": {
+      "others": "Quero nomear outro estudante",
+      "others-info": "As nomeações estão sujeitas a aprovação posterior por parte do Conselho Pedagógico. Apenas é possível nomear outros estudantes que participem nesta eleição.",
+      "self": "Quero candidatar-me",
+      "submit": "Efetuar nomeação"
+    },
     "round": "{{count}}ª Volta",
     "validating-nominations": "Validação de Candidaturas e Nomeações",
     "voting-period": {
@@ -124,5 +130,11 @@
   },
   "navigation": {
     "back-home": "Voltar à Lista de Eleições"
+  },
+  "search-person-input": {
+    "label": "Estudante a Nomear",
+    "loading": "A carregar resultados...",
+    "no-results": "Não foram encontrados resultados",
+    "placeholder": "Procurar pelo nome do estudante"
   }
 }

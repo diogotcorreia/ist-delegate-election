@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useLoaderData, useNavigate } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
+import FenixAvatar from '../components/fenix/FenixAvatar';
 
 export interface RootData {
   appConfig: AppConfigDto;
@@ -53,12 +54,7 @@ function Root() {
         <Typography sx={{ mr: 2 }} variant='h6' component='span'>
           {auth?.user.displayName}
         </Typography>
-        <Avatar
-          alt={auth?.user.username}
-          src={`${appConfig.fenix.baseUrl}/user/photo/${encodeURIComponent(
-            auth?.user.username ?? ''
-          )}?s=64`}
-        />
+        <FenixAvatar username={auth?.user.username || ''} size={40} />
       </Box>
       <Outlet />
     </Container>

@@ -1,68 +1,64 @@
-import { Avatar, Box, Button, Container, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { PersonRounded, PersonSearchRounded } from '@mui/icons-material';
+import { Alert, Button, CardActions, Collapse } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useLoaderData, useNavigate } from 'react-router-dom';
-import { AppConfigDto, AuthDto } from '../../@types/api';
-import { getAppConfig, getWhoAmI, setupFirstAdmin } from '../../api';
+import { useRouteLoaderData } from 'react-router-dom';
+import { SignedPersonSearchResultDto } from '../../@types/api';
+import ElectionCard from '../../components/election/ElectionCard';
+import RadioCard, { RadioCardGroup } from '../../components/forms/RadioCard';
+import SearchPersonInput from '../../components/forms/SearchPersonInput';
+import { RootData } from './root';
 
-export interface RootData {
-  appConfig: AppConfigDto;
-  auth?: AuthDto;
-}
-
-export async function loader(): Promise<RootData> {
-  const appConfig = await getAppConfig();
-  const auth = await getWhoAmI().catch(() => undefined);
-
-  return { appConfig, auth };
-}
-
-function Root() {
-  const navigate = useNavigate();
-  const { appConfig, auth } = useLoaderData() as RootData;
+function ElectionNominate() {
+  const { election } = useRouteLoaderData('user-single-election') as RootData;
   const { t } = useTranslation();
 
-  // redirect logged-out users to SSO
-  useEffect(() => {
-    if (!auth) {
-      const { baseUrl, clientId, redirectUrl } = appConfig.fenix;
-      window.location.href = `${baseUrl}/oauth/userdialog?client_id=${encodeURIComponent(
-        clientId
-      )}&redirect_uri=${encodeURIComponent(redirectUrl)}`;
-    }
-  }, [auth, appConfig.fenix]);
-
-  // create first admin user
-  useEffect(() => {
-    if (auth && !appConfig.isSetup) {
-      setupFirstAdmin()
-        .then(() => navigate('/'))
-        .catch(console.error); // ignore errors
-    }
-  }, [auth, appConfig.isSetup, navigate]);
+  const [nominateAction, setNominateAction] = useState<string | null>(null);
+  const [selectedPerson, setSelectedPerson] = useState<SignedPersonSearchResultDto | null>(null);
 
   return (
-    <Container>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', my: 4 }}>
-        {auth?.isAdmin && (
-          <>
-            <Button>{t('admin.page.title')}</Button>
-            <Box sx={{ flexGrow: 1 }} />
-          </>
-        )}
-        <Typography sx={{ mr: 2 }} variant='h6' component='span'>
-          {auth?.user.displayName}
-        </Typography>
-        <Avatar
-          alt={auth?.user.username}
-          src={`${appConfig.fenix.baseUrl}/user/photo/${encodeURIComponent(
-            auth?.user.username ?? ''
-          )}?s=64`}
+    <ElectionCard election={election}>
+      <RadioCardGroup
+        exclusive
+        value={nominateAction}
+        onChange={(_event, value) => setNominateAction(value)}
+        sx={{ my: 3 }}
+      >
+        <RadioCard
+          value='self'
+          icon={<PersonRounded fontSize='inherit' />}
+          text={t('election.nominate.self')}
         />
-      </Box>
-      <Outlet />
-    </Container>
+        <RadioCard
+          value='others'
+          icon={<PersonSearchRounded fontSize='inherit' />}
+          text={t('election.nominate.others')}
+        />
+      </RadioCardGroup>
+
+      <Collapse in={nominateAction === 'others'} sx={{ px: 1, my: 4 }}>
+        <Alert severity='info' sx={{ mb: 2 }}>
+          {t('election.nominate.others-info')}
+        </Alert>
+        <SearchPersonInput
+          electionId={election.id}
+          value={selectedPerson}
+          setValue={setSelectedPerson}
+        />
+      </Collapse>
+
+      <CardActions sx={{ flexDirection: 'row-reverse' }}>
+        <Button
+          disabled={
+            !(nominateAction === 'self' || (nominateAction === 'others' && selectedPerson !== null))
+          }
+          variant='contained'
+        >
+          {t('election.nominate.submit')}
+        </Button>
+      </CardActions>
+    </ElectionCard>
   );
 }
 
-export default Root;
+export default ElectionNominate;

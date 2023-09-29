@@ -8,6 +8,8 @@ import {
   DegreeElectionsDto,
   ElectionDto,
   LoginDto,
+  SearchPersonDto,
+  SignedPersonSearchResultDto,
 } from './@types/api';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '/api';
@@ -96,4 +98,8 @@ export function getUserElections(): Promise<ElectionDto[]> {
 
 export function getElection(electionId: number): Promise<ElectionDto> {
   return wrapFetch(fetch(`${BASE_URL}/election/${electionId}`));
+}
+
+export function searchUser(payload: SearchPersonDto): Promise<SignedPersonSearchResultDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/search-user`, buildJsonBody('POST', payload)));
 }
