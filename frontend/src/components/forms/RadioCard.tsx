@@ -25,6 +25,7 @@ const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
   flexDirection: 'column',
   textTransform: 'none',
   margin: 1,
+  boxSizing: 'content-box',
   '&.Mui-selected': {
     borderColor: theme.palette.primary.main,
     borderWidth: 2,

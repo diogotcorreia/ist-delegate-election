@@ -5,11 +5,13 @@ import {
   AppErrorDto,
   AuthDto,
   BulkCreateElectionsDto,
+  CastVoteDto,
   DegreeElectionsDto,
   ElectionDto,
   LoginDto,
   SearchPersonDto,
   SignedPersonSearchResultDto,
+  VoteOptionDto,
 } from './@types/api';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '/api';
@@ -113,8 +115,18 @@ export function electionSelfNominate(electionId: number): Promise<void> {
 export function electionNominate(
   electionId: number,
   payload: SignedPersonSearchResultDto
-): Promise<SignedPersonSearchResultDto[]> {
+): Promise<void> {
   return wrapFetch(
     fetch(`${BASE_URL}/election/${electionId}/nominate`, buildJsonBody('POST', payload))
+  );
+}
+
+export function getElectionVoteOptions(electionId: number): Promise<VoteOptionDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/election/${electionId}/vote-options`));
+}
+
+export function electionVote(electionId: number, payload: CastVoteDto): Promise<void> {
+  return wrapFetch(
+    fetch(`${BASE_URL}/election/${electionId}/vote`, buildJsonBody('POST', payload))
   );
 }
