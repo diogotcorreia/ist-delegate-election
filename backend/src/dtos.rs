@@ -57,6 +57,7 @@ pub struct AuthDto {
 #[serde(rename_all = "camelCase")]
 pub struct UserDto {
     pub username: String,
+    pub name: String,
     pub display_name: String,
     pub degree_entries: Vec<DegreeEntryDto>,
 }

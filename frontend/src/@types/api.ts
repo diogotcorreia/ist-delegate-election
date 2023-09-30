@@ -30,6 +30,7 @@ export interface DegreeEntryDto {
 
 export interface UserDto {
   username: string;
+  name: string;
   displayName: string;
   degreeEntries: DegreeEntryDto[];
 }

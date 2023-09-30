@@ -225,7 +225,7 @@ pub async fn self_nominate(
     let nomination = nomination::ActiveModel {
         election: ActiveValue::set(election_id),
         username: ActiveValue::set(user.username),
-        display_name: ActiveValue::set(user.display_name),
+        display_name: ActiveValue::set(user.name),
         valid: ActiveValue::set(true),
     };
 

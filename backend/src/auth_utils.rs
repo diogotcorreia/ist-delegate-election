@@ -67,6 +67,7 @@ mod tests {
     fn get_user_with_degrees(degrees: &[(&str, u8)]) -> UserDto {
         UserDto {
             username: "demo".to_string(),
+            name: "Demo".to_string(),
             display_name: "Demo".to_string(),
             degree_entries: degrees
                 .iter()

@@ -85,6 +85,7 @@ impl FenixService {
         Ok((
             UserDto {
                 username: person.username,
+                name: person.name,
                 display_name: person.display_name,
                 degree_entries,
             },
@@ -257,9 +258,10 @@ pub struct OAuthResponse {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 struct PersonResponse {
     username: String,
-    #[serde(rename = "displayName")]
+    name: String,
     display_name: String,
 }
 
