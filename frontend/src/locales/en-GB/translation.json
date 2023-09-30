@@ -115,6 +115,11 @@
     "round_ordinal_few": "{{count}}rd Round",
     "round_ordinal_other": "{{count}}th Round",
     "validating-nominations": "Validating Candidacies and Nominations",
+    "vote": {
+      "blank": "Blank Vote",
+      "submit": "Cast Vote",
+      "success": "Vote has been cast successfully"
+    },
     "voting-period": {
       "title": "Voting Period",
       "has-voted": "You have already voted in this election",
