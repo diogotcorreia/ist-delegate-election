@@ -315,6 +315,7 @@ pub async fn get_vote_options(
 
     let nominations = Nomination::find()
         .filter(nomination::Column::Election.eq(election_id))
+        .order_by_asc(nomination::Column::DisplayName)
         .all(&txn)
         .await?;
 
