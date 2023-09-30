@@ -65,11 +65,13 @@ function ElectionNominate() {
           value='self'
           icon={<PersonRounded fontSize='inherit' />}
           text={t('election.nominate.self')}
+          sx={{ width: 200, justifyContent: 'flex-start' }}
         />
         <RadioCard
           value='others'
           icon={<PersonSearchRounded fontSize='inherit' />}
           text={t('election.nominate.others')}
+          sx={{ width: 200, justifyContent: 'flex-start' }}
         />
       </RadioCardGroup>
 
