@@ -148,7 +148,7 @@ export function ElectionSummary({ election }: SummaryProps) {
               <Typography>{t('election.voting-period.has-voted')}</Typography>
             ) : (
               <Button component={Link} to={`/election/${election.id}/vote`} variant='contained'>
-                {t('election.voting-period.nominate-button')}
+                {t('election.voting-period.vote-button')}
               </Button>
             )}
           </StepContent>

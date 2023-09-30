@@ -110,6 +110,11 @@
     },
     "round": "{{count}}ª Volta",
     "validating-nominations": "Validação de Candidaturas e Nomeações",
+    "vote": {
+      "blank": "Voto em Branco",
+      "submit": "Submeter Voto",
+      "success": "Voto submetido com sucesso"
+    },
     "voting-period": {
       "title": "Período de Votação",
       "has-voted": "Já votou nesta eleição",

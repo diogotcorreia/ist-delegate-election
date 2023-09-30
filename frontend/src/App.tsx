@@ -36,6 +36,11 @@ import ElectionNominate, {
   action as electionNominateAction,
   ElectionNominateSuccess,
 } from './routes/election/nominate';
+import ElectionVote, {
+  action as electionVoteAction,
+  ElectionVoteSuccess,
+  loader as electionVoteLoader,
+} from './routes/election/vote';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -73,6 +78,13 @@ const router = createBrowserRouter([
           { index: true, element: <ElectionCardPage /> },
           { path: 'nominate', element: <ElectionNominate />, action: electionNominateAction },
           { path: 'nominate/success', element: <ElectionNominateSuccess /> },
+          {
+            path: 'vote',
+            element: <ElectionVote />,
+            loader: electionVoteLoader,
+            action: electionVoteAction,
+          },
+          { path: 'vote/success', element: <ElectionVoteSuccess /> },
         ],
       },
       { path: 'admin', element: <AdminRoot /> },
