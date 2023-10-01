@@ -1,3 +1,4 @@
+use slice_group_by::GroupBy;
 use std::collections::HashMap;
 
 use axum::{
@@ -465,34 +466,43 @@ pub async fn get_unverified_nominations(
 
     let active_year = fenix_service.get_active_year().await?;
 
-    let nominations: Vec<(nomination::Model, Option<election::Model>)> = Nomination::find()
+    let nominations: Vec<(nomination::Model, election::Model)> = Nomination::find()
         .find_also_related(Election)
         .filter(nomination::Column::Valid.is_null())
         .filter(election::Column::AcademicYear.eq(active_year))
         .order_by_asc(election::Column::VotingPeriodStart)
         .order_by_asc(election::Column::Id)
+        .order_by_asc(nomination::Column::DisplayName)
         .all(conn)
-        .await?;
+        .await?
+        .into_iter()
+        .map(|(nomination, election)| {
+            (
+                nomination,
+                election.expect("nomination must belong to an election"),
+            )
+        })
+        .collect();
 
-    let mut grouped_nominations = HashMap::new();
-    for (nomination, election) in nominations {
-        let election = election.expect("nomination to belong to an election");
-        let nomination = NominationDto::from_entity(nomination);
-        grouped_nominations
-            .entry(election.id)
-            .or_insert(ElectionWithUnverifedNominationsDto {
-                id: election.id,
-                degree: fenix_service
-                    .get_degree(&election.degree_id)
-                    .await?
-                    .unwrap(),
-                curricular_year: election.curricular_year,
-                round: election.round,
-                nominations: Vec::new(),
-            })
-            .nominations
-            .push(nomination);
+    let group_by: Vec<Vec<(nomination::Model, election::Model)>> = nominations
+        .binary_group_by(|a, b| a.1.id == b.1.id)
+        .map(Vec::from)
+        .collect();
+    let mut grouped_nominations = Vec::new();
+    for group in &group_by {
+        let (_, election) = group.first().unwrap();
+        let election_dto = ElectionWithUnverifedNominationsDto {
+            id: election.id,
+            degree: fenix_service.get_degree(&election.degree_id).await?,
+            curricular_year: election.curricular_year,
+            round: election.round,
+            nominations: group
+                .iter()
+                .map(|(nomination, _)| NominationDto::from_entity(nomination))
+                .collect(),
+        };
+        grouped_nominations.push(election_dto);
     }
 
-    Ok(Json(grouped_nominations.into_values().collect()))
+    Ok(Json(grouped_nominations))
 }
