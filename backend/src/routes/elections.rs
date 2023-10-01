@@ -226,15 +226,17 @@ pub async fn self_nominate(
         election: ActiveValue::set(election_id),
         username: ActiveValue::set(user.username),
         display_name: ActiveValue::set(user.name),
-        valid: ActiveValue::set(true),
+        valid: ActiveValue::set(Some(true)),
     };
 
     Nomination::insert(nomination)
         .on_conflict(
             OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
                 .update_column(nomination::Column::Valid)
+                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
                 .to_owned(),
         )
+        .do_nothing()
         .exec(&txn)
         .await?;
 
@@ -274,7 +276,7 @@ pub async fn nominate_others(
 
     let nomination = nomination::ActiveModel {
         election: ActiveValue::set(election_id),
-        valid: ActiveValue::set(nomination_dto.username == user.username),
+        valid: ActiveValue::set((nomination_dto.username == user.username).then_some(true)),
         username: ActiveValue::set(nomination_dto.username),
         display_name: ActiveValue::set(nomination_dto.display_name),
     };
@@ -283,7 +285,7 @@ pub async fn nominate_others(
         .on_conflict(
             OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
                 .update_column(nomination::Column::Valid)
-                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).eq(false))
+                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
                 .to_owned(),
         )
         .do_nothing()
@@ -323,15 +325,17 @@ pub async fn get_vote_options(
 
     let vote_options = nominations
         .into_iter()
-        .map(|nomination| {
-            // don't show options if not all nominations have been verified
-            nomination
-                .valid
-                .then_some(VoteOptionDto {
+        .filter_map(|nomination| {
+            // Don't show options if not all nominations have been verified.
+            // However, hide nominations that have been marked as invalid.
+            match nomination.valid {
+                Some(true) => Some(Ok(VoteOptionDto {
                     username: nomination.username,
                     display_name: nomination.display_name,
-                })
-                .ok_or(AppError::ElectionWithUnverifedNomination)
+                })),
+                Some(false) => None,
+                None => Some(Err(AppError::ElectionWithUnverifedNomination)),
+            }
         })
         .collect::<Result<Vec<_>, _>>()?;
 
@@ -360,7 +364,7 @@ pub async fn cast_vote(
         .filter(
             Condition::all()
                 .add(nomination::Column::Election.eq(election_id))
-                .add(nomination::Column::Valid.eq(false)),
+                .add(nomination::Column::Valid.is_null()),
         )
         .count(&txn)
         .await?

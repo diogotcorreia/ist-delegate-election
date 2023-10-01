@@ -10,7 +10,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub username: String,
     pub display_name: String,
-    pub valid: bool,
+    pub valid: Option<bool>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
