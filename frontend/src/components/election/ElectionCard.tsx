@@ -12,7 +12,11 @@ import {
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ElectionDto, ElectionStatusDto, ElectionWithUnverifedNominationsDto } from '../../@types/api';
+import {
+  ElectionDto,
+  ElectionStatusDto,
+  ElectionWithUnverifedNominationsDto,
+} from '../../@types/api';
 import useLocalizedString from '../../hooks/useLocalizedString';
 
 const DATE_FORMAT = {

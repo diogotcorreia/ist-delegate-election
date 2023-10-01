@@ -41,7 +41,9 @@ import ElectionVote, {
   ElectionVoteSuccess,
   loader as electionVoteLoader,
 } from './routes/election/vote';
-import BulkValidateNominations, { loader as bulkValidateNominationsLoader } from './routes/admin/bulk-validate-nominations';
+import BulkValidateNominations, {
+  loader as bulkValidateNominationsLoader,
+} from './routes/admin/bulk-validate-nominations';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
