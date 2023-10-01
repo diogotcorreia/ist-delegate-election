@@ -23,8 +23,8 @@ use sea_orm::{
 use crate::{
     auth_utils, crypto_utils,
     dtos::{
-        BulkCreateElectionsDto, CastVoteDto, ElectionDto, SignedPersonSearchResultDto,
-        VoteOptionDto,
+        BulkCreateElectionsDto, CastVoteDto, ElectionDto, ElectionWithUnverifedNominationsDto,
+        NominationDto, SignedPersonSearchResultDto, VoteOptionDto,
     },
     election_utils::{is_in_candidacy_period, is_in_voting_period},
     errors::AppError,
@@ -453,4 +453,46 @@ pub async fn get_unverified_nominations_count(
         .await?;
 
     Ok(Json(HashMap::from_iter(election)))
+}
+
+pub async fn get_unverified_nominations(
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<Vec<ElectionWithUnverifedNominationsDto>>, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let active_year = fenix_service.get_active_year().await?;
+
+    let nominations: Vec<(nomination::Model, Option<election::Model>)> = Nomination::find()
+        .find_also_related(Election)
+        .filter(nomination::Column::Valid.is_null())
+        .filter(election::Column::AcademicYear.eq(active_year))
+        .order_by_asc(election::Column::VotingPeriodStart)
+        .order_by_asc(election::Column::Id)
+        .all(conn)
+        .await?;
+
+    let mut grouped_nominations = HashMap::new();
+    for (nomination, election) in nominations {
+        let election = election.expect("nomination to belong to an election");
+        let nomination = NominationDto::from_entity(nomination);
+        grouped_nominations
+            .entry(election.id)
+            .or_insert(ElectionWithUnverifedNominationsDto {
+                id: election.id,
+                degree: fenix_service
+                    .get_degree(&election.degree_id)
+                    .await?
+                    .unwrap(),
+                curricular_year: election.curricular_year,
+                round: election.round,
+                nominations: Vec::new(),
+            })
+            .nominations
+            .push(nomination);
+    }
+
+    Ok(Json(grouped_nominations.into_values().collect()))
 }

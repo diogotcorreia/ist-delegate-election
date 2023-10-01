@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use entity::{admin, election};
+use entity::{admin, election, nomination};
 use sea_orm::prelude::*;
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
@@ -251,4 +251,34 @@ pub struct VoteOptionDto {
 #[derive(Deserialize)]
 pub struct CastVoteDto {
     pub username: Option<String>,
+}
+
+#[typeshare]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ElectionWithUnverifedNominationsDto {
+    pub id: i32,
+    pub degree: DegreeDto,
+    pub curricular_year: Option<i32>,
+    pub round: i32,
+    pub nominations: Vec<NominationDto>,
+}
+
+#[typeshare]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NominationDto {
+    pub username: String,
+    pub display_name: String,
+    pub valid: Option<bool>,
+}
+
+impl NominationDto {
+    pub fn from_entity(entity: nomination::Model) -> Self {
+        NominationDto {
+            username: entity.username,
+            display_name: entity.display_name,
+            valid: entity.valid,
+        }
+    }
 }
