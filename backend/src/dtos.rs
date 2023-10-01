@@ -258,7 +258,7 @@ pub struct CastVoteDto {
 #[serde(rename_all = "camelCase")]
 pub struct ElectionWithUnverifedNominationsDto {
     pub id: i32,
-    pub degree: DegreeDto,
+    pub degree: Option<DegreeDto>,
     pub curricular_year: Option<i32>,
     pub round: i32,
     pub nominations: Vec<NominationDto>,
@@ -274,10 +274,10 @@ pub struct NominationDto {
 }
 
 impl NominationDto {
-    pub fn from_entity(entity: nomination::Model) -> Self {
+    pub fn from_entity(entity: &nomination::Model) -> Self {
         NominationDto {
-            username: entity.username,
-            display_name: entity.display_name,
+            username: entity.username.clone(),
+            display_name: entity.display_name.clone(),
             valid: entity.valid,
         }
     }
