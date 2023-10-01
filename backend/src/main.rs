@@ -89,6 +89,10 @@ async fn main() {
             post(routes::elections::bulk_create_elections),
         )
         .route(
+            "/elections/nominations/unverified-count",
+            get(routes::elections::get_unverified_nominations_count),
+        )
+        .route(
             "/elections/user",
             get(routes::elections::get_user_elections),
         )
