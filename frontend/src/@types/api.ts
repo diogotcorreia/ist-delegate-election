@@ -127,7 +127,7 @@ export interface NominationDto {
 
 export interface ElectionWithUnverifedNominationsDto {
   id: number;
-  degree: DegreeDto;
+  degree?: DegreeDto;
   curricularYear?: number;
   round: number;
   nominations: NominationDto[];

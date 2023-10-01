@@ -87,7 +87,7 @@ function Elections() {
             severity='warning'
             variant='filled'
             action={
-              <Button color='inherit' size='small'>
+              <Button component={Link} to="/admin/bulk-validate-nominations" color='inherit' size='small' sx={{textAlign: "center"}}>
                 {t('admin.subpages.election-management.unverified-nominations-alert.fix-button', {
                   count: unverifiedNominationsCount,
                 })}
