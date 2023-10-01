@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -14,7 +16,8 @@ use entity::{
 use futures::stream::{self, StreamExt};
 use migration::OnConflict;
 use sea_orm::{
-    prelude::*, ActiveValue, Condition, DatabaseConnection, QueryOrder, Set, TransactionTrait,
+    prelude::*, ActiveValue, Condition, DatabaseConnection, JoinType, QueryOrder, QuerySelect,
+    RelationTrait, Set, TransactionTrait,
 };
 
 use crate::{
@@ -424,4 +427,30 @@ pub async fn cast_vote(
     txn.commit().await?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn get_unverified_nominations_count(
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<HashMap<i32, i64>>, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let active_year = fenix_service.get_active_year().await?;
+
+    let election: Vec<(i32, i64)> = Nomination::find()
+        .join(JoinType::InnerJoin, nomination::Relation::Election.def())
+        .select_only()
+        .column(nomination::Column::Election)
+        .column_as(nomination::Column::Username.count(), "invalid_count")
+        .filter(nomination::Column::Valid.is_null())
+        .filter(election::Column::AcademicYear.eq(active_year))
+        .group_by(nomination::Column::Election)
+        .having(Expr::expr(nomination::Column::Username.count()).gt(0))
+        .into_tuple()
+        .all(conn)
+        .await?;
+
+    Ok(Json(HashMap::from_iter(election)))
 }
