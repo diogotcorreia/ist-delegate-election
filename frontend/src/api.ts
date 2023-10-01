@@ -130,3 +130,7 @@ export function electionVote(electionId: number, payload: CastVoteDto): Promise<
     fetch(`${BASE_URL}/election/${electionId}/vote`, buildJsonBody('POST', payload))
   );
 }
+
+export function countUnverifiedNominations(): Promise<Record<number, number>> {
+  return wrapFetch(fetch(`${BASE_URL}/elections/nominations/unverified-count`));
+}

@@ -21,9 +21,10 @@ import { DegreeTypeAggregator } from '../../hooks/useSortAndGroupDegrees';
 
 interface Props {
   aggregator: DegreeTypeAggregator;
+  unverifiedNominationsCountByElection: Record<number, number>;
 }
 
-function DegreeTypeElections({ aggregator }: Props) {
+function DegreeTypeElections({ aggregator, unverifiedNominationsCountByElection }: Props) {
   const { degreeType, degreeElections } = aggregator;
   const { t } = useTranslation();
   const translateLs = useLocalizedString();
@@ -40,6 +41,16 @@ function DegreeTypeElections({ aggregator }: Props) {
   const electionCount = useMemo(
     () => degreesWithElections.reduce((acc, dElections) => acc + dElections.elections.length, 0),
     [degreesWithElections]
+  );
+  const unverifiedNominationsCount = useMemo(
+    () =>
+      degreesWithElections
+        .flatMap((dElections) => dElections.elections.map((election) => election.id))
+        .reduce(
+          (acc, electionId) => acc + (unverifiedNominationsCountByElection[electionId] ?? 0),
+          0
+        ),
+    [degreesWithElections, unverifiedNominationsCountByElection]
   );
 
   return (
@@ -62,6 +73,16 @@ function DegreeTypeElections({ aggregator }: Props) {
             color='primary'
           />
         )}
+        {unverifiedNominationsCount > 0 && (
+          <Chip
+            label={t('election.unverified-nominations-count', {
+              count: unverifiedNominationsCount,
+            })}
+            size='small'
+            sx={{ ml: 1 }}
+            color='warning'
+          />
+        )}
       </AccordionSummary>
       <AccordionDetails>
         {degreesWithElections.map((dElections) => (
@@ -74,7 +95,11 @@ function DegreeTypeElections({ aggregator }: Props) {
             </Typography>
             <Grid container sx={{ my: 2 }} spacing={2}>
               {dElections.elections.map((election) => (
-                <ElectionCard key={election.id} election={election} />
+                <ElectionCard
+                  key={election.id}
+                  election={election}
+                  unverifiedNominations={unverifiedNominationsCountByElection[election.id] ?? 0}
+                />
               ))}
             </Grid>
             <Divider />
@@ -107,7 +132,12 @@ function DegreeTypeElections({ aggregator }: Props) {
   );
 }
 
-function ElectionCard({ election }: { election: ElectionDto }) {
+interface ElectionCardProps {
+  election: ElectionDto;
+  unverifiedNominations: number;
+}
+
+function ElectionCard({ election, unverifiedNominations }: ElectionCardProps) {
   const { t } = useTranslation();
 
   return (
@@ -128,6 +158,12 @@ function ElectionCard({ election }: { election: ElectionDto }) {
                 })
               : t('election.curricular-year-none')}
           </Typography>
+          {unverifiedNominations > 0 && (
+            <Chip
+              color='warning'
+              label={t('election.unverified-nominations-count', { count: unverifiedNominations })}
+            />
+          )}
         </CardContent>
       </Card>
     </Grid>
