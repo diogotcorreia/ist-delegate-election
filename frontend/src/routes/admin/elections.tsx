@@ -28,7 +28,7 @@ import {
   useOutletContext,
 } from 'react-router-dom';
 import { DegreeElectionsDto } from '../../@types/api';
-import { bulkCreateElections, getDegrees } from '../../api';
+import { bulkCreateElections, countUnverifiedNominations, getDegrees } from '../../api';
 import DegreeTypeElections from '../../components/admin/DegreeTypeElections';
 import BulkCreateElectionsSubmitButton from '../../components/admin/forms/BulkCreateElectionsSubmitButton';
 import DateRangeInput from '../../components/admin/forms/DateRangeInput';
@@ -49,16 +49,25 @@ const DATE_FORMAT = {
 
 interface ElectionsData {
   degrees: DegreeElectionsDto[];
+  unverifiedNominationsCountByElection: Record<number, number>;
+  unverifiedNominationsCount: number;
 }
 
 export async function loader(): Promise<ElectionsData> {
   const degrees = await getDegrees();
+  const unverifiedNominationsCountByElection = await countUnverifiedNominations();
 
-  return { degrees };
+  const unverifiedNominationsCount = Object.values(unverifiedNominationsCountByElection).reduce(
+    (acc, v) => acc + v,
+    0
+  );
+
+  return { degrees, unverifiedNominationsCountByElection, unverifiedNominationsCount };
 }
 
 function Elections() {
-  const { degrees } = useLoaderData() as ElectionsData;
+  const { degrees, unverifiedNominationsCountByElection, unverifiedNominationsCount } =
+    useLoaderData() as ElectionsData;
   const { t } = useTranslation();
   const sortedDegrees = useSortAndGroupDegrees(degrees);
 
@@ -72,8 +81,37 @@ function Elections() {
           {t('admin.subpages.election-management.create-elections')}
         </Button>
       </Box>
+      <Box mb={2}>
+        {unverifiedNominationsCount > 0 && (
+          <Alert
+            severity='warning'
+            variant='filled'
+            action={
+              <Button
+                component={Link}
+                to='/admin/bulk-validate-nominations'
+                color='inherit'
+                size='small'
+                sx={{ textAlign: 'center' }}
+              >
+                {t('admin.subpages.election-management.unverified-nominations-alert.fix-button', {
+                  count: unverifiedNominationsCount,
+                })}
+              </Button>
+            }
+          >
+            {t('admin.subpages.election-management.unverified-nominations-alert.text', {
+              count: unverifiedNominationsCount,
+            })}
+          </Alert>
+        )}
+      </Box>
       {sortedDegrees.map((aggregator) => (
-        <DegreeTypeElections key={aggregator.degreeTypeHash} aggregator={aggregator} />
+        <DegreeTypeElections
+          key={aggregator.degreeTypeHash}
+          aggregator={aggregator}
+          unverifiedNominationsCountByElection={unverifiedNominationsCountByElection}
+        />
       ))}
       <Outlet context={{ sortedDegrees }} />
     </>

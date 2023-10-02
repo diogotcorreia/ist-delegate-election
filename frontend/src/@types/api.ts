@@ -118,3 +118,23 @@ export interface VoteOptionDto {
 export interface CastVoteDto {
   username?: string;
 }
+
+export interface NominationDto {
+  username: string;
+  displayName: string;
+  valid?: boolean;
+}
+
+export interface ElectionWithUnverifedNominationsDto {
+  id: number;
+  degree?: DegreeDto;
+  curricularYear?: number;
+  round: number;
+  nominations: NominationDto[];
+}
+
+export interface EditNominationDto {
+  username: string;
+  displayName?: string;
+  valid?: boolean;
+}

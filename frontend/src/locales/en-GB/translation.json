@@ -26,6 +26,11 @@
           "add-button": "Add"
         }
       },
+      "bulk-validate-nominations": {
+        "back": "Back to election management",
+        "empty": "All nominations have been validated!",
+        "title": "Validate Nominations"
+      },
       "election-management": {
         "bulk-dialog": {
           "candidacy-period": "Candidacies from {{start, datetime}} to {{end, datetime}}",
@@ -49,7 +54,13 @@
         },
         "create-elections": "Create Elections",
         "title": "Election Management",
-        "subtitle": "Create, edit and see results of elections"
+        "subtitle": "Create, edit and see results of elections",
+        "unverified-nominations-alert": {
+          "fix-button_one": "Validate nomination",
+          "fix-button_other": "Validate nominations",
+          "text_one": "{{count}} nomination has not been validated. Students can only vote once all nominations have been validated. Please validate this nomination before voting starts.",
+          "text_other": "{{count}} nominations have not been validated. Students can only vote once all nominations have been validated. Please validate these nominations before voting starts."
+        }
       }
     },
     "degree-type-elections": {
@@ -114,6 +125,8 @@
     "round_ordinal_two": "{{count}}nd Round",
     "round_ordinal_few": "{{count}}rd Round",
     "round_ordinal_other": "{{count}}th Round",
+    "unverified-nominations-count_one": "{{count}} unverified nomination",
+    "unverified-nominations-count_other": "{{count}} unverified nominations",
     "validating-nominations": "Validating Candidacies and Nominations",
     "vote": {
       "blank": "Blank Vote",
