@@ -17,9 +17,11 @@ export async function loader() {
 
   if (!auth) {
     const { baseUrl, clientId, redirectUrl } = appConfig.fenix;
-    return redirect(`${baseUrl}/oauth/userdialog?client_id=${encodeURIComponent(
-      clientId
-    )}&redirect_uri=${encodeURIComponent(redirectUrl)}`);
+    return redirect(
+      `${baseUrl}/oauth/userdialog?client_id=${encodeURIComponent(
+        clientId
+      )}&redirect_uri=${encodeURIComponent(redirectUrl)}`
+    );
   }
 
   return { appConfig, auth };
