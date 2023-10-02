@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, redirect, useLoaderData, useNavigate } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
-import { getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
+import { ApiError, getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
 import FenixAvatar from '../components/fenix/FenixAvatar';
 
 export interface RootData {
@@ -13,18 +13,21 @@ export interface RootData {
 
 export async function loader() {
   const appConfig = await getAppConfig();
-  const auth = await getWhoAmI().catch(() => undefined);
+  try {
+    const auth = await getWhoAmI();
 
-  if (!auth) {
-    const { baseUrl, clientId, redirectUrl } = appConfig.fenix;
-    return redirect(
-      `${baseUrl}/oauth/userdialog?client_id=${encodeURIComponent(
-        clientId
-      )}&redirect_uri=${encodeURIComponent(redirectUrl)}`
-    );
+    return { appConfig, auth };
+  } catch (e) {
+    if (e instanceof ApiError && e.getError().key === 'error.unauthorized') {
+      const { baseUrl, clientId, redirectUrl } = appConfig.fenix;
+      return redirect(
+        `${baseUrl}/oauth/userdialog?client_id=${encodeURIComponent(
+          clientId
+        )}&redirect_uri=${encodeURIComponent(redirectUrl)}`
+      );
+    }
+    throw e;
   }
-
-  return { appConfig, auth };
 }
 
 function Root() {
