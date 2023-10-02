@@ -42,6 +42,7 @@ import ElectionVote, {
   loader as electionVoteLoader,
 } from './routes/election/vote';
 import BulkValidateNominations, {
+  action as bulkValidateNominationsAction,
   loader as bulkValidateNominationsLoader,
 } from './routes/admin/bulk-validate-nominations';
 
@@ -111,6 +112,7 @@ const router = createBrowserRouter([
       {
         path: 'admin/bulk-validate-nominations',
         loader: bulkValidateNominationsLoader,
+        action: bulkValidateNominationsAction,
         element: <BulkValidateNominations />,
       },
     ],

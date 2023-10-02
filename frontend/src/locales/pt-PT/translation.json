@@ -26,6 +26,11 @@
           "add-button": "Adicionar"
         }
       },
+      "bulk-validate-nominations": {
+        "back": "Voltar à gestão de eleições",
+        "empty": "Todas as nomeações foram validadas!",
+        "title": "Validar Nomeações"
+      },
       "election-management": {
         "bulk-dialog": {
           "candidacy-period": "Candidaturas de {{start, datetime}} até {{end, datetime}}",

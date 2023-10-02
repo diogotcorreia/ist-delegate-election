@@ -132,3 +132,9 @@ export interface ElectionWithUnverifedNominationsDto {
   round: number;
   nominations: NominationDto[];
 }
+
+export interface EditNominationDto {
+  username: string;
+  displayName?: string;
+  valid?: boolean;
+}

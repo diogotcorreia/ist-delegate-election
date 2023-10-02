@@ -7,6 +7,7 @@ import {
   BulkCreateElectionsDto,
   CastVoteDto,
   DegreeElectionsDto,
+  EditNominationDto,
   ElectionDto,
   ElectionWithUnverifedNominationsDto,
   LoginDto,
@@ -138,4 +139,10 @@ export function countUnverifiedNominations(): Promise<Record<number, number>> {
 
 export function getUnverifiedNominations(): Promise<ElectionWithUnverifedNominationsDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/elections/nominations/unverified`));
+}
+
+export function editNomination(electionId: number, payload: EditNominationDto): Promise<void> {
+  return wrapFetch(
+    fetch(`${BASE_URL}/election/${electionId}/nomination`, buildJsonBody('PATCH', payload))
+  );
 }

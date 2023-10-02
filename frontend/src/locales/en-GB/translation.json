@@ -26,6 +26,11 @@
           "add-button": "Add"
         }
       },
+      "bulk-validate-nominations": {
+        "back": "Back to election management",
+        "empty": "All nominations have been validated!",
+        "title": "Validate Nominations"
+      },
       "election-management": {
         "bulk-dialog": {
           "candidacy-period": "Candidacies from {{start, datetime}} to {{end, datetime}}",
