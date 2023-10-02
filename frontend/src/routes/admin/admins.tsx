@@ -69,7 +69,7 @@ function Admins() {
                 <FenixAvatar username={admin.username} size={128} />
                 <Typography variant='h6' component='span' sx={{ my: 2 }}>
                   {admin.username}
-                  {admin.username === auth?.user.username && (
+                  {admin.username === auth.user.username && (
                     <Chip
                       sx={{ ml: 1 }}
                       color='primary'
@@ -97,7 +97,7 @@ function Admins() {
                   component={Link}
                   to={`remove/${encodeURIComponent(admin.username)}`}
                   color='error'
-                  disabled={admins.length < 2 || admin.username === auth?.user.username}
+                  disabled={admins.length < 2 || admin.username === auth.user.username}
                 >
                   {t('admin.subpages.admin-management.remove-button')}
                 </Button>
