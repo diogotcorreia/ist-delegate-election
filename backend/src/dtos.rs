@@ -282,3 +282,12 @@ impl NominationDto {
         }
     }
 }
+
+#[typeshare]
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EditNominationDto {
+    pub username: String,
+    pub display_name: Option<String>,
+    pub valid: Option<bool>,
+}

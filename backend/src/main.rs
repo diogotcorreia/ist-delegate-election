@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 use axum::extract::FromRef;
 
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use axum_sessions::SessionLayer;
 use migration::{Migrator, MigratorTrait};
@@ -107,6 +107,10 @@ async fn main() {
         .route(
             "/election/:election_id/nominate",
             post(routes::elections::nominate_others),
+        )
+        .route(
+            "/election/:election_id/nomination",
+            patch(routes::elections::edit_nomination),
         )
         .route(
             "/election/:election_id/self-nominate",

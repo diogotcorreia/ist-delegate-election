@@ -24,8 +24,9 @@ use sea_orm::{
 use crate::{
     auth_utils, crypto_utils,
     dtos::{
-        BulkCreateElectionsDto, CastVoteDto, ElectionDto, ElectionWithUnverifedNominationsDto,
-        NominationDto, SignedPersonSearchResultDto, VoteOptionDto,
+        BulkCreateElectionsDto, CastVoteDto, EditNominationDto, ElectionDto,
+        ElectionWithUnverifedNominationsDto, NominationDto, SignedPersonSearchResultDto,
+        VoteOptionDto,
     },
     election_utils::{is_in_candidacy_period, is_in_voting_period},
     errors::AppError,
@@ -505,4 +506,35 @@ pub async fn get_unverified_nominations(
     }
 
     Ok(Json(grouped_nominations))
+}
+
+pub async fn edit_nomination(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    Json(nomination_dto): Json<EditNominationDto>,
+) -> Result<StatusCode, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let updated_nomination = nomination::ActiveModel {
+        election: ActiveValue::Unchanged(election_id),
+        username: ActiveValue::Unchanged(nomination_dto.username),
+        display_name: nomination_dto
+            .display_name
+            .map_or(ActiveValue::NotSet, ActiveValue::Set),
+        valid: nomination_dto
+            .valid
+            .map_or(ActiveValue::NotSet, |v| ActiveValue::Set(Some(v))),
+    };
+
+    updated_nomination
+        .update(conn)
+        .await
+        .map_err(|err| match err {
+            DbErr::RecordNotUpdated => AppError::UnknownNomination,
+            _ => err.into(),
+        })?;
+
+    Ok(StatusCode::NO_CONTENT)
 }
