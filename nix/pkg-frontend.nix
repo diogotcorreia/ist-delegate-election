@@ -4,7 +4,7 @@ buildNpmPackage {
   version = "1.0.0";
 
   src = ../frontend;
-  npmDepsHash = "sha256-1GK4e12K7uPR76t+EUHcK04CGa1WwUkOazks0H9KkbM=";
+  npmDepsHash = "sha256-eDYmfj0wNgsVqnb6te15oRkRvJanIefzQZ7T4mfX1sQ=";
 
   nativeBuildInputs = [ nodejs ];
 
