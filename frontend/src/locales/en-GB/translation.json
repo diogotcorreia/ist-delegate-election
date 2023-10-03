@@ -1,5 +1,6 @@
 {
   "admin": {
+    "back-home": "Back to Home Page",
     "page": {
       "title": "Admin Area"
     },
