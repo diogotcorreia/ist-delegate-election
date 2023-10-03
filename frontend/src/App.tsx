@@ -45,6 +45,7 @@ import BulkValidateNominations, {
   action as bulkValidateNominationsAction,
   loader as bulkValidateNominationsLoader,
 } from './routes/admin/bulk-validate-nominations';
+import RootErrorPage from './routes/error';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -66,6 +67,7 @@ const router = createBrowserRouter([
     path: '/',
     loader: rootLoader,
     element: <Root />,
+    errorElement: <RootErrorPage />,
     children: [
       {
         index: true,

@@ -137,8 +137,58 @@
     }
   },
   "error": {
+    "daterange": {
+      "invalid": "O início do intervalo não pode ser depois do seu fim"
+    },
+    "degree": {
+      "invalid": "Não foi possível encontrar o curso indicado"
+    },
+    "duplicate": {
+      "admin": "Não é possível adicionar este utilizador como administrador, dado que este já é administrador",
+      "election": "Não é possível criar esta eleição, dado que já existe uma mesma eleição para este conjunto de curso/ano curricular/volta"
+    },
+    "election": {
+      "candidacy": {
+        "outside-period": "Não é possível efetuar nomeações fora do periodo de candidaturas"
+      },
+      "candidacy-after-voting": "O período de candidaturas não pode ser depois do período de votação",
+      "duplicate-nomination": "Já efetuou uma nomeação nesta eleição",
+      "duplicate-vote": "Já votou nesta eleição",
+      "unauthorized": "Não pode efetuar esta ação nesta eleição",
+      "unknown-vote-option": "Não foi possível encontrar esta pessoa como uma opção nesta eleição",
+      "unverified-nomination": "Algumas nomeações ainda não foram validadas, pelo que não é possível votar. Por favor tente mais tarde ou contacte o Conselho Pedagógico",
+      "voting": {
+        "outside-period": "Não é possível votar fora do período de votações"
+      }
+    },
+    "fenix": "Ocorreu um erro ao comunicar com o Fénix. Por favor tente novamente mais tarde",
+    "internal": "Ocorreu um erro interno à aplicação. Por favor tente novamente mais tarde",
     "languagestring": {
       "unknown": "Erro: tradução não encontrada"
+    },
+    "not": {
+      "enough": {
+        "admins": "Não é possível remover este administrador, visto que é o último administrador restante"
+      }
+    },
+    "page": {
+      "home-button": "Ir para a página principal",
+      "title": "Oh não! Ocorreu um erro"
+    },
+    "person-signature": {
+      "invalid": "A assinatura da nomeação é inválida. Por favor tente novamente"
+    },
+    "round": {
+      "invalid": "A volta da eleição tem de ser um inteiro positivo"
+    },
+    "unauthorized": "Sem permissão para ver esta página",
+    "unknown": {
+      "admin": "Não foi possível encontrar este administrador",
+      "election": "Não foi possível encontrar esta eleição",
+      "nomination": "Não foi possível encontrar esta nomeação ou eleição"
+    },
+    "username": {
+      "empty": "O nome de utilizador não pode estar vazio"
     }
   },
   "login": {
