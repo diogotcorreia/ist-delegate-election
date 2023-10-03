@@ -1,7 +1,7 @@
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, redirect, useLoaderData, useNavigate } from 'react-router-dom';
+import { Link, Outlet, redirect, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { ApiError, getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
 import FenixAvatar from '../components/fenix/FenixAvatar';
@@ -34,6 +34,9 @@ function Root() {
   const navigate = useNavigate();
   const { appConfig, auth } = useLoaderData() as RootData;
   const { t } = useTranslation();
+  const location = useLocation();
+
+  const isAdminRoute = /^\/admin($|\/)/.test(location.pathname);
 
   // create first admin user
   useEffect(() => {
@@ -46,17 +49,35 @@ function Root() {
 
   return (
     <Container>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', my: 4 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          my: 4,
+          flexWrap: 'wrap',
+        }}
+      >
         {auth.isAdmin && (
           <>
-            <Button>{t('admin.page.title')}</Button>
+            {isAdminRoute ? (
+              <Button component={Link} to='/'>
+                {t('admin.back-home')}
+              </Button>
+            ) : (
+              <Button component={Link} to='/admin'>
+                {t('admin.page.title')}
+              </Button>
+            )}
             <Box sx={{ flexGrow: 1 }} />
           </>
         )}
-        <Typography sx={{ mr: 2 }} variant='h6' component='span'>
-          {auth.user.displayName}
-        </Typography>
-        <FenixAvatar username={auth.user.username || ''} size={40} />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <Typography sx={{ mr: 2 }} variant='h6' component='span' textAlign='right'>
+            {auth.user.displayName}
+          </Typography>
+          <FenixAvatar username={auth.user.username || ''} size={40} />
+        </Box>
       </Box>
       <Outlet />
     </Container>

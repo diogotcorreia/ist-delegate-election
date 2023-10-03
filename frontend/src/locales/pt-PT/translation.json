@@ -1,5 +1,6 @@
 {
   "admin": {
+    "back-home": "Voltar à Página Principal",
     "page": {
       "title": "Área de Administração"
     },
