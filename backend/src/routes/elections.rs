@@ -392,7 +392,8 @@ pub async fn cast_vote(
             .filter(
                 Condition::all()
                     .add(nomination::Column::Election.eq(election_id))
-                    .add(nomination::Column::Username.eq(&vote_username)),
+                    .add(nomination::Column::Username.eq(&vote_username))
+                    .add(nomination::Column::Valid.eq(true)),
             )
             .count(&txn)
             .await?
