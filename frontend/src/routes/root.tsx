@@ -1,7 +1,15 @@
-import { Box, Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, Fade, LinearProgress, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Outlet, redirect, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Link,
+  Outlet,
+  redirect,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { ApiError, getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
 import FenixAvatar from '../components/fenix/FenixAvatar';
@@ -32,6 +40,7 @@ export async function loader() {
 
 function Root() {
   const navigate = useNavigate();
+  const navigation = useNavigation();
   const { appConfig, auth } = useLoaderData() as RootData;
   const { t } = useTranslation();
   const location = useLocation();
@@ -47,8 +56,23 @@ function Root() {
     }
   }, [appConfig.isSetup, navigate]);
 
+  const loading = navigation.state === 'loading';
+
   return (
     <Container>
+      <Fade
+        in={loading}
+        style={{
+          transitionDelay: loading ? '800ms' : '0ms',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+        }}
+        unmountOnExit
+      >
+        <LinearProgress />
+      </Fade>
       <Box
         sx={{
           display: 'flex',
