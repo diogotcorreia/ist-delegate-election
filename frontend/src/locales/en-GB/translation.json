@@ -144,6 +144,10 @@
   "error": {
     "languagestring": {
       "unknown": "Error: translation not found"
+    },
+    "page": {
+      "home-button": "Go to the home page",
+      "title": "Oh no! An error has occurred"
     }
   },
   "login": {

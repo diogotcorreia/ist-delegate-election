@@ -139,6 +139,10 @@
   "error": {
     "languagestring": {
       "unknown": "Erro: tradução não encontrada"
+    },
+    "page": {
+      "home-button": "Ir para a página principal",
+      "title": "Oh não! Ocorreu um erro"
     }
   },
   "login": {
