@@ -142,12 +142,58 @@
     }
   },
   "error": {
+    "daterange": {
+      "invalid": "The start of a date range cannot be after its end"
+    },
+    "degree": {
+      "invalid": "Could not find the given degree"
+    },
+    "duplicate": {
+      "admin": "Cannot add this user as admin since they are already an admin",
+      "election": "Cannot create this election since there is already one election for this degree/curricular year/round combination"
+    },
+    "election": {
+      "candidacy": {
+        "outside-period": "Cannot nominate someone outside the candidacy period"
+      },
+      "candidacy-after-voting": "The candidacy period cannot be after the voting period",
+      "duplicate-nomination": "You have already nominated someone in this election",
+      "duplicate-vote": "You have already voted in this election",
+      "unauthorized": "You cannot do that in this election",
+      "unknown-vote-option": "Could not find the given user as an option in this election",
+      "unverified-nomination": "Some nominations in this election have not been validated yet. Please try again later or contact the Pedagogical Council.",
+      "voting": {
+        "outside-period": "Cannot cast a vote outside the voting period"
+      }
+    },
+    "fenix": "An error occurred while communicating with Fénix. Please try again later",
+    "internal": "An internal error occurred. Please try again later",
     "languagestring": {
       "unknown": "Error: translation not found"
+    },
+    "not": {
+      "enough": {
+        "admins": "Cannot remove this admin, since it is the only one"
+      }
     },
     "page": {
       "home-button": "Go to the home page",
       "title": "Oh no! An error has occurred"
+    },
+    "person-signature": {
+      "invalid": "Nomination signature is invalid. Please try again later"
+    },
+    "round": {
+      "invalid": "The round must be a positive integer"
+    },
+    "unauthorized": "No permission to see this page",
+    "unknown": {
+      "admin": "Could not find this admin",
+      "election": "Could not find this election",
+      "nomination": "Could not find this nomination or election"
+    },
+    "username": {
+      "empty": "The username cannot be empty"
     }
   },
   "login": {
