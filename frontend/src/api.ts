@@ -52,7 +52,7 @@ async function wrapFetch<T>(responsePromise: Promise<Response>): Promise<T> {
     if (e instanceof ApiError) {
       throw e;
     }
-    throw new ApiError({ key: 'error.unknown' });
+    throw new ApiError({ key: 'error.generic' });
   }
 }
 

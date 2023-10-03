@@ -167,6 +167,7 @@
       }
     },
     "fenix": "An error occurred while communicating with Fénix. Please try again later",
+    "generic": "An error has occurred. Please try again later",
     "internal": "An internal error occurred. Please try again later",
     "languagestring": {
       "unknown": "Error: translation not found"
@@ -176,6 +177,7 @@
         "admins": "Cannot remove this admin, since it is the only one"
       }
     },
+    "not-found": "The requested page could not be found",
     "page": {
       "home-button": "Go to the home page",
       "title": "Oh no! An error has occurred"

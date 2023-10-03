@@ -14,7 +14,7 @@ function getErrorCode(error: unknown): string {
       return 'error.not-found';
     }
   }
-  return 'error.unknown';
+  return 'error.generic';
 }
 
 function RootErrorPage() {

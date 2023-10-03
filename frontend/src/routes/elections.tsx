@@ -60,7 +60,7 @@ export function ElectionsError() {
     if (error instanceof ApiError) {
       return error.getError().key;
     }
-    return 'error.unknown';
+    return 'error.generic';
   }, [error]);
 
   return <Alert severity='error'>{t(errorKey)}</Alert>;
