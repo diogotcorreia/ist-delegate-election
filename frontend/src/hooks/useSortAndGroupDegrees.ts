@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { DegreeElectionsDto, LocalizedStringDto } from '../@types/api';
+import useLocalizedString from './useLocalizedString';
 
 export interface DegreeTypeAggregator {
   degreeType: LocalizedStringDto;
@@ -16,6 +17,8 @@ function hashLocalizedString(localizedString: LocalizedStringDto): string {
 }
 
 function useSortAndGroupDegrees(degrees: DegreeElectionsDto[]): DegreeTypeAggregator[] {
+  const translateLs = useLocalizedString();
+
   return useMemo(() => {
     const aggregatedDegrees = degrees.reduce(
       (degreeTypes: Record<string, DegreeTypeAggregator>, degreeElections) => {
@@ -43,8 +46,12 @@ function useSortAndGroupDegrees(degrees: DegreeElectionsDto[]): DegreeTypeAggreg
       )
     );
 
+    degreeTypeAggregators.sort((a, b) =>
+      translateLs(a.degreeType).localeCompare(translateLs(b.degreeType))
+    );
+
     return degreeTypeAggregators;
-  }, [degrees]);
+  }, [degrees, translateLs]);
 }
 
 export default useSortAndGroupDegrees;
