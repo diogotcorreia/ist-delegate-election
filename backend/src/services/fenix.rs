@@ -70,15 +70,31 @@ impl FenixService {
     pub async fn authenticate_from_code(
         &self,
         code: &str,
-    ) -> reqwest::Result<(UserDto, OAuthResponse)> {
-        let oauth_response = self.authorize_fenix_oauth_code(code).await?;
+    ) -> Result<(UserDto, OAuthResponse), AppError> {
+        let oauth_response = self
+            .authorize_fenix_oauth_code(code)
+            .await
+            .map_err(|_| AppError::Unauthorized)?;
         let access_token = &oauth_response.access_token;
-        let person = self.get_user_details(access_token).await?;
-        let curriculum_response = self.get_curricular_details(access_token).await?;
+        let person = self
+            .get_user_details(access_token)
+            .await
+            .map_err(|_| AppError::FenixError)?;
+        let curriculum_response = self
+            .get_curricular_details(access_token)
+            .await
+            .map_err(|_| AppError::FenixError)?;
+        let academic_year = self.get_active_year().await?;
 
         let degree_entries: Vec<DegreeEntryDto> = curriculum_response
             .into_iter()
             .filter(|entry| entry.state == "REGISTERED")
+            .filter(|entry| {
+                entry
+                    .academic_terms
+                    .iter()
+                    .any(|term| term.year.to_string() == academic_year)
+            })
             .map(|entry| entry.into())
             .collect();
 
@@ -240,7 +256,7 @@ impl FenixService {
 
         let year = response.active_semester.year;
 
-        Ok(format!("{}/{}", year.begin_year, year.end_year))
+        Ok(year.to_string())
     }
 }
 
@@ -273,6 +289,7 @@ struct CurriculumResponse {
     degree: Degree,
     curricular_year: u8,
     state: String,
+    academic_terms: Vec<ExecutionSemester>,
 }
 
 #[derive(Deserialize)]
@@ -296,6 +313,12 @@ struct ExecutionSemester {
 struct ExecutionYear {
     begin_year: u32,
     end_year: u32,
+}
+
+impl ToString for ExecutionYear {
+    fn to_string(&self) -> String {
+        format!("{}/{}", self.begin_year, self.end_year)
+    }
 }
 
 #[derive(Deserialize)]

@@ -16,8 +16,7 @@ pub async fn login(
 ) -> Result<Json<AuthDto>, AppError> {
     let (user_details, oauth_tokens) = fenix_service
         .authenticate_from_code(&login_dto.code)
-        .await
-        .map_err(|_| AppError::Unauthorized)?;
+        .await?;
 
     let mut session = session_handle.write().await;
     session.insert("user", user_details.clone())?;
