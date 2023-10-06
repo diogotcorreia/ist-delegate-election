@@ -1,18 +1,9 @@
-import { Box, Button, Container, Fade, LinearProgress, Typography } from '@mui/material';
+import { Container, Fade, LinearProgress } from '@mui/material';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
-  Link,
-  Outlet,
-  redirect,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-  useNavigation,
-} from 'react-router-dom';
+import { Outlet, redirect, useLoaderData, useNavigate, useNavigation } from 'react-router-dom';
 import { AppConfigDto, AuthDto } from '../@types/api';
 import { ApiError, getAppConfig, getWhoAmI, setupFirstAdmin } from '../api';
-import FenixAvatar from '../components/fenix/FenixAvatar';
+import Navbar from '../components/Navbar';
 
 export interface RootData {
   appConfig: AppConfigDto;
@@ -42,10 +33,6 @@ function Root() {
   const navigate = useNavigate();
   const navigation = useNavigation();
   const { appConfig, auth } = useLoaderData() as RootData;
-  const { t } = useTranslation();
-  const location = useLocation();
-
-  const isAdminRoute = /^\/admin($|\/)/.test(location.pathname);
 
   // create first admin user
   useEffect(() => {
@@ -73,36 +60,7 @@ function Root() {
       >
         <LinearProgress />
       </Fade>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          my: 4,
-          flexWrap: 'wrap',
-        }}
-      >
-        {auth.isAdmin && (
-          <>
-            {isAdminRoute ? (
-              <Button component={Link} to='/'>
-                {t('admin.back-home')}
-              </Button>
-            ) : (
-              <Button component={Link} to='/admin'>
-                {t('admin.page.title')}
-              </Button>
-            )}
-            <Box sx={{ flexGrow: 1 }} />
-          </>
-        )}
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <Typography sx={{ mr: 2 }} variant='h6' component='span' textAlign='right'>
-            {auth.user.displayName}
-          </Typography>
-          <FenixAvatar username={auth.user.username || ''} size={40} />
-        </Box>
-      </Box>
+      <Navbar auth={auth} />
       <Outlet />
     </Container>
   );
