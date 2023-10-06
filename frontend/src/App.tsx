@@ -23,6 +23,7 @@ import Admins, {
 import AdminElections, {
   bulkAddAction as bulkAddElectionAction,
   ElectionsBulkAdd,
+  ElectionsBulkAddSuccess,
   loader as adminElectionsLoader,
 } from './routes/admin/elections';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -109,6 +110,7 @@ const router = createBrowserRouter([
         element: <AdminElections />,
         children: [
           { path: 'bulk-add', element: <ElectionsBulkAdd />, action: bulkAddElectionAction },
+          { path: 'bulk-add/success', element: <ElectionsBulkAddSuccess /> },
         ],
       },
       {

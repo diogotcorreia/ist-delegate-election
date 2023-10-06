@@ -51,6 +51,7 @@
             "voting": "Choose Voting Period",
             "years": "Choose Curricular Years"
           },
+          "success": "Elections created successfully!",
           "voting-period": "Voting from {{start, datetime}} to {{end, datetime}}"
         },
         "create-elections": "Create Elections",
