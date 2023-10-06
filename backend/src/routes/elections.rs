@@ -28,7 +28,7 @@ use crate::{
         ElectionWithUnverifedNominationsDto, NominationDto, SignedPersonSearchResultDto,
         VoteOptionDto,
     },
-    election_utils::{is_in_candidacy_period, is_in_voting_period},
+    election_utils::{get_user_in_election_condition, is_in_candidacy_period, is_in_voting_period},
     errors::AppError,
     services::fenix::FenixService,
 };
@@ -145,22 +145,7 @@ pub async fn get_user_elections(
         .await?;
 
     let elections = Election::find()
-        .filter(
-            user.degree_entries
-                .iter()
-                .fold(Condition::any(), |acc, entry| {
-                    acc.add(
-                        Condition::all()
-                            .add(election::Column::DegreeId.eq(&entry.degree_id))
-                            .add(election::Column::CurricularYear.eq(entry.curricular_year)),
-                    )
-                    .add(
-                        Condition::all()
-                            .add(election::Column::DegreeId.eq(&entry.degree_id))
-                            .add(election::Column::CurricularYear.is_null()),
-                    )
-                }),
-        )
+        .filter(get_user_in_election_condition(&user))
         .all(&txn)
         .await?;
 
