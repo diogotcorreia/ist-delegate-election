@@ -1,4 +1,4 @@
-import { AddRounded, CloseRounded } from '@mui/icons-material';
+import { AddRounded, CloseRounded, VerifiedRounded } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -16,7 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Dayjs } from 'dayjs';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionFunctionArgs,
@@ -123,7 +123,7 @@ export async function bulkAddAction({ request }: ActionFunctionArgs) {
 
   await bulkCreateElections(payload);
 
-  return redirect('..');
+  return redirect('../bulk-add/success');
 }
 
 export function ElectionsBulkAdd() {
@@ -194,7 +194,7 @@ export function ElectionsBulkAdd() {
   );
 
   return (
-    <Dialog open onClose={closeDialog} fullScreen>
+    <Dialog open onClose={closeDialog} fullScreen disableEscapeKeyDown>
       <DialogTitle>
         <Toolbar sx={{ gap: 1 }}>
           <IconButton onClick={closeDialog}>
@@ -387,6 +387,53 @@ export function ElectionsBulkAdd() {
               </StepContent>
             </Step>
           </Stepper>
+        </Container>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function ElectionsBulkAddSuccess() {
+  const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  // Go back to home page after 5 seconds
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setOpen(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  return (
+    <Dialog
+      open={open}
+      onClose={() => setOpen(false)}
+      onTransitionExited={() => navigate('..')}
+      fullScreen
+    >
+      <DialogTitle>
+        <Toolbar sx={{ gap: 1 }}>
+          <IconButton onClick={() => setOpen(false)}>
+            <CloseRounded />
+          </IconButton>
+          {t('admin.subpages.election-management.bulk-dialog.title')}
+        </Toolbar>
+      </DialogTitle>
+      <DialogContent>
+        <Container>
+          <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+            <Typography component='span' fontSize='10rem'>
+              <VerifiedRounded fontSize='inherit' color='success' />
+            </Typography>
+            <Typography variant='h5' component='p'>
+              {t('admin.subpages.election-management.bulk-dialog.success')}
+            </Typography>
+          </Box>
         </Container>
       </DialogContent>
     </Dialog>
