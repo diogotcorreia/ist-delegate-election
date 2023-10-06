@@ -1,6 +1,7 @@
 use crate::{
     auth_utils::{self, get_user},
     dtos::{AuthDto, LoginDto},
+    election_utils::validate_nominations_of_user,
     errors::AppError,
     services::fenix::FenixService,
 };
@@ -18,9 +19,12 @@ pub async fn login(
         .authenticate_from_code(&login_dto.code)
         .await?;
 
+    let active_year = fenix_service.get_active_year().await?;
+    validate_nominations_of_user(&user_details, conn, &active_year).await?;
+
     let mut session = session_handle.write().await;
-    session.insert("user", user_details.clone())?;
-    session.insert("oauth_tokens", oauth_tokens)?;
+    session.insert("user", &user_details)?;
+    session.insert("oauth_tokens", &oauth_tokens)?;
 
     let auth_details = AuthDto {
         is_admin: auth_utils::is_admin(&user_details.username, conn).await?,
