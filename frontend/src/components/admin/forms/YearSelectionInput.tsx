@@ -30,6 +30,8 @@ interface YearSelectionInputProps {
   selectedDegrees: Set<string>;
   selectedYears: Set<string>[]; // index 0 corresponds do degree-wide, other indexes == curricular years
   setSelectedYears: Dispatch<SetStateAction<Set<string>[]>>;
+  electionExists: (degreeId: string, curricularYear: number | undefined, round: number) => boolean;
+  round: number;
 }
 
 function YearSelectionInput({
@@ -37,6 +39,8 @@ function YearSelectionInput({
   selectedDegrees,
   selectedYears,
   setSelectedYears,
+  electionExists,
+  round,
 }: YearSelectionInputProps) {
   const { t } = useTranslation();
   const translateLs = useLocalizedString();
@@ -120,10 +124,12 @@ function YearSelectionInput({
         const newSelected = new Set(newArray[year]);
         if (checked) {
           degrees
+            .filter(({ degree }) => !electionExists(degree.id, year, round))
             .filter(({ degree }) => selectedDegrees.has(degree.id))
             .forEach(({ degree }) => newSelected.add(degree.id));
         } else {
           degrees
+            .filter(({ degree }) => !electionExists(degree.id, year, round))
             .filter(({ degree }) => selectedDegrees.has(degree.id))
             .forEach(({ degree }) => newSelected.delete(degree.id));
         }
@@ -219,6 +225,7 @@ function YearSelectionInput({
                         {Array.from({ length: maxYears + 1 }, (_, year) => (
                           <TableCell key={year}>
                             <Checkbox
+                              disabled={electionExists(degree.id, year, round)}
                               checked={selectedYears[year]?.has(degree.id) || false}
                               onChange={(_, checked) =>
                                 checked ? select(year, degree.id) : unselect(year, degree.id)

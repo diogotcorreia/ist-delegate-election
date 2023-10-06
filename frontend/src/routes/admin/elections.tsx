@@ -169,6 +169,30 @@ export function ElectionsBulkAdd() {
     [votingStart, votingEnd, candidacyEnd]
   );
 
+  const existingElectionsPerYear = useMemo(() => {
+    const existingElections: Record<string, number[][]> = {};
+
+    for (const degreeType of sortedDegrees) {
+      for (const degreeElection of degreeType.degreeElections) {
+        const yearRoundMatrix: number[][] = [];
+        for (const election of degreeElection.elections) {
+          const year = election.curricularYear ?? 0;
+          const rounds = yearRoundMatrix[year] || (yearRoundMatrix[year] = []);
+          rounds.push(election.round);
+        }
+        existingElections[degreeElection.degree.id] = yearRoundMatrix;
+      }
+    }
+
+    return existingElections;
+  }, [sortedDegrees]);
+  const electionExists = useCallback(
+    (degreeId: string, curricularYear: number | undefined, round: number) => {
+      return existingElectionsPerYear[degreeId]?.[curricularYear ?? 0]?.includes(round);
+    },
+    [existingElectionsPerYear]
+  );
+
   return (
     <Dialog open onClose={closeDialog} fullScreen>
       <DialogTitle>
@@ -324,6 +348,8 @@ export function ElectionsBulkAdd() {
                   selectedDegrees={selectedDegrees}
                   selectedYears={selectedYears}
                   setSelectedYears={setSelectedYears}
+                  electionExists={electionExists}
+                  round={round}
                 />
                 <Box mt={3} display='flex' gap={1}>
                   <Button onClick={handleBack} color='inherit'>
