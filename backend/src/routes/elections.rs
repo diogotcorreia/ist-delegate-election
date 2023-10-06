@@ -140,17 +140,29 @@ pub async fn get_user_elections(
 ) -> Result<Json<Vec<ElectionDto>>, AppError> {
     let user = auth_utils::get_user(session_handle).await?;
 
+    let active_year = fenix_service.get_active_year().await?;
+
     let txn = conn
         .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
         .await?;
 
     let elections = Election::find()
-        .filter(get_user_in_election_condition(&user))
+        .filter(
+            Condition::all()
+                .add(election::Column::AcademicYear.eq(active_year))
+                .add(get_user_in_election_condition(&user)),
+        )
         .all(&txn)
         .await?;
 
+    let election_ids: Vec<i32> = elections.iter().map(|election| election.id).collect();
+
     let nominations: Vec<i32> = NominationLog::find()
-        .filter(nomination_log::Column::Nominator.eq(&user.username))
+        .filter(
+            Condition::all()
+                .add(nomination_log::Column::Nominator.eq(&user.username))
+                .add(nomination_log::Column::Election.is_in(election_ids.clone())),
+        )
         .order_by_asc(nomination_log::Column::Election)
         .all(&txn)
         .await?
@@ -158,7 +170,11 @@ pub async fn get_user_elections(
         .map(|model| model.election)
         .collect();
     let votes: Vec<i32> = VoteLog::find()
-        .filter(vote_log::Column::Voter.eq(&user.username))
+        .filter(
+            Condition::all()
+                .add(vote_log::Column::Voter.eq(&user.username))
+                .add(vote_log::Column::Election.is_in(election_ids)),
+        )
         .order_by_asc(vote_log::Column::Election)
         .all(&txn)
         .await?
