@@ -125,6 +125,7 @@ async fn main() {
             get(routes::elections::get_vote_options),
         )
         .route("/login", post(routes::login::login))
+        .route("/logout", post(routes::login::logout))
         .route("/search-user", post(routes::search_user::search_user))
         .route("/setup/admin", post(routes::admin::setup_first_admin))
         .route("/whoami", get(routes::login::whoami));

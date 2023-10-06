@@ -47,6 +47,7 @@ import BulkValidateNominations, {
   loader as bulkValidateNominationsLoader,
 } from './routes/admin/bulk-validate-nominations';
 import RootErrorPage from './routes/error';
+import Logout, { loader as logoutLoader } from './routes/logout';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -125,6 +126,11 @@ const router = createBrowserRouter([
     path: '/login-callback',
     loader: loginCallbackLoader,
     element: <LoginCallback />,
+  },
+  {
+    path: '/logout',
+    loader: logoutLoader,
+    element: <Logout />,
   },
 ]);
 
