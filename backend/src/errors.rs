@@ -29,6 +29,7 @@ pub enum AppError {
     InvalidPersonSignature,
     UnknownNomination,
     Unauthorized,
+    Forbidden,
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
     DbError(DbErr),
@@ -77,6 +78,7 @@ impl IntoResponse for AppError {
             }
             AppError::UnknownNomination => (StatusCode::NOT_FOUND, "error.unknown.nomination"),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
+            AppError::Forbidden => (StatusCode::FORBIDDEN, "error.forbidden"),
             AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),
             AppError::SessionSerializationError(_) | AppError::DbError(_) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, "error.internal")

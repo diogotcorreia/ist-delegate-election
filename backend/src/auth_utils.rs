@@ -29,7 +29,7 @@ pub async fn get_admin(
     if is_admin(&user.username, conn).await? {
         Ok(user)
     } else {
-        Err(AppError::Unauthorized)
+        Err(AppError::Forbidden)
     }
 }
 
