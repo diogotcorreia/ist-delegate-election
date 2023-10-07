@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom';
 import {
   ElectionDto,
   ElectionStatusDto,
-  ElectionWithUnverifedNominationsDto,
+  ElectionWithUnverifiedNominationsDto,
 } from '../../@types/api';
 import useLocalizedString from '../../hooks/useLocalizedString';
 
@@ -30,7 +30,7 @@ const DATE_FORMAT = {
 };
 
 interface Props {
-  election: ElectionDto | ElectionWithUnverifedNominationsDto;
+  election: ElectionDto | ElectionWithUnverifiedNominationsDto;
   children?: React.ReactNode;
 }
 

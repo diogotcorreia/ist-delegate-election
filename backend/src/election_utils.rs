@@ -2,7 +2,7 @@ use entity::{
     election::{self, Model as Election},
     nomination::{self, Entity as Nomination},
 };
-use migration::Query;
+use migration::{OnConflict, Query};
 use sea_orm::{prelude::*, Condition, DatabaseConnection, EntityTrait};
 
 use crate::{dtos::UserDto, errors::AppError};
@@ -85,4 +85,14 @@ pub async fn validate_nominations_of_user(
         .await?;
 
     Ok(())
+}
+
+/// Get an OnConflict resolution rules when upserting a nomination.
+/// This updates the "valid" column if it is pending validation, but
+/// leaves it untouched otherwise.
+pub fn get_nomination_upsert_on_conflict() -> OnConflict {
+    OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
+        .update_column(nomination::Column::Valid)
+        .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
+        .to_owned()
 }

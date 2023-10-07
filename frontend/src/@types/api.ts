@@ -69,6 +69,13 @@ export enum ElectionStatusDto {
   Ended = 'ENDED',
 }
 
+export interface NominationDto {
+  username: string;
+  displayName: string;
+  valid?: boolean;
+  votes?: number;
+}
+
 export interface ElectionDto {
   id: number;
   academicYear: string;
@@ -80,6 +87,8 @@ export interface ElectionDto {
   status: ElectionStatusDto;
   hasNominated?: boolean;
   hasVoted?: boolean;
+  nominations?: NominationDto[];
+  totalVotes?: number;
 }
 
 export interface DegreeElectionsDto {
@@ -119,13 +128,7 @@ export interface CastVoteDto {
   username?: string;
 }
 
-export interface NominationDto {
-  username: string;
-  displayName: string;
-  valid?: boolean;
-}
-
-export interface ElectionWithUnverifedNominationsDto {
+export interface ElectionWithUnverifiedNominationsDto {
   id: number;
   degree?: DegreeDto;
   curricularYear?: number;
