@@ -1,6 +1,6 @@
 name: Formatting
 
-on: [push]
+on: [push, pull_request_target]
 
 env:
   CARGO_TERM_COLOR: always
