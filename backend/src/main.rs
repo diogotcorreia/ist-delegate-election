@@ -114,6 +114,10 @@ async fn main() {
         )
         .route(
             "/election/:election_id/nomination",
+            post(routes::elections::add_nomination),
+        )
+        .route(
+            "/election/:election_id/nomination",
             patch(routes::elections::edit_nomination),
         )
         .route(
