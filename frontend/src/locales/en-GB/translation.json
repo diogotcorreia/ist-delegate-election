@@ -63,6 +63,9 @@
           "text_one": "{{count}} nomination has not been validated. Students can only vote once all nominations have been validated. Please validate this nomination before voting starts.",
           "text_other": "{{count}} nominations have not been validated. Students can only vote once all nominations have been validated. Please validate these nominations before voting starts."
         }
+      },
+      "single-election": {
+        "back": "Back to election management"
       }
     },
     "degree-type-elections": {

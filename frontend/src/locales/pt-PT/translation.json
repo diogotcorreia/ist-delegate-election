@@ -63,6 +63,9 @@
           "text_one": "{{count}} nomeação ainda não foi validada. Os estudantes apenas conseguem votar quando todas as nomeações forem validadas. Por favor valide esta nomeação antes do início da votação.",
           "text_other": "{{count}} nomeações ainda não foram validadas. Os estudantes apenas conseguem votar quando todas as nomeações forem validadas. Por favor valide estas nomeações antes do início da votação."
         }
+      },
+      "single-election": {
+        "back": "Voltar à gestão de eleições"
       }
     },
     "degree-type-elections": {
@@ -143,7 +146,7 @@
       "title": "Período de Votação",
       "has-voted": "Já votou nesta eleição",
       "subtitle": "Votação de {{start, datetime}} até {{end, datetime}}",
-      "subtitle-short": "Votação de {{start, datetime}} até {{end, datetime}}",
+      "subtitle-short": "{{start, datetime}} até {{end, datetime}}",
       "vote-button": "Votar"
     }
   },
