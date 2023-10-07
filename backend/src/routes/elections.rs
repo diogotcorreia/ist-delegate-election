@@ -25,10 +25,13 @@ use crate::{
     auth_utils, crypto_utils,
     dtos::{
         BulkCreateElectionsDto, CastVoteDto, EditNominationDto, ElectionDto,
-        ElectionWithUnverifedNominationsDto, NominationDto, SignedPersonSearchResultDto,
+        ElectionWithUnverifiedNominationsDto, NominationDto, SignedPersonSearchResultDto,
         VoteOptionDto,
     },
-    election_utils::{get_user_in_election_condition, is_in_candidacy_period, is_in_voting_period},
+    election_utils::{
+        get_nomination_upsert_on_conflict, get_user_in_election_condition, is_in_candidacy_period,
+        is_in_voting_period,
+    },
     errors::AppError,
     services::fenix::FenixService,
 };
@@ -129,6 +132,61 @@ pub async fn get_election(
 
     Ok(Json(
         ElectionDto::from_entity_for_user(election, fenix_service, nominations > 0, votes > 0)
+            .await?,
+    ))
+}
+
+pub async fn get_election_details(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<ElectionDto>, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+
+    let nominations = Nomination::find()
+        .filter(nomination::Column::Election.eq(election_id))
+        .find_also_related(ElectionVote)
+        .all(&txn)
+        .await?;
+    let total_votes = VoteLog::find()
+        .filter(vote_log::Column::Election.eq(election_id))
+        .count(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    // convert nominations to dto, and only shows votes if election has ended
+    let has_ended = chrono::Utc::now() > election.voting_period_end.and_utc();
+    let nominations = nominations
+        .into_iter()
+        .map(|(nomination, vote_opt)| {
+            NominationDto::from_entity_with_votes(
+                &nomination,
+                has_ended.then_some(vote_opt.map(|vote| vote.count).unwrap_or(0)),
+            )
+        })
+        .collect();
+
+    // don't show total votes if election is still on-going
+    let total_votes = has_ended.then_some(
+        total_votes
+            .try_into()
+            .expect("total votes should fit in a 32-bit integer"),
+    );
+
+    Ok(Json(
+        ElectionDto::from_entity_for_admin(election, fenix_service, nominations, total_votes)
             .await?,
     ))
 }
@@ -236,12 +294,7 @@ pub async fn self_nominate(
     };
 
     Nomination::insert(nomination)
-        .on_conflict(
-            OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
-                .update_column(nomination::Column::Valid)
-                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
-                .to_owned(),
-        )
+        .on_conflict(get_nomination_upsert_on_conflict())
         .do_nothing()
         .exec(&txn)
         .await?;
@@ -288,12 +341,7 @@ pub async fn nominate_others(
     };
 
     Nomination::insert(nomination)
-        .on_conflict(
-            OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
-                .update_column(nomination::Column::Valid)
-                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
-                .to_owned(),
-        )
+        .on_conflict(get_nomination_upsert_on_conflict())
         .do_nothing()
         .exec(&txn)
         .await?;
@@ -340,7 +388,7 @@ pub async fn get_vote_options(
                     display_name: nomination.display_name,
                 })),
                 Some(false) => None,
-                None => Some(Err(AppError::ElectionWithUnverifedNomination)),
+                None => Some(Err(AppError::ElectionWithUnverifiedNomination)),
             }
         })
         .collect::<Result<Vec<_>, _>>()?;
@@ -376,7 +424,7 @@ pub async fn cast_vote(
         .await?
         > 0
     {
-        return Err(AppError::ElectionWithUnverifedNomination);
+        return Err(AppError::ElectionWithUnverifiedNomination);
     }
 
     let vote_log = vote_log::ActiveModel {
@@ -463,7 +511,7 @@ pub async fn get_unverified_nominations(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
     State(ref fenix_service): State<FenixService>,
-) -> Result<Json<Vec<ElectionWithUnverifedNominationsDto>>, AppError> {
+) -> Result<Json<Vec<ElectionWithUnverifiedNominationsDto>>, AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
@@ -494,7 +542,7 @@ pub async fn get_unverified_nominations(
     let mut grouped_nominations = Vec::new();
     for group in &group_by {
         let (_, election) = group.first().unwrap();
-        let election_dto = ElectionWithUnverifedNominationsDto {
+        let election_dto = ElectionWithUnverifiedNominationsDto {
             id: election.id,
             degree: fenix_service.get_degree(&election.degree_id).await?,
             curricular_year: election.curricular_year,
@@ -508,6 +556,43 @@ pub async fn get_unverified_nominations(
     }
 
     Ok(Json(grouped_nominations))
+}
+
+pub async fn add_nomination(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref signing_key): State<[u8; 64]>,
+    Json(nomination_dto): Json<SignedPersonSearchResultDto>,
+) -> Result<StatusCode, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let txn = conn.begin().await?;
+
+    Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+
+    crypto_utils::validate_person_search_result(election_id, &nomination_dto, signing_key)?;
+
+    let nomination = nomination::ActiveModel {
+        election: ActiveValue::set(election_id),
+        valid: ActiveValue::set(Some(true)),
+        username: ActiveValue::set(nomination_dto.username),
+        display_name: ActiveValue::set(nomination_dto.display_name),
+    };
+
+    Nomination::insert(nomination)
+        .on_conflict(get_nomination_upsert_on_conflict())
+        .do_nothing()
+        .exec(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    Ok(StatusCode::NO_CONTENT)
 }
 
 pub async fn edit_nomination(

@@ -105,8 +105,16 @@ async fn main() {
             get(routes::elections::get_election),
         )
         .route(
+            "/election/:election_id/details",
+            get(routes::elections::get_election_details),
+        )
+        .route(
             "/election/:election_id/nominate",
             post(routes::elections::nominate_others),
+        )
+        .route(
+            "/election/:election_id/nomination",
+            post(routes::elections::add_nomination),
         )
         .route(
             "/election/:election_id/nomination",

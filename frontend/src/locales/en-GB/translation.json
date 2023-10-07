@@ -106,7 +106,9 @@
       "title": "Candidacy Period",
       "has-nominated": "You have already nominated a student for this election",
       "nominate-button": "Nominate Student",
-      "subtitle": "Candidacies from {{start, datetime}} to {{end, datetime}}"
+      "none": "There is no candidacy period",
+      "subtitle": "Candidacies from {{start, datetime}} to {{end, datetime}}",
+      "subtitle-short": "{{start, datetime}} to {{end, datetime}}"
     },
     "completed": "Election Has Ended",
     "count_one": "{{count}} election",
@@ -127,6 +129,13 @@
     "round_ordinal_two": "{{count}}nd Round",
     "round_ordinal_few": "{{count}}rd Round",
     "round_ordinal_other": "{{count}}th Round",
+    "status": {
+      "CANDIDACY": "Nominations",
+      "ENDED": "Finished",
+      "NOT_STARTED": "Not Started",
+      "PROCESSING": "Processing",
+      "VOTING": "Voting"
+    },
     "unverified-nominations-count_one": "{{count}} unverified nomination",
     "unverified-nominations-count_other": "{{count}} unverified nominations",
     "validating-nominations": "Validating Candidacies and Nominations",
@@ -139,6 +148,7 @@
       "title": "Voting Period",
       "has-voted": "You have already voted in this election",
       "subtitle": "Voting from {{start, datetime}} to {{end, datetime}}",
+      "subtitle-short": "{{start, datetime}} to {{end, datetime}}",
       "vote-button": "Vote"
     }
   },

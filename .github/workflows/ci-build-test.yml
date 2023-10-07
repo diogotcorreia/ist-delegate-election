@@ -1,12 +1,13 @@
 name: Build and Test
 
-on: [push]
+on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build-test-backend:
+    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
     name: Build and Test Backend
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +29,7 @@ jobs:
         working-directory: ./backend
 
   build-test-frontend:
+    if: (github.event_name != 'pull_request' && ! github.event.pull_request.head.repo.fork) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork)
     name: Build and Test Frontend
     runs-on: ubuntu-latest
     steps:

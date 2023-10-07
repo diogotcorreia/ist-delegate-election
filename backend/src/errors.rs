@@ -16,7 +16,7 @@ pub enum AppError {
     UnknownElection,
     InvalidDateRange,
     ElectionCandidacyAfterVoting,
-    ElectionWithUnverifedNomination,
+    ElectionWithUnverifiedNomination,
     UnknownVoteOption,
     DuplicateVote,
     DuplicateNomination,
@@ -48,7 +48,7 @@ impl IntoResponse for AppError {
                 StatusCode::BAD_REQUEST,
                 "error.election.candidacy-after-voting",
             ),
-            AppError::ElectionWithUnverifedNomination => {
+            AppError::ElectionWithUnverifiedNomination => {
                 (StatusCode::CONFLICT, "error.election.unverified-nomination")
             }
             AppError::UnknownVoteOption => (
