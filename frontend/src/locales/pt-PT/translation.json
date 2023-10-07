@@ -107,7 +107,9 @@
       "title": "Período de Candidaturas",
       "has-nominated": "Já nomeou um estudante para esta eleição",
       "nominate-button": "Nomear Estudante",
-      "subtitle": "Candidaturas de {{start, datetime}} até {{end, datetime}}"
+      "none": "Não existe período de candidaturas",
+      "subtitle": "Candidaturas de {{start, datetime}} até {{end, datetime}}",
+      "subtitle-short": "{{start, datetime}} até {{end, datetime}}"
     },
     "completed": "Fim da Eleição",
     "count_one": "{{count}} eleição",
@@ -122,6 +124,13 @@
       "success": "Nomeação efetuada com sucesso"
     },
     "round": "{{count}}ª Volta",
+    "status": {
+      "CANDIDACY": "Nomeações",
+      "ENDED": "Terminada",
+      "NOT_STARTED": "Por Começar",
+      "PROCESSING": "Em Processamento",
+      "VOTING": "Votações"
+    },
     "unverified-nominations-count_one": "{{count}} nomeação por validar",
     "unverified-nominations-count_other": "{{count}} nomeações por validar",
     "validating-nominations": "Validação de Candidaturas e Nomeações",
@@ -134,6 +143,7 @@
       "title": "Período de Votação",
       "has-voted": "Já votou nesta eleição",
       "subtitle": "Votação de {{start, datetime}} até {{end, datetime}}",
+      "subtitle-short": "Votação de {{start, datetime}} até {{end, datetime}}",
       "vote-button": "Votar"
     }
   },

@@ -4,9 +4,9 @@
   - changed-files: ['frontend/**/*']
 
 "type:feature":
-  - head-branch: ['^feature']
+  - head-branch: ['^feat']
 "type:refactor":
-  - head-branch: ['^refactor']
+  - head-branch: ['^refact']
 "type:chore":
   - head-branch: ['^chore']
 "type:bug":
