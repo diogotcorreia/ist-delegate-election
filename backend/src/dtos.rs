@@ -104,14 +104,21 @@ pub struct DegreeDto {
 pub struct ElectionDto {
     pub id: i32,
     pub academic_year: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub degree: Option<DegreeDto>,
     pub curricular_year: Option<i32>,
     pub candidacy_period: Option<DateRangeDto>,
     pub voting_period: DateRangeDto,
     pub round: i32,
     pub status: ElectionStatusDto,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub has_nominated: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub has_voted: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub nominations: Option<Vec<NominationDto>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub total_votes: Option<i32>,
 }
 
 impl ElectionDto {
@@ -149,6 +156,21 @@ impl ElectionDto {
         dto.degree = fenix_service.get_degree(&degree_id).await?;
         dto.has_nominated = Some(has_nominated);
         dto.has_voted = Some(has_voted);
+
+        Ok(dto)
+    }
+    pub async fn from_entity_for_admin(
+        entity: election::Model,
+        fenix_service: &FenixService,
+        nominations: Vec<NominationDto>,
+        total_votes: Option<i32>,
+    ) -> Result<Self, AppError> {
+        let degree_id = entity.degree_id.clone();
+        let mut dto = Self::from_entity(entity)?;
+
+        dto.degree = fenix_service.get_degree(&degree_id).await?;
+        dto.total_votes = total_votes;
+        dto.nominations = Some(nominations);
 
         Ok(dto)
     }
@@ -271,14 +293,20 @@ pub struct NominationDto {
     pub username: String,
     pub display_name: String,
     pub valid: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub votes: Option<i32>,
 }
 
 impl NominationDto {
     pub fn from_entity(entity: &nomination::Model) -> Self {
+        Self::from_entity_with_votes(entity, None)
+    }
+    pub fn from_entity_with_votes(entity: &nomination::Model, votes: Option<i32>) -> Self {
         NominationDto {
             username: entity.username.clone(),
             display_name: entity.display_name.clone(),
             valid: entity.valid,
+            votes,
         }
     }
 }
