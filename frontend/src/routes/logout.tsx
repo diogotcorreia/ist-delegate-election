@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Container, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { logout } from '../api';
 
@@ -9,22 +10,28 @@ export async function loader() {
 }
 
 function Logout() {
-  return (
-    <Box
-      sx={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Typography variant='h4'>logged out</Typography>
+  const { t } = useTranslation();
 
-      <Button component={Link} to='/'>
-        login again
-      </Button>
-    </Box>
+  return (
+    <Container>
+      <Box
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Typography variant='h4' sx={{ mb: 4 }}>
+          {t('logout.success')}
+        </Typography>
+
+        <Button component={Link} to='/'>
+          {t('logout.login-button')}
+        </Button>
+      </Box>
+    </Container>
   );
 }
 

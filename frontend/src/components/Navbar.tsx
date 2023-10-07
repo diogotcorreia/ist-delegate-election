@@ -99,7 +99,7 @@ function LanguageItem({ lang, name, changeLanguage }: LanguageItemProps) {
 }
 
 function AccountAvatar({ username }: { username: string }) {
-  const { i18n } = useTranslation();
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,7 +117,7 @@ function AccountAvatar({ username }: { username: string }) {
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
         <MenuItem component={Link} to='/logout'>
-          logout
+          {t('navbar.logout-button')}
         </MenuItem>
       </Menu>
     </>

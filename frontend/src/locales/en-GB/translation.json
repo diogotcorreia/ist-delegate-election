@@ -206,6 +206,13 @@
     },
     "loading": "Hang tight... We're logging you in"
   },
+  "logout": {
+    "success": "You have been logged out. You can now close this page",
+    "login-button": "Go back and Login"
+  },
+  "navbar": {
+    "logout-button": "Logout"
+  },
   "navigation": {
     "back-home": "Back to Election List"
   },
