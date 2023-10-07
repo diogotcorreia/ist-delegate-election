@@ -26,9 +26,6 @@ const DATE_FORMAT = {
   year: 'numeric',
   month: 'numeric',
   day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
 };
 
 interface Props {
