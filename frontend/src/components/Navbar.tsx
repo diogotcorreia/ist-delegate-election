@@ -46,7 +46,7 @@ function Navbar({ auth }: Props) {
         <Typography sx={{ mr: 2 }} variant='h6' component='span' textAlign='right'>
           {auth.user.displayName}
         </Typography>
-        <FenixAvatar username={auth.user.username || ''} size={40} />
+        <AccountAvatar username={auth.user.username} />
       </Box>
     </Box>
   );
@@ -95,6 +95,32 @@ function LanguageItem({ lang, name, changeLanguage }: LanguageItemProps) {
       {name}
       {i18n.language === lang && <CheckRounded sx={{ ml: 1 }} />}
     </MenuItem>
+  );
+}
+
+function AccountAvatar({ username }: { username: string }) {
+  const { t } = useTranslation();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <>
+      <IconButton onClick={handleClick}>
+        <FenixAvatar username={username} size={40} />
+      </IconButton>
+
+      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <MenuItem component={Link} to='/logout'>
+          {t('navbar.logout-button')}
+        </MenuItem>
+      </Menu>
+    </>
   );
 }
 

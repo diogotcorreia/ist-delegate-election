@@ -72,6 +72,10 @@ export function login(payload: LoginDto): Promise<AuthDto> {
   return wrapFetch(fetch(`${BASE_URL}/login`, buildJsonBody('POST', payload)));
 }
 
+export function logout(): Promise<AuthDto> {
+  return wrapFetch(fetch(`${BASE_URL}/logout`, buildJsonBody('POST')));
+}
+
 export function getAdmins(): Promise<AdminDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/admins`));
 }

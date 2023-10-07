@@ -5,7 +5,7 @@ use crate::{
     errors::AppError,
     services::fenix::FenixService,
 };
-use axum::{extract::State, Extension, Json};
+use axum::{extract::State, http::StatusCode, Extension, Json};
 use axum_sessions::SessionHandle;
 use sea_orm::DatabaseConnection;
 
@@ -45,4 +45,13 @@ pub async fn whoami(
         user,
     };
     Ok(Json(auth_details))
+}
+
+pub async fn logout(
+    Extension(ref session_handle): Extension<SessionHandle>,
+) -> Result<StatusCode, AppError> {
+    let mut session = session_handle.write().await;
+    session.destroy();
+
+    Ok(StatusCode::NO_CONTENT)
 }

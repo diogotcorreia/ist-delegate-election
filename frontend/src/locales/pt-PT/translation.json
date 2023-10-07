@@ -201,6 +201,13 @@
     },
     "loading": "Aguarde enquanto efetuamos o login"
   },
+  "logout": {
+    "success": "A sua sessão foi terminada. Pode fechar esta página",
+    "login-button": "Voltar atrás e iniciar sessão"
+  },
+  "navbar": {
+    "logout-button": "Terminar sessão"
+  },
   "navigation": {
     "back-home": "Voltar à Lista de Eleições"
   },
