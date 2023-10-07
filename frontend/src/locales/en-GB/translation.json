@@ -178,6 +178,7 @@
       }
     },
     "fenix": "An error occurred while communicating with Fénix. Please try again later",
+    "forbidden": "You do not have the necessary permissions to perform this action",
     "generic": "An error has occurred. Please try again later",
     "internal": "An internal error occurred. Please try again later",
     "languagestring": {
@@ -199,7 +200,7 @@
     "round": {
       "invalid": "The round must be a positive integer"
     },
-    "unauthorized": "No permission to see this page",
+    "unauthorized": "You must be logged in to perform this action",
     "unknown": {
       "admin": "Could not find this admin",
       "election": "Could not find this election",

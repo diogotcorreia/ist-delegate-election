@@ -101,7 +101,7 @@ pub async fn setup_first_admin(
 
     let count = Admin::find().count(&txn).await?;
     if count != 0 {
-        return Err(AppError::Unauthorized);
+        return Err(AppError::Forbidden);
     }
 
     let now = chrono::offset::Utc::now().naive_utc();
