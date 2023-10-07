@@ -133,6 +133,60 @@ pub async fn get_election(
     ))
 }
 
+pub async fn get_election_details(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<ElectionDto>, AppError> {
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
+
+    let election = Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+
+    let nominations = Nomination::find()
+        .filter(nomination::Column::Election.eq(election_id))
+        .find_also_related(ElectionVote)
+        .all(&txn)
+        .await?;
+    let total_votes = VoteLog::find()
+        .filter(vote_log::Column::Election.eq(election_id))
+        .count(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    // convert nominations to dto, and only shows votes if election has ended
+    let has_ended = chrono::Utc::now() > election.voting_period_end.and_utc();
+    let nominations = nominations
+        .into_iter()
+        .map(|(nomination, vote_opt)| {
+            NominationDto::from_entity_with_votes(
+                &nomination,
+                has_ended.then_some(vote_opt.map(|vote| vote.count).unwrap_or(0)),
+            )
+        })
+        .collect();
+
+    // don't show total votes if election is still on-going
+    let total_votes = has_ended.then_some(
+        total_votes
+            .try_into()
+            .expect("total votes should fit in a 32-bit integer"),
+    );
+
+    Ok(Json(
+        ElectionDto::from_entity_for_admin(election, fenix_service, nominations, total_votes)
+            .await?,
+    ))
+}
+
 pub async fn get_user_elections(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
