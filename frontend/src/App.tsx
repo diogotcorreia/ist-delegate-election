@@ -126,11 +126,13 @@ const router = createBrowserRouter([
     path: '/login-callback',
     loader: loginCallbackLoader,
     element: <LoginCallback />,
+    errorElement: <RootErrorPage />,
   },
   {
     path: '/logout',
     loader: logoutLoader,
     element: <Logout />,
+    errorElement: <RootErrorPage />,
   },
 ]);
 
