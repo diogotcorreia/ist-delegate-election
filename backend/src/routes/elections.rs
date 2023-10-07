@@ -28,7 +28,10 @@ use crate::{
         ElectionWithUnverifiedNominationsDto, NominationDto, SignedPersonSearchResultDto,
         VoteOptionDto,
     },
-    election_utils::{get_user_in_election_condition, is_in_candidacy_period, is_in_voting_period},
+    election_utils::{
+        get_nomination_upsert_on_conflict, get_user_in_election_condition, is_in_candidacy_period,
+        is_in_voting_period,
+    },
     errors::AppError,
     services::fenix::FenixService,
 };
@@ -139,6 +142,7 @@ pub async fn get_election_details(
     State(ref conn): State<DatabaseConnection>,
     State(ref fenix_service): State<FenixService>,
 ) -> Result<Json<ElectionDto>, AppError> {
+    // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
     let txn = conn
@@ -290,12 +294,7 @@ pub async fn self_nominate(
     };
 
     Nomination::insert(nomination)
-        .on_conflict(
-            OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
-                .update_column(nomination::Column::Valid)
-                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
-                .to_owned(),
-        )
+        .on_conflict(get_nomination_upsert_on_conflict())
         .do_nothing()
         .exec(&txn)
         .await?;
@@ -342,12 +341,7 @@ pub async fn nominate_others(
     };
 
     Nomination::insert(nomination)
-        .on_conflict(
-            OnConflict::columns([nomination::Column::Election, nomination::Column::Username])
-                .update_column(nomination::Column::Valid)
-                .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
-                .to_owned(),
-        )
+        .on_conflict(get_nomination_upsert_on_conflict())
         .do_nothing()
         .exec(&txn)
         .await?;
@@ -562,6 +556,43 @@ pub async fn get_unverified_nominations(
     }
 
     Ok(Json(grouped_nominations))
+}
+
+pub async fn add_nomination(
+    Path(election_id): Path<i32>,
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref signing_key): State<[u8; 64]>,
+    Json(nomination_dto): Json<SignedPersonSearchResultDto>,
+) -> Result<StatusCode, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let txn = conn.begin().await?;
+
+    Election::find_by_id(election_id)
+        .one(&txn)
+        .await?
+        .ok_or(AppError::UnknownElection)?;
+
+    crypto_utils::validate_person_search_result(election_id, &nomination_dto, signing_key)?;
+
+    let nomination = nomination::ActiveModel {
+        election: ActiveValue::set(election_id),
+        valid: ActiveValue::set(Some(true)),
+        username: ActiveValue::set(nomination_dto.username),
+        display_name: ActiveValue::set(nomination_dto.display_name),
+    };
+
+    Nomination::insert(nomination)
+        .on_conflict(get_nomination_upsert_on_conflict())
+        .do_nothing()
+        .exec(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    Ok(StatusCode::NO_CONTENT)
 }
 
 pub async fn edit_nomination(
