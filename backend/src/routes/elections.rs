@@ -25,7 +25,7 @@ use crate::{
     auth_utils, crypto_utils,
     dtos::{
         BulkCreateElectionsDto, CastVoteDto, EditNominationDto, ElectionDto,
-        ElectionWithUnverifedNominationsDto, NominationDto, SignedPersonSearchResultDto,
+        ElectionWithUnverifiedNominationsDto, NominationDto, SignedPersonSearchResultDto,
         VoteOptionDto,
     },
     election_utils::{get_user_in_election_condition, is_in_candidacy_period, is_in_voting_period},
@@ -340,7 +340,7 @@ pub async fn get_vote_options(
                     display_name: nomination.display_name,
                 })),
                 Some(false) => None,
-                None => Some(Err(AppError::ElectionWithUnverifedNomination)),
+                None => Some(Err(AppError::ElectionWithUnverifiedNomination)),
             }
         })
         .collect::<Result<Vec<_>, _>>()?;
@@ -376,7 +376,7 @@ pub async fn cast_vote(
         .await?
         > 0
     {
-        return Err(AppError::ElectionWithUnverifedNomination);
+        return Err(AppError::ElectionWithUnverifiedNomination);
     }
 
     let vote_log = vote_log::ActiveModel {
@@ -463,7 +463,7 @@ pub async fn get_unverified_nominations(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
     State(ref fenix_service): State<FenixService>,
-) -> Result<Json<Vec<ElectionWithUnverifedNominationsDto>>, AppError> {
+) -> Result<Json<Vec<ElectionWithUnverifiedNominationsDto>>, AppError> {
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
@@ -494,7 +494,7 @@ pub async fn get_unverified_nominations(
     let mut grouped_nominations = Vec::new();
     for group in &group_by {
         let (_, election) = group.first().unwrap();
-        let election_dto = ElectionWithUnverifedNominationsDto {
+        let election_dto = ElectionWithUnverifiedNominationsDto {
             id: election.id,
             degree: fenix_service.get_degree(&election.degree_id).await?,
             curricular_year: election.curricular_year,

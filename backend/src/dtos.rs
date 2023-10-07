@@ -256,7 +256,7 @@ pub struct CastVoteDto {
 #[typeshare]
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ElectionWithUnverifedNominationsDto {
+pub struct ElectionWithUnverifiedNominationsDto {
     pub id: i32,
     pub degree: Option<DegreeDto>,
     pub curricular_year: Option<i32>,

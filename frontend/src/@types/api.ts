@@ -125,7 +125,7 @@ export interface NominationDto {
   valid?: boolean;
 }
 
-export interface ElectionWithUnverifedNominationsDto {
+export interface ElectionWithUnverifiedNominationsDto {
   id: number;
   degree?: DegreeDto;
   curricularYear?: number;

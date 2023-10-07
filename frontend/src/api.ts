@@ -9,7 +9,7 @@ import {
   DegreeElectionsDto,
   EditNominationDto,
   ElectionDto,
-  ElectionWithUnverifedNominationsDto,
+  ElectionWithUnverifiedNominationsDto,
   LoginDto,
   SearchPersonDto,
   SignedPersonSearchResultDto,
@@ -141,7 +141,7 @@ export function countUnverifiedNominations(): Promise<Record<number, number>> {
   return wrapFetch(fetch(`${BASE_URL}/elections/nominations/unverified-count`));
 }
 
-export function getUnverifiedNominations(): Promise<ElectionWithUnverifedNominationsDto[]> {
+export function getUnverifiedNominations(): Promise<ElectionWithUnverifiedNominationsDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/elections/nominations/unverified`));
 }
 
