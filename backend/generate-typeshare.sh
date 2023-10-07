@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
 SCRIPT_DIR=$(dirname -- "$0")
+
+# `typeshare` must be available; use `cargo install typeshare-cli` or equivalent
 typeshare --lang typescript --output-file $SCRIPT_DIR/../frontend/src/@types/api.ts --config-file $SCRIPT_DIR/typeshare.toml $SCRIPT_DIR
 
 pushd $SCRIPT_DIR/../frontend
