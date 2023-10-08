@@ -8,7 +8,7 @@ use crate::{
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use axum_sessions::SessionHandle;
 use entity::user_degree_override::{self, Entity as UserDegreeOverride};
-use sea_orm::prelude::*;
+use sea_orm::{prelude::*, Condition};
 
 pub async fn login(
     State(ref fenix_service): State<FenixService>,
@@ -20,9 +20,15 @@ pub async fn login(
         .authenticate_from_code(&login_dto.code)
         .await?;
 
+    let active_year = fenix_service.get_active_year().await?;
+
     // override degrees of user
     let degree_overrides = UserDegreeOverride::find()
-        .filter(user_degree_override::Column::Username.eq(user_details.username.clone()))
+        .filter(
+            Condition::all()
+                .add(user_degree_override::Column::Username.eq(user_details.username.clone()))
+                .add(user_degree_override::Column::AcademicYear.eq(active_year.clone())),
+        )
         .all(conn)
         .await?;
 
@@ -48,7 +54,6 @@ pub async fn login(
         }
     }
 
-    let active_year = fenix_service.get_active_year().await?;
     validate_nominations_of_user(&user_details, conn, &active_year).await?;
 
     let mut session = session_handle.write().await;

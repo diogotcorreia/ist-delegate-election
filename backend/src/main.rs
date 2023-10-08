@@ -136,6 +136,18 @@ async fn main() {
         .route("/logout", post(routes::login::logout))
         .route("/search-user", post(routes::search_user::search_user))
         .route("/setup/admin", post(routes::admin::setup_first_admin))
+        .route(
+            "/user-degree-overrides",
+            get(routes::user_degree_overrides::get_user_degree_overrides),
+        )
+        .route(
+            "/user-degree-overrides",
+            post(routes::user_degree_overrides::bulk_add_user_degree_override),
+        )
+        .route(
+            "/user-degree-overrides",
+            delete(routes::user_degree_overrides::bulk_delete_user_degree_override),
+        )
         .route("/whoami", get(routes::login::whoami));
 
     let mut app = Router::new()
