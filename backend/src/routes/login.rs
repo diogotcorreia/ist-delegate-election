@@ -1,13 +1,14 @@
 use crate::{
     auth_utils::{self, get_user},
-    dtos::{AuthDto, LoginDto},
+    dtos::{AuthDto, DegreeEntryDto, LoginDto},
     election_utils::validate_nominations_of_user,
     errors::AppError,
     services::fenix::FenixService,
 };
 use axum::{extract::State, http::StatusCode, Extension, Json};
 use axum_sessions::SessionHandle;
-use sea_orm::DatabaseConnection;
+use entity::user_degree_override::{self, Entity as UserDegreeOverride};
+use sea_orm::prelude::*;
 
 pub async fn login(
     State(ref fenix_service): State<FenixService>,
@@ -15,9 +16,37 @@ pub async fn login(
     Extension(ref session_handle): Extension<SessionHandle>,
     Json(login_dto): Json<LoginDto>,
 ) -> Result<Json<AuthDto>, AppError> {
-    let (user_details, oauth_tokens) = fenix_service
+    let (mut user_details, oauth_tokens) = fenix_service
         .authenticate_from_code(&login_dto.code)
         .await?;
+
+    // override degrees of user
+    let degree_overrides = UserDegreeOverride::find()
+        .filter(user_degree_override::Column::Username.eq(user_details.username.clone()))
+        .all(conn)
+        .await?;
+
+    // If user is already in degree, just change the curricular year.
+    // Otherwise, add the new degree entry
+    for degree_override in degree_overrides {
+        let curricular_year = degree_override
+            .curricular_year
+            .try_into()
+            .expect("curricular year to be a u8");
+        let degree_entry = user_details
+            .degree_entries
+            .iter_mut()
+            .find(|degree| degree.degree_id == degree_override.degree_id);
+        match degree_entry {
+            Some(degree_entry) => {
+                degree_entry.curricular_year = curricular_year;
+            }
+            None => user_details.degree_entries.push(DegreeEntryDto {
+                degree_id: degree_override.degree_id,
+                curricular_year,
+            }),
+        }
+    }
 
     let active_year = fenix_service.get_active_year().await?;
     validate_nominations_of_user(&user_details, conn, &active_year).await?;
