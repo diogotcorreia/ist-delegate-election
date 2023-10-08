@@ -176,7 +176,7 @@ function AdminSingleElection() {
               }
             >
               <span>{t('admin.subpages.single-election.votes', { count: blankVotes ?? 0 })}</span>
-              <Box width={40} />
+              {(election.nominations?.length ?? 0) > 0 && <Box width={40} />}
             </NominationCard>
           )}
           {invalidNominations.map((nomination) => (
@@ -199,10 +199,8 @@ function AdminSingleElection() {
               <NominationCardAction electionId={election.id} nomination={nomination} />
             </NominationCard>
           ))}
-          {!hasEnded && (election.nominations?.length ?? 0)=== 0 && (
-          <Typography>
-            {t('admin.subpages.single-election.nominations-empty')}
-          </Typography>
+          {!hasEnded && (election.nominations?.length ?? 0) === 0 && (
+            <Typography>{t('admin.subpages.single-election.nominations-empty')}</Typography>
           )}
         </Box>
       </ElectionCard>
