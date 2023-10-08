@@ -63,6 +63,19 @@
           "text_one": "{{count}} nomination has not been validated. Students can only vote once all nominations have been validated. Please validate this nomination before voting starts.",
           "text_other": "{{count}} nominations have not been validated. Students can only vote once all nominations have been validated. Please validate these nominations before voting starts."
         }
+      },
+      "single-election": {
+        "add-nomination-button": "Add nomination",
+        "add-nomination-title": "Add a nomination to this election",
+        "back": "Back to election management",
+        "invalidate-nomination": "Invalidate Nomination",
+        "nominations-title": "Nominations & Votes",
+        "nominations-empty": "There are currently no nominations in this election",
+        "validate-nomination": "Validate Nomination",
+        "votes_one": "{{count}} vote  ",
+        "votes_other": "{{count}} votes",
+        "winner": "Winner",
+        "winner-tie": "Winner (tie)"
       }
     },
     "degree-type-elections": {
@@ -86,6 +99,7 @@
   },
   "common": {
     "back": "Back",
+    "cancel": "Cancel",
     "next": "Next",
     "optional": "Optional",
     "skip": "Skip"

@@ -48,6 +48,12 @@ import BulkValidateNominations, {
 } from './routes/admin/bulk-validate-nominations';
 import RootErrorPage from './routes/error';
 import Logout, { loader as logoutLoader } from './routes/logout';
+import AdminSingleElection, {
+  action as adminSingleElectionAction,
+  addNominationAction,
+  AddNominationPage,
+  loader as adminSingleElectionLoader,
+} from './routes/admin/election';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -112,6 +118,15 @@ const router = createBrowserRouter([
         children: [
           { path: 'bulk-add', element: <ElectionsBulkAdd />, action: bulkAddElectionAction },
           { path: 'bulk-add/success', element: <ElectionsBulkAddSuccess /> },
+        ],
+      },
+      {
+        path: 'admin/election/:electionId',
+        loader: adminSingleElectionLoader,
+        action: adminSingleElectionAction,
+        element: <AdminSingleElection />,
+        children: [
+          { path: 'add-nomination', element: <AddNominationPage />, action: addNominationAction },
         ],
       },
       {

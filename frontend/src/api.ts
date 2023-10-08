@@ -108,6 +108,10 @@ export function getElection(electionId: number): Promise<ElectionDto> {
   return wrapFetch(fetch(`${BASE_URL}/election/${electionId}`));
 }
 
+export function getElectionDetails(electionId: number): Promise<ElectionDto> {
+  return wrapFetch(fetch(`${BASE_URL}/election/${electionId}/details`));
+}
+
 export function searchUser(payload: SearchPersonDto): Promise<SignedPersonSearchResultDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/search-user`, buildJsonBody('POST', payload)));
 }
@@ -124,6 +128,15 @@ export function electionNominate(
 ): Promise<void> {
   return wrapFetch(
     fetch(`${BASE_URL}/election/${electionId}/nominate`, buildJsonBody('POST', payload))
+  );
+}
+
+export function addNomination(
+  electionId: number,
+  payload: SignedPersonSearchResultDto
+): Promise<void> {
+  return wrapFetch(
+    fetch(`${BASE_URL}/election/${electionId}/nomination`, buildJsonBody('POST', payload))
   );
 }
 

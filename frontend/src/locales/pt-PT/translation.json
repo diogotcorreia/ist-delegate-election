@@ -63,6 +63,19 @@
           "text_one": "{{count}} nomeação ainda não foi validada. Os estudantes apenas conseguem votar quando todas as nomeações forem validadas. Por favor valide esta nomeação antes do início da votação.",
           "text_other": "{{count}} nomeações ainda não foram validadas. Os estudantes apenas conseguem votar quando todas as nomeações forem validadas. Por favor valide estas nomeações antes do início da votação."
         }
+      },
+      "single-election": {
+        "add-nomination-button": "Adicionar nomeação",
+        "add-nomination-title": "Adicionar uma nomeação a esta eleição",
+        "back": "Voltar à gestão de eleições",
+        "invalidate-nomination": "Invalidar Nomeação",
+        "nominations-title": "Nomeações & Votos",
+        "nominations-empty": "De momento não existem nomeações nesta eleição",
+        "validate-nomination": "Validar Nomeação",
+        "votes_one": "{{count}} voto  ",
+        "votes_other": "{{count}} votos",
+        "winner": "Vencedor(a)",
+        "winner-tie": "Vencedor(a) (empate)"
       }
     },
     "degree-type-elections": {
@@ -86,6 +99,7 @@
   },
   "common": {
     "back": "Voltar",
+    "cancel": "Cancelar",
     "next": "Avançar",
     "optional": "Opcional",
     "skip": "Saltar"
@@ -143,7 +157,7 @@
       "title": "Período de Votação",
       "has-voted": "Já votou nesta eleição",
       "subtitle": "Votação de {{start, datetime}} até {{end, datetime}}",
-      "subtitle-short": "Votação de {{start, datetime}} até {{end, datetime}}",
+      "subtitle-short": "{{start, datetime}} até {{end, datetime}}",
       "vote-button": "Votar"
     }
   },

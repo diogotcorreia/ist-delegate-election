@@ -156,6 +156,7 @@ pub async fn get_election_details(
 
     let nominations = Nomination::find()
         .filter(nomination::Column::Election.eq(election_id))
+        .order_by_asc(nomination::Column::DisplayName)
         .find_also_related(ElectionVote)
         .all(&txn)
         .await?;

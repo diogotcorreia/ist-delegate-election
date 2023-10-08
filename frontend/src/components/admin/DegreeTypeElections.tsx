@@ -5,7 +5,9 @@ import {
   AccordionSummary,
   alpha,
   Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
   Chip,
   Divider,
@@ -18,6 +20,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { ElectionDto, ElectionStatusDto } from '../../@types/api';
 import useLocalizedString from '../../hooks/useLocalizedString';
 import { DegreeTypeAggregator } from '../../hooks/useSortAndGroupDegrees';
@@ -234,6 +237,11 @@ function ElectionCard({ election, unverifiedNominations }: ElectionCardProps) {
             })}
           </Typography>
         </CardContent>
+        <CardActions>
+          <Button component={Link} to={`/admin/election/${election.id}`} size='small'>
+            see more
+          </Button>
+        </CardActions>
       </Card>
     </Grid>
   );
