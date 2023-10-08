@@ -141,3 +141,24 @@ export interface EditNominationDto {
   displayName?: string;
   valid?: boolean;
 }
+
+export interface BulkAddUserDegreeOverrideDto {
+  degreeId: string;
+  curricularYear: number;
+  usernames: string[];
+}
+
+export interface BulkDeleteUserDegreeOverrideDto {
+  degreeId: string;
+  usernames: string[];
+}
+
+export interface UserDegreeOverrideDto {
+  username: string;
+  curricularYear: number;
+}
+
+export interface DegreeWithUserOverridesDto {
+  degree?: DegreeDto;
+  users: UserDegreeOverrideDto[];
+}
