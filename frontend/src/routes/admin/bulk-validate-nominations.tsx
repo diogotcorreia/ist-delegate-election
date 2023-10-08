@@ -1,7 +1,7 @@
 import { ArrowBackRounded, CheckRounded, ClearRounded, VerifiedRounded } from '@mui/icons-material';
-import { Box, Button, IconButton, Paper, styled, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ActionFunctionArgs, Form, Link, useLoaderData } from 'react-router-dom';
+import { ActionFunctionArgs, Link, useLoaderData } from 'react-router-dom';
 import { ElectionWithUnverifiedNominationsDto } from '../../@types/api';
 import { editNomination, getUnverifiedNominations } from '../../api';
 import ElectionCard from '../../components/election/ElectionCard';
