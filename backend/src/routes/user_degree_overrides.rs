@@ -28,12 +28,14 @@ pub async fn bulk_add_user_degree_override(
         .get_degree(&override_dto.degree_id)
         .await?
         .ok_or(AppError::InvalidDegree)?;
+    let active_year = fenix_service.get_active_year().await?;
 
     let override_models: Vec<_> = override_dto
         .usernames
         .into_iter()
         .map(|username| user_degree_override::ActiveModel {
             username: ActiveValue::set(username),
+            academic_year: ActiveValue::set(active_year.clone()),
             degree_id: ActiveValue::set(override_dto.degree_id.clone()),
             curricular_year: ActiveValue::set(override_dto.curricular_year.into()),
         })
@@ -43,6 +45,7 @@ pub async fn bulk_add_user_degree_override(
         .on_conflict(
             OnConflict::columns([
                 user_degree_override::Column::Username,
+                user_degree_override::Column::AcademicYear,
                 user_degree_override::Column::DegreeId,
             ])
             .update_column(user_degree_override::Column::CurricularYear)
@@ -63,7 +66,10 @@ pub async fn get_user_degree_overrides(
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
+    let active_year = fenix_service.get_active_year().await?;
+
     let overrides = UserDegreeOverride::find()
+        .filter(user_degree_override::Column::AcademicYear.eq(active_year))
         .order_by_asc(user_degree_override::Column::Username)
         .all(conn)
         .await?;
@@ -91,7 +97,7 @@ pub async fn get_user_degree_overrides(
 }
 
 pub async fn bulk_delete_user_degree_override(
-    State(ref _fenix_service): State<FenixService>,
+    State(ref fenix_service): State<FenixService>,
     State(ref conn): State<DatabaseConnection>,
     Extension(ref session_handle): Extension<SessionHandle>,
     Json(override_dto): Json<BulkDeleteUserDegreeOverrideDto>,
@@ -99,9 +105,12 @@ pub async fn bulk_delete_user_degree_override(
     // assert admin only
     auth_utils::get_admin(session_handle, conn).await?;
 
+    let active_year = fenix_service.get_active_year().await?;
+
     UserDegreeOverride::delete_many()
         .filter(
             Condition::all()
+                .add(user_degree_override::Column::AcademicYear.eq(active_year))
                 .add(user_degree_override::Column::DegreeId.eq(override_dto.degree_id))
                 .add(user_degree_override::Column::Username.is_in(override_dto.usernames)),
         )
