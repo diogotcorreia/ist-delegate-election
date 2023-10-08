@@ -3,8 +3,7 @@ use std::collections::HashMap;
 use crate::{
     auth_utils::{self},
     dtos::{
-        BulkAddUserDegreeOverrideDto, BulkDeleteUserDegreeOverrideDto,
-        DegreeWithUserOverridesDto,
+        BulkAddUserDegreeOverrideDto, BulkDeleteUserDegreeOverrideDto, DegreeWithUserOverridesDto,
     },
     errors::AppError,
     services::fenix::FenixService,
