@@ -3,11 +3,13 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "admin")]
+#[sea_orm(table_name = "user_degree_override")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub username: String,
-    pub date_added: DateTime,
+    #[sea_orm(primary_key, auto_increment = false)]
+    pub degree_id: String,
+    pub curricular_year: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
