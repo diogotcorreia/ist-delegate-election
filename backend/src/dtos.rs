@@ -319,3 +319,35 @@ pub struct EditNominationDto {
     pub display_name: Option<String>,
     pub valid: Option<bool>,
 }
+
+#[typeshare]
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BulkAddUserDegreeOverrideDto {
+    pub degree_id: String,
+    pub curricular_year: u8,
+    pub usernames: Vec<String>,
+}
+
+#[typeshare]
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BulkDeleteUserDegreeOverrideDto {
+    pub degree_id: String,
+    pub usernames: Vec<String>,
+}
+
+#[typeshare]
+#[derive(Serialize)]
+pub struct DegreeWithUserOverridesDto {
+    pub degree: Option<DegreeDto>,
+    pub users: Vec<UserDegreeOverrideDto>,
+}
+
+#[typeshare]
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UserDegreeOverrideDto {
+    pub username: String,
+    pub curricular_year: u8,
+}
