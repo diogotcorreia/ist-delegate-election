@@ -1,4 +1,5 @@
 import { Box, Paper, PaperOwnProps, styled, Typography } from '@mui/material';
+import { Form } from 'react-router-dom';
 import FenixAvatar from '../../components/fenix/FenixAvatar';
 
 const NominationContainer = styled(Paper)(({ theme }) => ({
@@ -48,6 +49,22 @@ function NominationCard({
         {children}
       </Box>
     </NominationContainer>
+  );
+}
+
+interface EditNominationFormProps {
+  electionId: number;
+  username: string;
+  children?: React.ReactNode;
+}
+
+export function EditNominationForm({ children, electionId, username }: EditNominationFormProps) {
+  return (
+    <Form method='post'>
+      <input type='hidden' name='electionId' value={electionId} />
+      <input type='hidden' name='username' value={username} />
+      {children}
+    </Form>
   );
 }
 

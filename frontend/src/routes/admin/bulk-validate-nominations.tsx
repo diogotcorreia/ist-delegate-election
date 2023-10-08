@@ -5,7 +5,7 @@ import { ActionFunctionArgs, Form, Link, useLoaderData } from 'react-router-dom'
 import { ElectionWithUnverifiedNominationsDto } from '../../@types/api';
 import { editNomination, getUnverifiedNominations } from '../../api';
 import ElectionCard from '../../components/election/ElectionCard';
-import NominationCard from '../../components/election/NominationCard';
+import NominationCard, { EditNominationForm } from '../../components/election/NominationCard';
 
 interface BulkValidateNominationsData {
   elections: ElectionWithUnverifiedNominationsDto[];
@@ -54,16 +54,14 @@ function BulkValidateNominations() {
         <ElectionCard key={election.id} election={election}>
           {election.nominations.map((nomination) => (
             <NominationCard username={nomination.username} displayName={nomination.displayName}>
-              <Form method='post'>
-                <input type='hidden' name='electionId' value={election.id} />
-                <input type='hidden' name='username' value={nomination.username} />
+              <EditNominationForm electionId={election.id} username={nomination.username}>
                 <IconButton color='success' type='submit' name='valid' value='true'>
                   <CheckRounded />
                 </IconButton>
                 <IconButton color='error' type='submit' name='valid' value='false'>
                   <ClearRounded />
                 </IconButton>
-              </Form>
+              </EditNominationForm>
             </NominationCard>
           ))}
         </ElectionCard>

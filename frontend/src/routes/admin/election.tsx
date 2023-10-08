@@ -45,7 +45,7 @@ import {
 } from '../../@types/api';
 import { addNomination, editNomination, getElectionDetails } from '../../api';
 import ElectionCard from '../../components/election/ElectionCard';
-import NominationCard from '../../components/election/NominationCard';
+import NominationCard, { EditNominationForm } from '../../components/election/NominationCard';
 import SearchPersonInput from '../../components/forms/SearchPersonInput';
 
 const DATE_FORMAT = {
@@ -297,22 +297,6 @@ function NominationCardAction({ electionId, nomination }: NominationCardActionPr
         </EditNominationForm>
       </Menu>
     </>
-  );
-}
-
-interface EditNominationFormProps {
-  electionId: number;
-  username: string;
-  children?: React.ReactNode;
-}
-
-function EditNominationForm({ children, electionId, username }: EditNominationFormProps) {
-  return (
-    <Form method='post'>
-      <input type='hidden' name='electionId' value={electionId} />
-      <input type='hidden' name='username' value={username} />
-      {children}
-    </Form>
   );
 }
 
