@@ -65,7 +65,14 @@
         }
       },
       "single-election": {
-        "back": "Back to election management"
+        "back": "Back to election management",
+        "invalidate-nomination": "Invalidate Nomination",
+        "nominations-title": "Nominations & Votes",
+        "validate-nomination": "Validate Nomination",
+        "votes_one": "{{count}} vote  ",
+        "votes_other": "{{count}} votes",
+        "winner": "Winner",
+        "winner-tie": "Winner (tie)"
       }
     },
     "degree-type-elections": {

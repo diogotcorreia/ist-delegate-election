@@ -48,7 +48,10 @@ import BulkValidateNominations, {
 } from './routes/admin/bulk-validate-nominations';
 import RootErrorPage from './routes/error';
 import Logout, { loader as logoutLoader } from './routes/logout';
-import AdminSingleElection, { loader as adminSingleElectionLoader } from './routes/admin/election';
+import AdminSingleElection, {
+  action as adminSingleElectionAction,
+  loader as adminSingleElectionLoader,
+} from './routes/admin/election';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -118,6 +121,7 @@ const router = createBrowserRouter([
       {
         path: 'admin/election/:electionId',
         loader: adminSingleElectionLoader,
+        action: adminSingleElectionAction,
         element: <AdminSingleElection />,
       },
       {

@@ -16,6 +16,7 @@ export interface NominationCardProps extends PaperOwnProps {
   username?: string;
   displayName: string;
   avatar?: React.ReactNode;
+  chip?: React.ReactNode;
   children?: React.ReactNode;
 }
 
@@ -23,6 +24,7 @@ function NominationCard({
   username,
   displayName,
   avatar,
+  chip,
   children,
   ...props
 }: NominationCardProps) {
@@ -31,11 +33,14 @@ function NominationCard({
       <Box display='flex' gap={2} flexGrow={1}>
         {avatar || (username && <FenixAvatar username={username} size={48} />)}
         <Box display='flex' flexDirection='column' justifyContent='center'>
-          {username && (
-            <Typography color='textSecondary' variant='body2'>
-              {username}
-            </Typography>
-          )}
+          <Box display='flex' justifyContent='flex-start' alignItems='center' gap={1}>
+            {username && (
+              <Typography color='textSecondary' variant='body2'>
+                {username}
+              </Typography>
+            )}
+            {chip}
+          </Box>
           <Typography variant='subtitle2'>{displayName}</Typography>
         </Box>
       </Box>

@@ -65,7 +65,15 @@
         }
       },
       "single-election": {
-        "back": "Voltar à gestão de eleições"
+        "back": "Voltar à gestão de eleições",
+        "invalidate-nomination": "Invalidar Nomeação",
+        "nominations-title": "Nomeações & Votos",
+        "nominations-empty": "De momento não existem nomeações nesta eleição",
+        "validate-nomination": "Validar Nomeação",
+        "votes_one": "{{count}} voto  ",
+        "votes_other": "{{count}} votos",
+        "winner": "Vencedor",
+        "winner-tie": "Vencedor (empate)"
       }
     },
     "degree-type-elections": {
