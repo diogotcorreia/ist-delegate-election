@@ -21,7 +21,11 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(UserDegreeOverride::AcademicYear).string().not_null())
+                    .col(
+                        ColumnDef::new(UserDegreeOverride::AcademicYear)
+                            .string()
+                            .not_null(),
+                    )
                     .col(
                         ColumnDef::new(UserDegreeOverride::CurricularYear)
                             .integer()
