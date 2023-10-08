@@ -9,6 +9,8 @@ pub struct Model {
     pub username: String,
     #[sea_orm(primary_key, auto_increment = false)]
     pub degree_id: String,
+    #[sea_orm(primary_key, auto_increment = false)]
+    pub academic_year: String,
     pub curricular_year: i32,
 }
 

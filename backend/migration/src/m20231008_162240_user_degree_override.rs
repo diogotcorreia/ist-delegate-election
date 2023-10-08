@@ -22,6 +22,11 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
+                        ColumnDef::new(UserDegreeOverride::AcademicYear)
+                            .string()
+                            .not_null(),
+                    )
+                    .col(
                         ColumnDef::new(UserDegreeOverride::CurricularYear)
                             .integer()
                             .not_null(),
@@ -29,6 +34,7 @@ impl MigrationTrait for Migration {
                     .primary_key(
                         Index::create()
                             .col(UserDegreeOverride::Username)
+                            .col(UserDegreeOverride::AcademicYear)
                             .col(UserDegreeOverride::DegreeId),
                     )
                     .to_owned(),
@@ -47,6 +53,7 @@ impl MigrationTrait for Migration {
 enum UserDegreeOverride {
     Table,
     Username,
+    AcademicYear,
     DegreeId,
     CurricularYear,
 }
