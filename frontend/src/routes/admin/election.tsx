@@ -1,13 +1,27 @@
 import {
+  AddRounded,
   ArrowBackRounded,
   CheckRounded,
   ClearRounded,
   EditOffRounded,
   MoreVertRounded,
 } from '@mui/icons-material';
-import { Avatar, Box, Button, Chip, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionFunctionArgs,
@@ -15,12 +29,24 @@ import {
   Link,
   LoaderFunctionArgs,
   Outlet,
+  redirect,
   useLoaderData,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+  useSubmit,
 } from 'react-router-dom';
-import { ElectionDto, ElectionStatusDto, NominationDto } from '../../@types/api';
-import { editNomination, getElectionDetails } from '../../api';
+import { SubmitTarget } from 'react-router-dom/dist/dom';
+import {
+  ElectionDto,
+  ElectionStatusDto,
+  NominationDto,
+  SignedPersonSearchResultDto,
+} from '../../@types/api';
+import { addNomination, editNomination, getElectionDetails } from '../../api';
 import ElectionCard from '../../components/election/ElectionCard';
 import NominationCard from '../../components/election/NominationCard';
+import SearchPersonInput from '../../components/forms/SearchPersonInput';
 
 const DATE_FORMAT = {
   weekday: 'long',
@@ -44,17 +70,14 @@ export async function loader({ params }: LoaderFunctionArgs): Promise<RootData> 
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const action = formData.get('action')?.toString();
-  if (action === 'edit-nomination') {
-    const electionId = formData.get('electionId')?.valueOf() as number;
-    const username = formData.get('username')?.toString() || '';
-    const valid = formData.get('valid')?.toString() === 'true';
-    const nomination = {
-      username,
-      valid,
-    };
-    await editNomination(electionId, nomination);
-  }
+  const electionId = formData.get('electionId')?.valueOf() as number;
+  const username = formData.get('username')?.toString() || '';
+  const valid = formData.get('valid')?.toString() === 'true';
+  const nomination = {
+    username,
+    valid,
+  };
+  await editNomination(electionId, nomination);
 
   return null;
 }
@@ -202,9 +225,21 @@ function AdminSingleElection() {
           {!hasEnded && (election.nominations?.length ?? 0) === 0 && (
             <Typography>{t('admin.subpages.single-election.nominations-empty')}</Typography>
           )}
+          {!hasEnded && (
+            <Box display='flex' justifyContent='center' mt={2}>
+              <Button
+                component={Link}
+                to='./add-nomination'
+                variant='outlined'
+                startIcon={<AddRounded />}
+              >
+                {t('admin.subpages.single-election.add-nomination-button')}
+              </Button>
+            </Box>
+          )}
         </Box>
       </ElectionCard>
-      <Outlet />
+      <Outlet context={{ electionId: election.id }} />
     </>
   );
 }
@@ -243,7 +278,7 @@ function NominationCardAction({ electionId, nomination }: NominationCardActionPr
   return (
     <>
       <Box component='span' sx={{ whiteSpace: 'pre-wrap' }}>
-        {nomination.votes !== null &&
+        {nomination.votes !== undefined &&
           t('admin.subpages.single-election.votes', { count: nomination.votes })}
       </Box>
       <IconButton onClick={handleClick}>
@@ -274,11 +309,72 @@ interface EditNominationFormProps {
 function EditNominationForm({ children, electionId, username }: EditNominationFormProps) {
   return (
     <Form method='post'>
-      <input type='hidden' name='action' value='edit-nomination' />
       <input type='hidden' name='electionId' value={electionId} />
       <input type='hidden' name='username' value={username} />
       {children}
     </Form>
+  );
+}
+
+export async function addNominationAction({ params, request }: ActionFunctionArgs) {
+  const payload = await request.json();
+
+  await addNomination(parseInt(params.electionId || '', 10), payload.person);
+
+  return null;
+}
+
+export function AddNominationPage() {
+  const { state } = useLocation();
+  const { electionId } = useOutletContext<{ electionId: number }>();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(true);
+  const [selectedPerson, setSelectedPerson] = useState<SignedPersonSearchResultDto | null>(null);
+  const { t } = useTranslation();
+  const submit = useSubmit();
+  const handleSubmit = useCallback(() => {
+    const payload = {
+      person: selectedPerson,
+    };
+    // bah
+    submit(payload as unknown as SubmitTarget, {
+      method: 'post',
+      encType: 'application/json',
+      state: { close: true },
+    });
+  }, [submit, selectedPerson]);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (state?.close) {
+      handleClose();
+    }
+  }, [state?.close]);
+
+  return (
+    <Dialog open={open} onClose={handleClose} onTransitionExited={() => navigate('..')} fullWidth>
+      <DialogTitle>{t('admin.subpages.single-election.add-nomination-title')}</DialogTitle>
+      <DialogContent>
+        <Box mt={1}>
+          <SearchPersonInput
+            electionId={electionId}
+            value={selectedPerson}
+            setValue={setSelectedPerson}
+          />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button color='error' onClick={handleClose}>
+          {t('common.cancel')}
+        </Button>
+        <Button onClick={handleSubmit}>
+          {t('admin.subpages.single-election.add-nomination-button')}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 

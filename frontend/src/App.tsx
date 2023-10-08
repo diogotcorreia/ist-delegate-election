@@ -50,6 +50,8 @@ import RootErrorPage from './routes/error';
 import Logout, { loader as logoutLoader } from './routes/logout';
 import AdminSingleElection, {
   action as adminSingleElectionAction,
+  addNominationAction,
+  AddNominationPage,
   loader as adminSingleElectionLoader,
 } from './routes/admin/election';
 
@@ -123,6 +125,9 @@ const router = createBrowserRouter([
         loader: adminSingleElectionLoader,
         action: adminSingleElectionAction,
         element: <AdminSingleElection />,
+        children: [
+          { path: 'add-nomination', element: <AddNominationPage />, action: addNominationAction },
+        ],
       },
       {
         path: 'admin/bulk-validate-nominations',

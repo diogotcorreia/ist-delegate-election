@@ -131,6 +131,15 @@ export function electionNominate(
   );
 }
 
+export function addNomination(
+  electionId: number,
+  payload: SignedPersonSearchResultDto
+): Promise<void> {
+  return wrapFetch(
+    fetch(`${BASE_URL}/election/${electionId}/nomination`, buildJsonBody('POST', payload))
+  );
+}
+
 export function getElectionVoteOptions(electionId: number): Promise<VoteOptionDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/election/${electionId}/vote-options`));
 }

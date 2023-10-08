@@ -65,6 +65,8 @@
         }
       },
       "single-election": {
+        "add-nomination-button": "Add nomination",
+        "add-nomination-title": "Add a nomination to this election",
         "back": "Back to election management",
         "invalidate-nomination": "Invalidate Nomination",
         "nominations-title": "Nominations & Votes",
@@ -97,6 +99,7 @@
   },
   "common": {
     "back": "Back",
+    "cancel": "Cancel",
     "next": "Next",
     "optional": "Optional",
     "skip": "Skip"
