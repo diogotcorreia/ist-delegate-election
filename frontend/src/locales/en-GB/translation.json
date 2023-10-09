@@ -76,6 +76,16 @@
         "votes_other": "{{count}} votes",
         "winner": "Winner",
         "winner-tie": "Winner (tie)"
+      },
+      "user-degree-override-management": {
+        "assign-users-to-degree-button": "Assign users to degree",
+        "bulk-add": {
+          "curricular-year": "Curricular Year",
+          "curricular-year-helper-text": "The curricular year must be a number",
+          "select-degree": "Select Degree"
+        },
+        "title": "User Management",
+        "subtitle": "Add or override degrees assigned to users"
       }
     },
     "degree-type-elections": {

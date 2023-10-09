@@ -8,12 +8,25 @@ use futures::stream::{self, StreamExt};
 
 use crate::{
     auth_utils,
-    dtos::{DegreeElectionsDto, ElectionDto},
+    dtos::{DegreeElectionsDto, ElectionDto, DegreeDto},
     errors::AppError,
     services::fenix::FenixService,
 };
 
 pub async fn list_degrees(
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref conn): State<DatabaseConnection>,
+    State(ref fenix_service): State<FenixService>,
+) -> Result<Json<Vec<DegreeDto>>, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let degrees = fenix_service.get_degrees().await?.collect();
+
+    Ok(Json(degrees))
+}
+
+pub async fn list_degrees_with_elections(
     Extension(ref session_handle): Extension<SessionHandle>,
     State(ref conn): State<DatabaseConnection>,
     State(ref fenix_service): State<FenixService>,
