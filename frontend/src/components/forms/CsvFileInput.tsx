@@ -58,7 +58,7 @@ function CsvFileInput({ helpText, importValues }: CsvFileInputProps) {
     setError(false);
     try {
       const result: Result = await new Promise((complete, error) =>
-        parse(file, { header: true, encoding: 'utf-8', complete, error })
+        parse(file, { header: true, skipEmptyLines: true, encoding: 'utf-8', complete, error })
       );
       setResults(result);
     } catch (e) {

@@ -33,7 +33,7 @@ function UserDegreeOverridesRoot() {
 
       <React.Suspense fallback={<CircularProgress />}>
         <Await resolve={overrides} errorElement={<p>error</p>}>
-          <p>TODO {JSON.stringify(overrides)}</p>
+          {(overrides) => <p>TODO {JSON.stringify(overrides)}</p>}
         </Await>
       </React.Suspense>
     </>

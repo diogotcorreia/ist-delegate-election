@@ -80,9 +80,13 @@
       "user-degree-override-management": {
         "assign-users-to-degree-button": "Assign users to degree",
         "bulk-add": {
+          "back": "Back to User Management",
           "curricular-year": "Curricular Year",
           "curricular-year-helper-text": "The curricular year must be a number",
+          "remove-all": "Remove All",
           "select-degree": "Select Degree",
+          "submit": "Save association",
+          "title": "Assign Degree to User(s)",
           "upload-help-text": "Select the column of the CSV file that contains usernames"
         },
         "title": "User Management",

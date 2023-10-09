@@ -1,9 +1,9 @@
-import { DeleteRounded } from '@mui/icons-material';
-import { Autocomplete, Button, IconButton, Paper, TextField, Typography } from '@mui/material';
+import { ArrowBackRounded, DeleteRounded } from '@mui/icons-material';
+import { Autocomplete, Box, Button, IconButton, Paper, TextField, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActionFunctionArgs, redirect, useLoaderData, useSubmit } from 'react-router-dom';
+import { ActionFunctionArgs, Link, redirect, useLoaderData, useSubmit } from 'react-router-dom';
 import { SubmitTarget } from 'react-router-dom/dist/dom';
 import { DegreeDto } from '../../../@types/api';
 import { addUserDegreeOverrides, getDegrees } from '../../../api';
@@ -92,8 +92,18 @@ function BulkAddUserDegreeOverrides() {
 
   return (
     <>
+      <Box mb={2}>
+        <Button
+          component={Link}
+          to='/admin/user-degree-overrides'
+          startIcon={<ArrowBackRounded />}
+          color='inherit'
+        >
+          {t('admin.subpages.user-degree-override-management.bulk-add.back')}
+        </Button>
+      </Box>
       <Typography variant='h2' gutterBottom>
-        {t('admin.subpages.user-degree-override-management.title')}
+        {t('admin.subpages.user-degree-override-management.bulk-add.title')}
       </Typography>
 
       <Grid container spacing={2}>
@@ -134,32 +144,38 @@ function BulkAddUserDegreeOverrides() {
         </Grid>
       </Grid>
 
-      <CsvFileInput
-        helpText={t('admin.subpages.user-degree-override-management.bulk-add.upload-help-text')}
-        importValues={importValues}
-      />
+      <Box display='flex' alignItems='center' flexWrap='wrap' gap={2} my={2}>
+        <CsvFileInput
+          helpText={t('admin.subpages.user-degree-override-management.bulk-add.upload-help-text')}
+          importValues={importValues}
+        />
 
-      <Button
-        onClick={() => setUsers(new Set())}
-        startIcon={<DeleteRounded />}
-        variant='outlined'
-        color='error'
-      >
-        Delete all
-      </Button>
+        {users.size > 0 && (
+          <Button
+            onClick={() => setUsers(new Set())}
+            startIcon={<DeleteRounded />}
+            variant='outlined'
+            color='error'
+          >
+            {t('admin.subpages.user-degree-override-management.bulk-add.remove-all')}
+          </Button>
+        )}
 
-      <Button
-        onClick={handleSubmit}
-        variant='contained'
-        disabled={
-          selectedDegree === null ||
-          curricularYear === null ||
-          !isCurricularYearValid ||
-          users.size === 0
-        }
-      >
-        Submit
-      </Button>
+        <Box flexGrow={1} />
+
+        <Button
+          onClick={handleSubmit}
+          variant='contained'
+          disabled={
+            selectedDegree === null ||
+            curricularYear === null ||
+            !isCurricularYearValid ||
+            users.size === 0
+          }
+        >
+          {t('admin.subpages.user-degree-override-management.bulk-add.submit')}
+        </Button>
+      </Box>
 
       <Grid container spacing={2}>
         {[...users].map((user) => (
