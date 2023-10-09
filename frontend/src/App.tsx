@@ -54,6 +54,14 @@ import AdminSingleElection, {
   AddNominationPage,
   loader as adminSingleElectionLoader,
 } from './routes/admin/election';
+import UserDegreeOverridesRoot, {
+  action as userDegreeOverridesAction,
+  loader as userDegreeOverridesLoader,
+} from './routes/admin/user-degree-override/root';
+import BulkAddUserDegreeOverrides, {
+  action as bulkAddUserDegreeOverridesAction,
+  loader as bulkAddUserDegreeOverridesLoader,
+} from './routes/admin/user-degree-override/bulk-add';
 
 function getThemeOptions(dark: boolean): ThemeOptions {
   return {
@@ -134,6 +142,18 @@ const router = createBrowserRouter([
         loader: bulkValidateNominationsLoader,
         action: bulkValidateNominationsAction,
         element: <BulkValidateNominations />,
+      },
+      {
+        path: 'admin/user-degree-overrides',
+        loader: userDegreeOverridesLoader,
+        action: userDegreeOverridesAction,
+        element: <UserDegreeOverridesRoot />,
+      },
+      {
+        path: 'admin/user-degree-overrides/bulk-add',
+        loader: bulkAddUserDegreeOverridesLoader,
+        action: bulkAddUserDegreeOverridesAction,
+        element: <BulkAddUserDegreeOverrides />,
       },
     ],
   },

@@ -76,6 +76,22 @@
         "votes_other": "{{count}} votes",
         "winner": "Winner",
         "winner-tie": "Winner (tie)"
+      },
+      "user-degree-override-management": {
+        "assign-users-to-degree-button": "Assign users to degree",
+        "bulk-add": {
+          "back": "Back to User Management",
+          "curricular-year": "Curricular Year",
+          "curricular-year-helper-text": "The curricular year must be a number",
+          "remove-all": "Remove All",
+          "select-degree": "Select Degree",
+          "submit": "Save association",
+          "title": "Assign Degree to User(s)",
+          "upload-help-text": "Select the column of the CSV file that contains usernames"
+        },
+        "delete-all": "Delete All",
+        "title": "User Management",
+        "subtitle": "Add or override degrees assigned to users"
       }
     },
     "degree-type-elections": {
@@ -103,6 +119,14 @@
     "next": "Next",
     "optional": "Optional",
     "skip": "Skip"
+  },
+  "csv-file-input": {
+    "import-button": "Import",
+    "parser-error": "Error while parsing CSV file, on row {{row}}: {{description}}",
+    "select-column": "Column",
+    "title": "Import CSV File",
+    "upload-button": "Upload CSV File",
+    "upload-error": "Error while uploading CSV file"
   },
   "dashboard": {
     "elections": {

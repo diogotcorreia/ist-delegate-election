@@ -76,6 +76,22 @@
         "votes_other": "{{count}} votos",
         "winner": "Vencedor(a)",
         "winner-tie": "Vencedor(a) (empate)"
+      },
+      "user-degree-override-management": {
+        "assign-users-to-degree-button": "Associar utilizadores a cursos",
+        "bulk-add": {
+          "back": "Voltar à Gestão de Utilizadores",
+          "curricular-year": "Ano Curricular",
+          "curricular-year-helper-text": "O ano curricular tem de ser um número",
+          "remove-all": "Remover todos",
+          "select-degree": "Selecionar Curso",
+          "submit": "Guardar Associação",
+          "title": "Associar Curso a Utilizadores",
+          "upload-help-text": "Selecione a coluna do ficheiro CSV que contém os nomes de utilizador"
+        },
+        "delete-all": "Eliminar todos",
+        "title": "Gestão de Utilizadores",
+        "subtitle": "Adicionar ou forçar associações de cursos a utilizadores"
       }
     },
     "degree-type-elections": {
@@ -103,6 +119,14 @@
     "next": "Avançar",
     "optional": "Opcional",
     "skip": "Saltar"
+  },
+  "csv-file-input": {
+    "import-button": "Importar",
+    "parser-error": "Erro ao ler o ficheiro CSV, na linha {{row}}: {{description}}",
+    "select-column": "Coluna",
+    "title": "Importar Ficheiro CSV",
+    "upload-button": "Selecionar Ficheiro CSV",
+    "upload-error": "Erro ao importar o ficheiro CSV"
   },
   "dashboard": {
     "elections": {

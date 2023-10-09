@@ -85,6 +85,10 @@ async fn main() {
         .route("/config", get(routes::config::get_config))
         .route("/degrees", get(routes::degrees::list_degrees))
         .route(
+            "/degrees/elections",
+            get(routes::degrees::list_degrees_with_elections),
+        )
+        .route(
             "/elections/bulk",
             post(routes::elections::bulk_create_elections),
         )

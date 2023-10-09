@@ -1,4 +1,9 @@
-import { AdminPanelSettings, Ballot, ChevronRight } from '@mui/icons-material';
+import {
+  AdminPanelSettingsRounded,
+  BallotRounded,
+  ChevronRight,
+  GroupRounded,
+} from '@mui/icons-material';
 import { Card, CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useTranslation } from 'react-i18next';
@@ -8,14 +13,20 @@ const subpages = [
   {
     title: 'admin.subpages.election-management.title',
     subtitle: 'admin.subpages.election-management.subtitle',
-    icon: <Ballot fontSize='inherit' />,
+    icon: <BallotRounded fontSize='inherit' />,
     path: '/admin/elections',
   },
   {
     title: 'admin.subpages.admin-management.title',
     subtitle: 'admin.subpages.admin-management.subtitle',
-    icon: <AdminPanelSettings fontSize='inherit' />,
+    icon: <AdminPanelSettingsRounded fontSize='inherit' />,
     path: '/admin/admins',
+  },
+  {
+    title: 'admin.subpages.user-degree-override-management.title',
+    subtitle: 'admin.subpages.user-degree-override-management.subtitle',
+    icon: <GroupRounded fontSize='inherit' />,
+    path: '/admin/user-degree-overrides',
   },
 ];
 

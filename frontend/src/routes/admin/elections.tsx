@@ -28,7 +28,7 @@ import {
   useOutletContext,
 } from 'react-router-dom';
 import { DegreeElectionsDto } from '../../@types/api';
-import { bulkCreateElections, countUnverifiedNominations, getDegrees } from '../../api';
+import { bulkCreateElections, countUnverifiedNominations, getDegreeElections } from '../../api';
 import DegreeTypeElections from '../../components/admin/DegreeTypeElections';
 import BulkCreateElectionsSubmitButton from '../../components/admin/forms/BulkCreateElectionsSubmitButton';
 import DateRangeInput from '../../components/admin/forms/DateRangeInput';
@@ -54,7 +54,7 @@ interface ElectionsData {
 }
 
 export async function loader(): Promise<ElectionsData> {
-  const degrees = await getDegrees();
+  const degrees = await getDegreeElections();
   const unverifiedNominationsCountByElection = await countUnverifiedNominations();
 
   const unverifiedNominationsCount = Object.values(unverifiedNominationsCountByElection).reduce(

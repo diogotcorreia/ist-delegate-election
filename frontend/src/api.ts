@@ -4,9 +4,13 @@ import {
   AppConfigDto,
   AppErrorDto,
   AuthDto,
+  BulkAddUserDegreeOverrideDto,
   BulkCreateElectionsDto,
+  BulkDeleteUserDegreeOverrideDto,
   CastVoteDto,
+  DegreeDto,
   DegreeElectionsDto,
+  DegreeWithUserOverridesDto,
   EditNominationDto,
   ElectionDto,
   ElectionWithUnverifiedNominationsDto,
@@ -92,7 +96,11 @@ export function setupFirstAdmin(): Promise<void> {
   return wrapFetch(fetch(`${BASE_URL}/setup/admin`, buildJsonBody('POST')));
 }
 
-export function getDegrees(): Promise<DegreeElectionsDto[]> {
+export function getDegreeElections(): Promise<DegreeElectionsDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/degrees/elections`));
+}
+
+export function getDegrees(): Promise<DegreeDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/degrees`));
 }
 
@@ -162,4 +170,16 @@ export function editNomination(electionId: number, payload: EditNominationDto): 
   return wrapFetch(
     fetch(`${BASE_URL}/election/${electionId}/nomination`, buildJsonBody('PATCH', payload))
   );
+}
+
+export function getUserDegreeOverrides(): Promise<DegreeWithUserOverridesDto[]> {
+  return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`));
+}
+
+export function addUserDegreeOverrides(payload: BulkAddUserDegreeOverrideDto): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`, buildJsonBody('POST', payload)));
+}
+
+export function deleteUserDegreeOverrides(payload: BulkDeleteUserDegreeOverrideDto): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`, buildJsonBody('DELETE', payload)));
 }
