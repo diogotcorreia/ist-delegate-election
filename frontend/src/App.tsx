@@ -58,6 +58,7 @@ import UserDegreeOverridesRoot, {
   loader as userDegreeOverridesLoader,
 } from './routes/admin/user-degree-override/root';
 import BulkAddUserDegreeOverrides, {
+  action as bulkAddUserDegreeOverridesAction,
   loader as bulkAddUserDegreeOverridesLoader,
 } from './routes/admin/user-degree-override/bulk-add';
 
@@ -149,6 +150,7 @@ const router = createBrowserRouter([
       {
         path: 'admin/user-degree-overrides/bulk-add',
         loader: bulkAddUserDegreeOverridesLoader,
+        action: bulkAddUserDegreeOverridesAction,
         element: <BulkAddUserDegreeOverrides />,
       },
     ],

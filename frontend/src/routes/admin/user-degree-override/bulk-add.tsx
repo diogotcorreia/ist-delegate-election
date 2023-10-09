@@ -1,10 +1,13 @@
-import { Autocomplete, TextField, Typography } from '@mui/material';
+import { DeleteRounded } from '@mui/icons-material';
+import { Autocomplete, Button, IconButton, Paper, TextField, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLoaderData } from 'react-router-dom';
+import { ActionFunctionArgs, redirect, useLoaderData, useSubmit } from 'react-router-dom';
+import { SubmitTarget } from 'react-router-dom/dist/dom';
 import { DegreeDto } from '../../../@types/api';
-import { getDegrees } from '../../../api';
+import { addUserDegreeOverrides, getDegrees } from '../../../api';
+import CsvFileInput from '../../../components/forms/CsvFileInput';
 import useLocalizedString from '../../../hooks/useLocalizedString';
 
 interface BulkAddData {
@@ -17,6 +20,14 @@ export async function loader() {
   return { degrees };
 }
 
+export async function action({ request }: ActionFunctionArgs) {
+  const payload = await request.json();
+
+  await addUserDegreeOverrides(payload);
+
+  return redirect('/admin/user-degree-overrides');
+}
+
 interface DegreeDtoWithType extends DegreeDto {
   type: string;
 }
@@ -25,9 +36,11 @@ function BulkAddUserDegreeOverrides() {
   const { degrees } = useLoaderData() as BulkAddData;
   const { t } = useTranslation();
   const translateLs = useLocalizedString();
+  const submit = useSubmit();
 
   const [selectedDegree, setSelectedDegree] = useState<DegreeDtoWithType | null>(null);
   const [curricularYear, setCurricularYear] = useState<string | null>(null);
+  const [users, setUsers] = useState<Set<string>>(new Set());
 
   const autocompleteOptions = useMemo(() => {
     const degreesWithType = degrees.map((degree) => ({
@@ -44,6 +57,38 @@ function BulkAddUserDegreeOverrides() {
     const parsed = parseInt(curricularYear || '', 10);
     return !isNaN(parsed) && parsed > 0 && parsed <= 255;
   }, [curricularYear]);
+
+  const importValues = useCallback(
+    (values: string[]) => {
+      setUsers((users) => {
+        const newUsers = new Set(users);
+        values.forEach((v) => newUsers.add(v));
+        return newUsers;
+      });
+    },
+    [setUsers]
+  );
+
+  const handleRemoveUser = (username: string) => () => {
+    setUsers((users) => {
+      const newUsers = new Set(users);
+      newUsers.delete(username);
+      return newUsers;
+    });
+  };
+
+  const handleSubmit = useCallback(() => {
+    const payload = {
+      degreeId: selectedDegree?.id,
+      curricularYear: parseInt(curricularYear ?? '', 10),
+      usernames: [...users],
+    };
+    // bah
+    submit(payload as unknown as SubmitTarget, {
+      method: 'post',
+      encType: 'application/json',
+    });
+  }, [submit, selectedDegree, curricularYear, users]);
 
   return (
     <>
@@ -87,6 +132,46 @@ function BulkAddUserDegreeOverrides() {
             fullWidth
           />
         </Grid>
+      </Grid>
+
+      <CsvFileInput
+        helpText={t('admin.subpages.user-degree-override-management.bulk-add.upload-help-text')}
+        importValues={importValues}
+      />
+
+      <Button
+        onClick={() => setUsers(new Set())}
+        startIcon={<DeleteRounded />}
+        variant='outlined'
+        color='error'
+      >
+        Delete all
+      </Button>
+
+      <Button
+        onClick={handleSubmit}
+        variant='contained'
+        disabled={
+          selectedDegree === null ||
+          curricularYear === null ||
+          !isCurricularYearValid ||
+          users.size === 0
+        }
+      >
+        Submit
+      </Button>
+
+      <Grid container spacing={2}>
+        {[...users].map((user) => (
+          <Grid xs={12} sm={6} md={4} lg={2}>
+            <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Typography flexGrow={1}>{user}</Typography>
+              <IconButton onClick={handleRemoveUser(user)}>
+                <DeleteRounded />
+              </IconButton>
+            </Paper>
+          </Grid>
+        ))}
       </Grid>
     </>
   );

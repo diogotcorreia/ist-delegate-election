@@ -8,7 +8,7 @@ use futures::stream::{self, StreamExt};
 
 use crate::{
     auth_utils,
-    dtos::{DegreeElectionsDto, ElectionDto, DegreeDto},
+    dtos::{DegreeDto, DegreeElectionsDto, ElectionDto},
     errors::AppError,
     services::fenix::FenixService,
 };

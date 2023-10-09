@@ -20,6 +20,7 @@
     "http-proxy-middleware": "^2.0.6",
     "i18next": "^23.5.1",
     "i18next-browser-languagedetector": "^7.1.0",
+    "papaparse": "^5.4.1",
     "prettier": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -55,5 +56,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.9"
   }
 }

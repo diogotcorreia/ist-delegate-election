@@ -82,7 +82,8 @@
         "bulk-add": {
           "curricular-year": "Curricular Year",
           "curricular-year-helper-text": "The curricular year must be a number",
-          "select-degree": "Select Degree"
+          "select-degree": "Select Degree",
+          "upload-help-text": "Select the column of the CSV file that contains usernames"
         },
         "title": "User Management",
         "subtitle": "Add or override degrees assigned to users"
@@ -113,6 +114,14 @@
     "next": "Next",
     "optional": "Optional",
     "skip": "Skip"
+  },
+  "csv-file-input": {
+    "import-button": "Import",
+    "parser-error": "Error while parsing CSV file, on row {{row}}: {{description}}",
+    "select-column": "Column",
+    "title": "Import CSV File",
+    "upload-button": "Upload CSV File",
+    "upload-error": "Error while uploading CSV file"
   },
   "dashboard": {
     "elections": {

@@ -4,7 +4,9 @@ import {
   AppConfigDto,
   AppErrorDto,
   AuthDto,
+  BulkAddUserDegreeOverrideDto,
   BulkCreateElectionsDto,
+  BulkDeleteUserDegreeOverrideDto,
   CastVoteDto,
   DegreeDto,
   DegreeElectionsDto,
@@ -172,4 +174,12 @@ export function editNomination(electionId: number, payload: EditNominationDto): 
 
 export function getUserDegreeOverrides(): Promise<DegreeWithUserOverridesDto[]> {
   return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`));
+}
+
+export function addUserDegreeOverrides(payload: BulkAddUserDegreeOverrideDto): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`, buildJsonBody('POST', payload)));
+}
+
+export function deleteUserDegreeOverrides(payload: BulkDeleteUserDegreeOverrideDto): Promise<void> {
+  return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`, buildJsonBody('DELETE', payload)));
 }
