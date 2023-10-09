@@ -89,6 +89,7 @@
           "title": "Assign Degree to User(s)",
           "upload-help-text": "Select the column of the CSV file that contains usernames"
         },
+        "delete-all": "Delete All",
         "title": "User Management",
         "subtitle": "Add or override degrees assigned to users"
       }

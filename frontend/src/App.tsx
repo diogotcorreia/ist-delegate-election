@@ -55,6 +55,7 @@ import AdminSingleElection, {
   loader as adminSingleElectionLoader,
 } from './routes/admin/election';
 import UserDegreeOverridesRoot, {
+  action as userDegreeOverridesAction,
   loader as userDegreeOverridesLoader,
 } from './routes/admin/user-degree-override/root';
 import BulkAddUserDegreeOverrides, {
@@ -145,6 +146,7 @@ const router = createBrowserRouter([
       {
         path: 'admin/user-degree-overrides',
         loader: userDegreeOverridesLoader,
+        action: userDegreeOverridesAction,
         element: <UserDegreeOverridesRoot />,
       },
       {

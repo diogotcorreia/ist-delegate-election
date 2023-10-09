@@ -89,6 +89,7 @@
           "title": "Associar Curso a Utilizadores",
           "upload-help-text": "Selecione a coluna do ficheiro CSV que contém os nomes de utilizador"
         },
+        "delete-all": "Eliminar todos",
         "title": "Gestão de Utilizadores",
         "subtitle": "Adicionar ou forçar associações de cursos a utilizadores"
       }

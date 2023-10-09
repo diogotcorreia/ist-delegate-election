@@ -137,7 +137,7 @@ function BulkAddUserDegreeOverrides() {
             label={t('admin.subpages.user-degree-override-management.bulk-add.curricular-year')}
             type='text'
             inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-            value={curricularYear}
+            value={curricularYear || ''}
             onChange={(event) => setCurricularYear(event.target.value)}
             fullWidth
           />
@@ -179,7 +179,7 @@ function BulkAddUserDegreeOverrides() {
 
       <Grid container spacing={2}>
         {[...users].map((user) => (
-          <Grid xs={12} sm={6} md={4} lg={2}>
+          <Grid key={user} xs={12} sm={6} md={4} lg={2}>
             <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
               <Typography flexGrow={1}>{user}</Typography>
               <IconButton onClick={handleRemoveUser(user)}>
