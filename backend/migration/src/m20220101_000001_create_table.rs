@@ -23,22 +23,22 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Election::CurricularYear).integer().null())
                     .col(
                         ColumnDef::new(Election::CandidacyPeriodStart)
-                            .timestamp()
+                            .date_time()
                             .null(),
                     )
                     .col(
                         ColumnDef::new(Election::CandidacyPeriodEnd)
-                            .timestamp()
+                            .date_time()
                             .null(),
                     )
                     .col(
                         ColumnDef::new(Election::VotingPeriodStart)
-                            .timestamp()
+                            .date_time()
                             .not_null(),
                     )
                     .col(
                         ColumnDef::new(Election::VotingPeriodEnd)
-                            .timestamp()
+                            .date_time()
                             .not_null(),
                     )
                     .col(ColumnDef::new(Election::Round).integer().not_null())
@@ -145,7 +145,7 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Admin::DateAdded).timestamp().not_null())
+                    .col(ColumnDef::new(Admin::DateAdded).date_time().not_null())
                     .to_owned(),
             )
             .await?;
