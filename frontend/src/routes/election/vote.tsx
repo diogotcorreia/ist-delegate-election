@@ -70,6 +70,7 @@ function ElectionVote() {
       >
         {voteOptions.map((option) => (
           <RadioCard
+            key={option.username}
             value={option.username}
             icon={<FenixAvatar username={option.username} size={64} />}
             sx={{ width: 200, justifyContent: 'flex-start' }}
