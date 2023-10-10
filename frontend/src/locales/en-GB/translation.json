@@ -95,6 +95,7 @@
       }
     },
     "degree-type-elections": {
+      "card-details": "See Details",
       "empty_one": "{{count}} degree without elections",
       "empty_other": "{{count}} degrees without elections"
     },

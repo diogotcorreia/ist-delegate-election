@@ -239,7 +239,7 @@ function ElectionCard({ election, unverifiedNominations }: ElectionCardProps) {
         </CardContent>
         <CardActions>
           <Button component={Link} to={`/admin/election/${election.id}`} size='small'>
-            see more
+            {t('admin.degree-type-elections.card-details')}
           </Button>
         </CardActions>
       </Card>
