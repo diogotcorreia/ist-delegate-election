@@ -906,7 +906,7 @@ dependencies = [
 
 [[package]]
 name = "entity"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "sea-orm",
 ]
@@ -1485,7 +1485,7 @@ dependencies = [
 
 [[package]]
 name = "ist-delegate-election"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "async-session",
  "axum",
@@ -1638,7 +1638,7 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 
 [[package]]
 name = "migration"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "async-std",
  "sea-orm-migration",
