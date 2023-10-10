@@ -53,7 +53,11 @@ function BulkValidateNominations() {
       {elections.map((election) => (
         <ElectionCard key={election.id} election={election}>
           {election.nominations.map((nomination) => (
-            <NominationCard username={nomination.username} displayName={nomination.displayName}>
+            <NominationCard
+              key={nomination.username}
+              username={nomination.username}
+              displayName={nomination.displayName}
+            >
               <EditNominationForm electionId={election.id} username={nomination.username}>
                 <IconButton color='success' type='submit' name='valid' value='true'>
                   <CheckRounded />
