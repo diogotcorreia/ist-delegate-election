@@ -73,16 +73,16 @@ function DegreeSelectionInput({ degrees, selected, setSelected }: DegreeSelectio
       {degrees.map(({ degreeType, degreeTypeHash, degreeElections }) => (
         <Accordion key={degreeTypeHash}>
           <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-            <Box display='flex' alignItems='center' gap={1}>
-              <Checkbox
-                checked={degreeElections.length === selectedByType[degreeTypeHash]}
-                indeterminate={
-                  selectedByType[degreeTypeHash] > 0 &&
-                  selectedByType[degreeTypeHash] < degreeElections.length
-                }
-                onChange={onDegreeTypeChange(degreeElections)}
-                onClick={(e) => e.stopPropagation()}
-              />
+            <Checkbox
+              checked={degreeElections.length === selectedByType[degreeTypeHash]}
+              indeterminate={
+                selectedByType[degreeTypeHash] > 0 &&
+                selectedByType[degreeTypeHash] < degreeElections.length
+              }
+              onChange={onDegreeTypeChange(degreeElections)}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <Box display='flex' alignItems='center' flexWrap='wrap' gap={1}>
               <span>{translateLs(degreeType)}</span>
               <Chip
                 label={t('degree.count', {

@@ -67,34 +67,27 @@ function DegreeTypeElections({ aggregator, unverifiedNominationsCountByElection 
 
   return (
     <Accordion>
-      <AccordionSummary
-        expandIcon={<ExpandMoreRounded />}
-        sx={{ display: 'flex', alignItems: 'center' }}
-      >
-        <span>{translateLs(degreeType)}</span>
-        <Chip
-          label={t('degree.count', { count: degreeElections.length })}
-          size='small'
-          sx={{ ml: 1 }}
-        />
-        {electionCount > 0 && (
-          <Chip
-            label={t('election.count', { count: electionCount })}
-            size='small'
-            sx={{ ml: 1 }}
-            color='primary'
-          />
-        )}
-        {unverifiedNominationsCount > 0 && (
-          <Chip
-            label={t('election.unverified-nominations-count', {
-              count: unverifiedNominationsCount,
-            })}
-            size='small'
-            sx={{ ml: 1 }}
-            color='warning'
-          />
-        )}
+      <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+        <Box display='flex' alignItems='center' flexWrap='wrap' gap={1}>
+          <span>{translateLs(degreeType)}</span>
+          <Chip label={t('degree.count', { count: degreeElections.length })} size='small' />
+          {electionCount > 0 && (
+            <Chip
+              label={t('election.count', { count: electionCount })}
+              size='small'
+              color='primary'
+            />
+          )}
+          {unverifiedNominationsCount > 0 && (
+            <Chip
+              label={t('election.unverified-nominations-count', {
+                count: unverifiedNominationsCount,
+              })}
+              size='small'
+              color='warning'
+            />
+          )}
+        </Box>
       </AccordionSummary>
       <AccordionDetails>
         {degreesWithElections.map((dElections, i) => (
