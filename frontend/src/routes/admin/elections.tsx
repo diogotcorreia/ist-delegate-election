@@ -14,6 +14,7 @@ import {
   Stepper,
   Toolbar,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { Dayjs } from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -397,6 +398,7 @@ export function ElectionsBulkAddSuccess() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const theme = useTheme();
 
   // Go back to home page after 5 seconds
   useEffect(() => {
@@ -414,6 +416,7 @@ export function ElectionsBulkAddSuccess() {
       open={open}
       onClose={() => setOpen(false)}
       onTransitionExited={() => navigate('..')}
+      transitionDuration={{ enter: 0, exit: theme.transitions.duration.leavingScreen }}
       fullScreen
     >
       <DialogTitle>
