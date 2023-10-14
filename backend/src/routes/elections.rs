@@ -452,16 +452,10 @@ pub async fn cast_vote(
             return Err(AppError::UnknownVoteOption);
         }
 
-        let vote_count = ElectionVote::find_by_id((election_id, vote_username.clone()))
-            .one(&txn)
-            .await?
-            .map(|v| v.count)
-            .unwrap_or(0);
-
         let vote = election_vote::ActiveModel {
             election: ActiveValue::set(election_id),
             nomination_username: ActiveValue::set(vote_username),
-            count: ActiveValue::set(vote_count + 1),
+            count: ActiveValue::set(1),
         };
 
         ElectionVote::insert(vote)
@@ -470,7 +464,10 @@ pub async fn cast_vote(
                     election_vote::Column::Election,
                     election_vote::Column::NominationUsername,
                 ])
-                .update_column(election_vote::Column::Count)
+                .value(
+                    election_vote::Column::Count,
+                    election_vote::Column::Count.into_expr().add(1),
+                )
                 .to_owned(),
             )
             .exec(&txn)
