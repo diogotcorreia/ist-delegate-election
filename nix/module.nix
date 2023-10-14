@@ -13,7 +13,7 @@ in {
 
       fqdn = mkOption {
         type = types.str;
-        default = "http://localhost:${cfg.port}";
+        default = "http://localhost:${toString cfg.port}";
         defaultText = literalExpression
           ''"http://localhost:''${services.ist-delegate-election.port}"'';
         description = lib.mdDoc ''
