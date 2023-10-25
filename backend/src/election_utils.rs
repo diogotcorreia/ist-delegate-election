@@ -212,7 +212,9 @@ pub async fn get_all_results_as_csv(
                     Query::select()
                         .from(ElectionVote)
                         .expr_as(
-                            election_vote::Column::Count.sum().cast_as(Alias::new("integer")),
+                            election_vote::Column::Count
+                                .sum()
+                                .cast_as(Alias::new("integer")),
                             Alias::new("votes_count"),
                         )
                         .cond_where(
