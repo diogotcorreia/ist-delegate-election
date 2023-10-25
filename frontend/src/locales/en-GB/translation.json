@@ -158,6 +158,7 @@
     "curricular-year_ordinal_other": "{{count}}th Year",
     "curricular-year-none": "Degree-wide",
     "nominate": {
+      "no-self-nomination": "You are not eligible for candidacy in this election, since you are currently on mobility.",
       "others": "I want to nominate another student",
       "others-info": "Nominations are subject to approval by the Pedagogical Council. It is only possible to nominate other students participating in this election.",
       "self": "I want to apply",

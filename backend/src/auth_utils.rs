@@ -56,6 +56,24 @@ pub fn can_vote_on_election(user: &UserDto, election: &Election) -> Result<(), A
         .ok_or(AppError::ElectionUnauthorized)
 }
 
+/// A user can self nominate on the election if they are attending the corresponding degree,
+/// and, if the election has a curricular year, they are attending that year as well.
+/// They cannot self nominate if they are currently away on mobility.
+pub fn can_self_nominate_on_election(user: &UserDto, election: &Election) -> Result<(), AppError> {
+    user.degree_entries
+        .iter()
+        .any(|entry| {
+            entry.nomination_elegible
+                && entry.degree_id == election.degree_id
+                && election
+                    .curricular_year
+                    .map(|year| year == entry.curricular_year as i32)
+                    .unwrap_or(true)
+        })
+        .then_some(())
+        .ok_or(AppError::ElectionUnauthorized)
+}
+
 #[cfg(test)]
 mod tests {
     use chrono::NaiveDateTime;
@@ -74,6 +92,7 @@ mod tests {
                 .map(|(id, year)| DegreeEntryDto {
                     degree_id: id.to_string(),
                     curricular_year: *year,
+                    nomination_elegible: true,
                 })
                 .collect(),
         }

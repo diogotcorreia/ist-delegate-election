@@ -42,6 +42,7 @@ pub struct LoginDto {
 pub struct DegreeEntryDto {
     pub degree_id: String,
     pub curricular_year: u8,
+    pub nomination_elegible: bool,
 }
 
 #[typeshare]
