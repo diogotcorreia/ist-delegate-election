@@ -1,16 +1,23 @@
 use entity::{
-    election::{self, Model as Election},
+    election::{self, Entity as Election},
+    election_vote::{self, Entity as ElectionVote},
     nomination::{self, Entity as Nomination},
+    vote_log::{self, Entity as VoteLog},
 };
-use migration::{OnConflict, Query};
-use sea_orm::{prelude::*, Condition, DatabaseConnection, EntityTrait};
+use migration::{Alias, OnConflict, Query, SimpleExpr};
+use sea_orm::{
+    prelude::*, Condition, DatabaseConnection, EntityTrait, FromQueryResult, JoinType, QueryOrder,
+    QuerySelect, TransactionTrait,
+};
+use serde::Serialize;
 
 use crate::{
     dtos::{DegreeEntryDto, UserDto},
     errors::AppError,
+    services::fenix::FenixService,
 };
 
-pub fn is_in_candidacy_period(election: &Election) -> Result<(), AppError> {
+pub fn is_in_candidacy_period(election: &election::Model) -> Result<(), AppError> {
     let now = chrono::Utc::now();
     match (
         election.candidacy_period_start,
@@ -23,7 +30,7 @@ pub fn is_in_candidacy_period(election: &Election) -> Result<(), AppError> {
     .ok_or(AppError::OutsideCandidacyPeriod)
 }
 
-pub fn is_in_voting_period(election: &Election) -> Result<(), AppError> {
+pub fn is_in_voting_period(election: &election::Model) -> Result<(), AppError> {
     let now = chrono::Utc::now();
 
     let start = election.voting_period_start;
@@ -71,7 +78,7 @@ pub async fn validate_nominations_of_user(
                 .add(Expr::exists(
                     Query::select()
                         .column(election::Column::Id)
-                        .from(election::Entity)
+                        .from(Election)
                         .cond_where(
                             Condition::all()
                                 .add(
@@ -103,4 +110,176 @@ pub fn get_nomination_upsert_on_conflict() -> OnConflict {
         .update_column(nomination::Column::Valid)
         .action_and_where(Expr::col((Nomination, nomination::Column::Valid)).is_null())
         .to_owned()
+}
+
+#[derive(FromQueryResult, Serialize)]
+struct ElectionAllResults {
+    #[serde(rename = "election_id")]
+    id: i32,
+    round: i32,
+    #[serde(rename = "degree")]
+    degree_id: String,
+    curricular_year: Option<i32>,
+    username: String,
+    display_name: String,
+    vote_count: i32,
+}
+
+#[derive(FromQueryResult)]
+struct ElectionBlankVotes {
+    id: i32,
+    round: i32,
+    degree_id: String,
+    curricular_year: Option<i32>,
+    total_votes: i64,
+    non_blank_votes: Option<i64>,
+}
+
+pub async fn get_all_results_as_csv(
+    conn: &DatabaseConnection,
+    fenix_service: &FenixService,
+) -> Result<String, AppError> {
+    let active_year = fenix_service.get_active_year().await?;
+
+    let now = chrono::Utc::now().naive_utc();
+
+    let txn = conn
+        .begin_with_config(None, Some(sea_orm::AccessMode::ReadOnly))
+        .await?;
+
+    let mut all_results: Vec<ElectionAllResults> = Election::find()
+        .select_only()
+        .columns([
+            election::Column::Id,
+            election::Column::Round,
+            election::Column::DegreeId,
+            election::Column::CurricularYear,
+        ])
+        .columns([
+            nomination::Column::Username,
+            nomination::Column::DisplayName,
+        ])
+        .column_as(election_vote::Column::Count, "vote_count")
+        .join(JoinType::InnerJoin, election::Relation::Nomination.def())
+        .join(
+            JoinType::InnerJoin,
+            nomination::Relation::ElectionVote.def(),
+        )
+        .filter(
+            Condition::all()
+                .add(election::Column::AcademicYear.eq(active_year.clone()))
+                .add(election::Column::VotingPeriodEnd.lt(now))
+                .add(nomination::Column::Valid.eq(Some(true))),
+        )
+        .order_by_asc(election::Column::Round)
+        .order_by_asc(election::Column::DegreeId)
+        .order_by_asc(election_vote::Column::Count)
+        .into_model::<ElectionAllResults>()
+        .all(&txn)
+        .await?;
+
+    // get blank votes
+    let blank_votes = Election::find()
+        .select_only()
+        .columns([
+            election::Column::Id,
+            election::Column::Round,
+            election::Column::DegreeId,
+            election::Column::CurricularYear,
+        ])
+        .expr_as(
+            SimpleExpr::SubQuery(
+                None,
+                Box::new(
+                    Query::select()
+                        .from(VoteLog)
+                        .expr_as(vote_log::Column::Voter.count(), Alias::new("total_votes"))
+                        .cond_where(
+                            vote_log::Column::Election
+                                .into_expr()
+                                .eq(election::Column::Id.into_expr()),
+                        )
+                        .to_owned()
+                        .into_sub_query_statement(),
+                ),
+            ),
+            "total_votes",
+        )
+        .expr_as(
+            SimpleExpr::SubQuery(
+                None,
+                Box::new(
+                    Query::select()
+                        .from(ElectionVote)
+                        .expr_as(
+                            election_vote::Column::Count.sum(),
+                            Alias::new("votes_count"),
+                        )
+                        .cond_where(
+                            election_vote::Column::Election
+                                .into_expr()
+                                .eq(election::Column::Id.into_expr()),
+                        )
+                        .to_owned()
+                        .into_sub_query_statement(),
+                ),
+            ),
+            "non_blank_votes",
+        )
+        .to_owned()
+        .filter(
+            Condition::all()
+                .add(election::Column::AcademicYear.eq(active_year))
+                .add(election::Column::VotingPeriodEnd.lt(now)),
+        )
+        .order_by_asc(election::Column::Round)
+        .order_by_asc(election::Column::DegreeId)
+        .into_model::<ElectionBlankVotes>()
+        .all(&txn)
+        .await?;
+
+    txn.commit().await?;
+
+    // insert blank vote counts at the end (stable sort will put them in the correct place
+    // afterwards)
+    for election in blank_votes {
+        let blank_vote_count = election.total_votes - election.non_blank_votes.unwrap_or(0);
+        all_results.push(ElectionAllResults {
+            id: election.id,
+            round: election.round,
+            degree_id: election.degree_id,
+            curricular_year: election.curricular_year,
+            username: "blank".to_owned(),
+            display_name: "".to_owned(),
+            vote_count: blank_vote_count as i32,
+        })
+    }
+
+    // replace degree id with acronym
+    for result in &mut all_results {
+        result.degree_id = fenix_service
+            .get_degree(&result.degree_id)
+            .await?
+            .map(|degree| degree.acronym)
+            .unwrap_or("unknown".to_owned());
+    }
+
+    // sort by round, degree, curricular year
+    all_results.sort_by_key(|row| {
+        (
+            row.round,
+            row.degree_id.clone(),
+            row.curricular_year.unwrap_or(0),
+        )
+    });
+
+    let mut wtr = csv::Writer::from_writer(vec![]);
+    for result in all_results {
+        wtr.serialize(result)?;
+    }
+
+    wtr.flush()?;
+
+    String::from_utf8(wtr.into_inner().map_err(|_| AppError::CsvError(None))?)
+        .map_err(|_| AppError::CsvError(None))
 }

@@ -1,4 +1,4 @@
-import { AddRounded, CloseRounded, VerifiedRounded } from '@mui/icons-material';
+import { AddRounded, CloseRounded, DownloadRounded, VerifiedRounded } from '@mui/icons-material';
 import {
   Alert,
   Box,
@@ -29,7 +29,12 @@ import {
   useOutletContext,
 } from 'react-router-dom';
 import { DegreeElectionsDto } from '../../@types/api';
-import { bulkCreateElections, countUnverifiedNominations, getDegreeElections } from '../../api';
+import {
+  bulkCreateElections,
+  countUnverifiedNominations,
+  getDegreeElections,
+  getElectionsResultsDownloadCsvUrl,
+} from '../../api';
 import DegreeTypeElections from '../../components/admin/DegreeTypeElections';
 import BulkCreateElectionsSubmitButton from '../../components/admin/forms/BulkCreateElectionsSubmitButton';
 import DateRangeInput from '../../components/admin/forms/DateRangeInput';
@@ -77,9 +82,18 @@ function Elections() {
       <Typography variant='h2' gutterBottom>
         {t('admin.subpages.election-management.title')}
       </Typography>
-      <Box my={4} display='flex' flexDirection='row-reverse'>
+      <Box my={4} display='flex' flexDirection='row-reverse' gap={1} flexWrap='wrap'>
         <Button component={Link} to='bulk-add' variant='contained' startIcon={<AddRounded />}>
           {t('admin.subpages.election-management.create-elections')}
+        </Button>
+        <Button
+          component='a'
+          href={getElectionsResultsDownloadCsvUrl()}
+          target='_blank'
+          variant='outlined'
+          startIcon={<DownloadRounded />}
+        >
+          {t('admin.subpages.election-management.download-results-csv')}
         </Button>
       </Box>
       <Box mb={2}>

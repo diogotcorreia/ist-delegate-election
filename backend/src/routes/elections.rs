@@ -3,7 +3,8 @@ use std::collections::HashMap;
 
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{header, StatusCode},
+    response::IntoResponse,
     Extension, Json,
 };
 use axum_sessions::SessionHandle;
@@ -29,8 +30,8 @@ use crate::{
         VoteOptionDto,
     },
     election_utils::{
-        get_nomination_upsert_on_conflict, get_user_in_election_condition, is_in_candidacy_period,
-        is_in_voting_period,
+        get_all_results_as_csv, get_nomination_upsert_on_conflict, get_user_in_election_condition,
+        is_in_candidacy_period, is_in_voting_period,
     },
     errors::AppError,
     services::fenix::FenixService,
@@ -626,4 +627,26 @@ pub async fn edit_nomination(
         })?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn download_results(
+    Extension(ref session_handle): Extension<SessionHandle>,
+    State(ref fenix_service): State<FenixService>,
+    State(ref conn): State<DatabaseConnection>,
+    // Json(nomination_dto): Json<EditNominationDto>,
+) -> Result<impl IntoResponse, AppError> {
+    // assert admin only
+    auth_utils::get_admin(session_handle, conn).await?;
+
+    let headers = [
+        (header::CONTENT_TYPE, "text/csv; charset=utf-8"),
+        (
+            header::CONTENT_DISPOSITION,
+            "attachment; filename=\"election_results.csv\"",
+        ),
+    ];
+
+    let data = get_all_results_as_csv(conn, fenix_service).await?;
+
+    Ok((headers, data))
 }

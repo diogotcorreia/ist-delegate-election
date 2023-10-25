@@ -183,3 +183,7 @@ export function addUserDegreeOverrides(payload: BulkAddUserDegreeOverrideDto): P
 export function deleteUserDegreeOverrides(payload: BulkDeleteUserDegreeOverrideDto): Promise<void> {
   return wrapFetch(fetch(`${BASE_URL}/user-degree-overrides`, buildJsonBody('DELETE', payload)));
 }
+
+export function getElectionsResultsDownloadCsvUrl(): string {
+  return `${BASE_URL}/elections/results/download/csv`;
+}

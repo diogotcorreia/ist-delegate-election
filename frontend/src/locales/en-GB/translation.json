@@ -55,6 +55,7 @@
           "voting-period": "Voting from {{start, datetime}} to {{end, datetime}}"
         },
         "create-elections": "Create Elections",
+        "download-results-csv": "Download results as CSV",
         "title": "Election Management",
         "subtitle": "Create, edit and see results of elections",
         "unverified-nominations-alert": {
