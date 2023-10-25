@@ -46,10 +46,12 @@ pub async fn login(
         match degree_entry {
             Some(degree_entry) => {
                 degree_entry.curricular_year = curricular_year;
+                degree_entry.nomination_elegible = true;
             }
             None => user_details.degree_entries.push(DegreeEntryDto {
                 degree_id: degree_override.degree_id,
                 curricular_year,
+                nomination_elegible: true,
             }),
         }
     }

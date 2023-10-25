@@ -88,12 +88,13 @@ impl FenixService {
 
         let degree_entries: Vec<DegreeEntryDto> = curriculum_response
             .into_iter()
-            .filter(|entry| entry.state == "REGISTERED")
-            .filter(|entry| {
-                entry
+            .filter(|entry| match entry.state.as_str() {
+                "REGISTERED" => entry
                     .academic_terms
                     .iter()
-                    .any(|term| term.year.to_string() == academic_year)
+                    .any(|term| term.year.to_string() == academic_year),
+                "MOBILITY" => true,
+                _ => false,
             })
             .map(|entry| entry.into())
             .collect();
@@ -265,6 +266,7 @@ impl From<CurriculumResponse> for DegreeEntryDto {
         DegreeEntryDto {
             degree_id: value.degree.id,
             curricular_year: value.curricular_year,
+            nomination_elegible: value.state == "REGISTERED",
         }
     }
 }

@@ -1,6 +1,6 @@
 import { PersonRounded, PersonSearchRounded, VerifiedRounded } from '@mui/icons-material';
 import { Alert, Box, Button, CardActions, Collapse, Typography } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActionFunctionArgs,
@@ -16,7 +16,8 @@ import { electionNominate, electionSelfNominate } from '../../api';
 import ElectionCard from '../../components/election/ElectionCard';
 import RadioCard, { RadioCardGroup } from '../../components/forms/RadioCard';
 import SearchPersonInput from '../../components/forms/SearchPersonInput';
-import { RootData } from './root';
+import { RootData } from '../root';
+import { RootData as ElectionRootData } from './root';
 
 export async function action({ params, request }: ActionFunctionArgs) {
   const payload = await request.json();
@@ -31,12 +32,20 @@ export async function action({ params, request }: ActionFunctionArgs) {
 }
 
 function ElectionNominate() {
-  const { election } = useRouteLoaderData('user-single-election') as RootData;
+  const { auth } = useRouteLoaderData('root') as RootData;
+  const { election } = useRouteLoaderData('user-single-election') as ElectionRootData;
   const { t } = useTranslation();
   const submit = useSubmit();
 
   const [nominateAction, setNominateAction] = useState<string | null>(null);
   const [selectedPerson, setSelectedPerson] = useState<SignedPersonSearchResultDto | null>(null);
+
+  const canSelfNominate = useMemo(
+    () =>
+      auth.user.degreeEntries.find((entry) => entry.degreeId === election?.degree?.id)
+        ?.nominationElegible ?? true,
+    [auth.user.degreeEntries, election?.degree?.id]
+  );
 
   const handleSubmit = useCallback(() => {
     const payload = {
@@ -53,8 +62,16 @@ function ElectionNominate() {
     return <Navigate to='..' replace={true} />;
   }
 
+  const isSelectedUserValid =
+    selectedPerson !== null && (canSelfNominate || selectedPerson?.username !== auth.user.username);
+
   return (
     <ElectionCard election={election}>
+      {!canSelfNominate && (
+        <Alert severity='warning' sx={{ my: 2 }}>
+          {t('election.nominate.no-self-nomination')}
+        </Alert>
+      )}
       <RadioCardGroup
         exclusive
         value={nominateAction}
@@ -66,6 +83,7 @@ function ElectionNominate() {
           icon={<PersonRounded fontSize='inherit' />}
           text={t('election.nominate.self')}
           sx={{ width: 200, justifyContent: 'flex-start' }}
+          disabled={!canSelfNominate}
         />
         <RadioCard
           value='others'
@@ -89,7 +107,7 @@ function ElectionNominate() {
       <CardActions sx={{ flexDirection: 'row-reverse' }}>
         <Button
           disabled={
-            !(nominateAction === 'self' || (nominateAction === 'others' && selectedPerson !== null))
+            !(nominateAction === 'self' || (nominateAction === 'others' && isSelectedUserValid))
           }
           variant='contained'
           onClick={handleSubmit}

@@ -209,7 +209,7 @@ pub async fn get_user_elections(
         .filter(
             Condition::all()
                 .add(election::Column::AcademicYear.eq(active_year))
-                .add(get_user_in_election_condition(&user)),
+                .add(get_user_in_election_condition(user.degree_entries.iter())),
         )
         .all(&txn)
         .await?;
@@ -275,7 +275,7 @@ pub async fn self_nominate(
         .one(&txn)
         .await?
         .ok_or(AppError::UnknownElection)?;
-    auth_utils::can_vote_on_election(&user, &election)?;
+    auth_utils::can_self_nominate_on_election(&user, &election)?;
     is_in_candidacy_period(&election)?;
 
     let nomination_log = nomination_log::ActiveModel {
@@ -320,7 +320,11 @@ pub async fn nominate_others(
         .one(&txn)
         .await?
         .ok_or(AppError::UnknownElection)?;
-    auth_utils::can_vote_on_election(&user, &election)?;
+    if user.username == nomination_dto.username {
+        auth_utils::can_self_nominate_on_election(&user, &election)?;
+    } else {
+        auth_utils::can_vote_on_election(&user, &election)?;
+    }
     is_in_candidacy_period(&election)?;
 
     crypto_utils::validate_person_search_result(election_id, &nomination_dto, signing_key)?;

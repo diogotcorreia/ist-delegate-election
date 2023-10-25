@@ -26,6 +26,7 @@ export interface LoginDto {
 export interface DegreeEntryDto {
   degreeId: string;
   curricularYear: number;
+  nominationElegible: boolean;
 }
 
 export interface UserDto {
