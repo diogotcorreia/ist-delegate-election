@@ -132,7 +132,7 @@ struct ElectionBlankVotes {
     degree_id: String,
     curricular_year: Option<i32>,
     total_votes: i64,
-    non_blank_votes: Option<i64>,
+    non_blank_votes: Option<i32>,
 }
 
 pub async fn get_all_results_as_csv(
@@ -212,7 +212,7 @@ pub async fn get_all_results_as_csv(
                     Query::select()
                         .from(ElectionVote)
                         .expr_as(
-                            election_vote::Column::Count.sum(),
+                            election_vote::Column::Count.sum().cast_as(Alias::new("integer")),
                             Alias::new("votes_count"),
                         )
                         .cond_where(
@@ -243,7 +243,7 @@ pub async fn get_all_results_as_csv(
     // insert blank vote counts at the end (stable sort will put them in the correct place
     // afterwards)
     for election in blank_votes {
-        let blank_vote_count = election.total_votes - election.non_blank_votes.unwrap_or(0);
+        let blank_vote_count = election.total_votes as i32 - election.non_blank_votes.unwrap_or(0);
         all_results.push(ElectionAllResults {
             id: election.id,
             round: election.round,
@@ -251,7 +251,7 @@ pub async fn get_all_results_as_csv(
             curricular_year: election.curricular_year,
             username: "blank".to_owned(),
             display_name: "".to_owned(),
-            vote_count: blank_vote_count as i32,
+            vote_count: blank_vote_count,
         })
     }
 
