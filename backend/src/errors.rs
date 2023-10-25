@@ -33,6 +33,8 @@ pub enum AppError {
     FenixError,
     SessionSerializationError(async_session::serde_json::Error),
     DbError(DbErr),
+    CsvError(Option<csv::Error>),
+    IoError(std::io::Error),
 }
 
 impl IntoResponse for AppError {
@@ -80,9 +82,10 @@ impl IntoResponse for AppError {
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "error.unauthorized"),
             AppError::Forbidden => (StatusCode::FORBIDDEN, "error.forbidden"),
             AppError::FenixError => (StatusCode::BAD_GATEWAY, "error.fenix"),
-            AppError::SessionSerializationError(_) | AppError::DbError(_) => {
-                (StatusCode::INTERNAL_SERVER_ERROR, "error.internal")
-            }
+            AppError::SessionSerializationError(_)
+            | AppError::DbError(_)
+            | AppError::CsvError(_)
+            | AppError::IoError(_) => (StatusCode::INTERNAL_SERVER_ERROR, "error.internal"),
         };
 
         let error = AppErrorDto {
@@ -103,5 +106,19 @@ impl From<DbErr> for AppError {
     fn from(inner: DbErr) -> Self {
         error!("{}", inner);
         Self::DbError(inner)
+    }
+}
+
+impl From<csv::Error> for AppError {
+    fn from(inner: csv::Error) -> Self {
+        error!("{}", inner);
+        Self::CsvError(Some(inner))
+    }
+}
+
+impl From<std::io::Error> for AppError {
+    fn from(inner: std::io::Error) -> Self {
+        error!("{}", inner);
+        Self::IoError(inner)
     }
 }

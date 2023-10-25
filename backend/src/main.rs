@@ -93,6 +93,10 @@ async fn main() {
             post(routes::elections::bulk_create_elections),
         )
         .route(
+            "/elections/results/download/csv",
+            get(routes::elections::download_results),
+        )
+        .route(
             "/elections/nominations/unverified",
             get(routes::elections::get_unverified_nominations),
         )
