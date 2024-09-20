@@ -272,6 +272,6 @@
     "label": "Student to Nominate",
     "loading": "Loading results...",
     "no-results": "No results have been found",
-    "placeholder": "Type a student's name or IST-ID"
+    "placeholder": "Type a student's name"
   }
 }

@@ -170,17 +170,16 @@ impl FenixService {
         &self,
         oauth_token: &str,
         query: &str,
-        _degree_id: &str,
+        degree_id: &str,
     ) -> reqwest::Result<PersonSearchResponse> {
         let client = reqwest::Client::new();
 
         client
-            .post(format!("{}/api/bennu-core/users/find", self.base_url,))
-            .query(&[
-                ("query", query),
-                ("includeInactive", "false"),
-                ("maxHits", "20"),
-            ])
+            .get(format!(
+                "{}{}/person/search",
+                self.base_url, TECNICO_API_PREFIX
+            ))
+            .query(&[("name", query), ("degree", degree_id), ("limit", "20")])
             .header("Authorization", format!("Bearer {}", oauth_token))
             .header("X-Requested-With", "XMLHttpRequest")
             .send()
@@ -326,7 +325,7 @@ impl ToString for ExecutionYear {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PersonSearchResponse {
-    pub users: Vec<PersonSearchResult>,
+    pub items: Vec<PersonSearchResult>,
 }
 
 #[derive(Deserialize)]
