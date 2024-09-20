@@ -40,7 +40,7 @@ pub async fn search_user(
 
     Ok(Json(
         results
-            .users
+            .items
             .into_iter()
             .map(|result| sign_person_search_result(election.id, result, signing_key))
             .collect(),
