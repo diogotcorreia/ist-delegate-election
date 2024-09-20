@@ -1,10 +1,10 @@
 { buildNpmPackage, nodejs }:
 buildNpmPackage {
   pname = "ist-delegate-election-frontend";
-  version = "1.2.0";
+  version = "1.3.0";
 
   src = ../frontend;
-  npmDepsHash = "sha256-1TYC9KJx7C5QEOnQposNh6PqoNKWLsKrMjiLFeuWjTI=";
+  npmDepsHash = "sha256-6FMYrbs/fpjhgx/4cLbZZDpHEoIW0g8Fg6UmYcmPbG4=";
 
   nativeBuildInputs = [ nodejs ];
 
