@@ -1,6 +1,15 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    "group:all"
+  ],
+  "schedule": [
+    "* * 1 9 *"
+  ],
+  "ignorePresets": [
+    ":semanticPrefixFixDepsChoreOthers"
   ]
 }
